@@ -177,7 +177,6 @@ var cena = 99.99;
 > ```js
 > var a = 11;
 > if (a > 10) {
->   // <-- blok pridruzen if-u
->   console.log(a); // 11
+>   console.log(a); // blok pridruzen if-u
 > }
 > ```
