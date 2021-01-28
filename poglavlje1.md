@@ -180,3 +180,59 @@ var cena = 99.99;
 >   console.log(a); // blok pridruzen if-u
 > }
 > ```
+
+## Uslovni iskazi
+
+Kako vi proverili da je je neki izraz tacan, i u potvrdnom odgovoru izvrsili neki blok koda, koristimo _**if**_.
+
+```js
+if (parametar) {
+  //blok koda
+}
+```
+
+> if ocekuje vrednost tipa _boolean_ kao svoj parametar.<br>
+> U slucaju da to nije, radi se implicitna konverzija.<br>
+> Blok koda se nece izvrsiti ako je parametru prosledjena _**0**_ ili _**""**_.<br>
+> Sve druge vrednosti se smatraju tacnim, pa ce se blok koda izvrsiti.
+
+```js
+if (parametar) {
+  // blok koda
+} else {
+  // blok koda
+}
+```
+
+> else, bukvalno kaze, ako je parametar **false**, ja cu se izvrsiti.
+
+## Petlje
+
+Autor knjige petlje poredi sa prodavcem u nekoj prodavnici. On ce usluzivati pomoc kupcima sve dok ne ostane vise kupaca. Blok koda se izvrsava sve dok je uslov ispunjen.
+
+```js
+while (brojKupaca > 0) {
+  console.log("Kako Vam mogu pomoci?");
+  brojKupaca--;
+}
+```
+
+> **Iteracija** je jedno izvrsavanje bloka.<br>
+> Uslov se svaki put proverava kada prodje iteracija.
+
+Glavna razlika izmedju while i do..while jeste to sto while proverava uslov pre iteracije. Do..while izvrsi iteraciju pa tek onda proverava uslov.
+
+**For**
+
+```js
+for (var i = 0; i <= 9; i++) {
+  // blok koda
+}
+```
+
+> Petlja for ima tri odredbe :<br>
+> inicijalizaciju (var i = 0)<br>
+> uslov dokle ce se blok izvrsavati (i <= 9)<br>
+> odredbu azuriranja (i++)
+
+**Petlja se izvrsava dok njen uslov ne prestane da bude ispunjen**, bez obzira na vrstu iste.
