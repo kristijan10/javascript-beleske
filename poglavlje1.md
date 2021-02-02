@@ -236,3 +236,49 @@ for (var i = 0; i <= 9; i++) {
 > odredbu azuriranja (i++)
 
 **Petlja se izvrsava dok njen uslov ne prestane da bude ispunjen**, bez obzira na vrstu iste.
+
+## Funkcije
+
+Glavna namena funkcija jeste eliminisanje ponavljanja istog koda. Organizuju delove koda u sekcije, pa se mogu pozivati bezbroj puta.
+
+```js
+function imeFunkcije(parametar) {
+  // blok koda
+}
+```
+
+### Opseg vidljivosti promenljivih
+
+Ako od prodavca mobilnih telefona zatrazis neki model koji nemaju u prodavnici, on nece moci da ti proda taj isti model. Moraces da potrazis u drugoj prodavnici.<br>
+**Opseg vidljivosti** (_scope_) je skup promenljivih i pravila po kojim se moze pristupiti tim istim promenljivima.<br>
+Svaki blok koda stvara opseg vidljivosti za sebe. U istom opsegu vidljivosti ne mogu biti dve promenljive istog imena. Dok u dva razlicita opsega vidljivosti mozes imati dve promenljive istog imena.
+
+```js
+function jedan() {
+  var a = 1;
+  console.log(a);
+}
+
+function dva() {
+  var a = 2;
+  console.log(a);
+}
+
+jedan(); // 1
+dva(); // 2
+```
+
+Funkcija u funkciji pravi novi opseg vidljivosti, s tim sto unutrasnja funkcija moze da pristupi promenljivima iz spoljasnje funkcije, dok obrnuto ne moze (spoljasnja ne vidi promenljive unutrasnje funkcije).
+
+```js
+function spoljasnja() {
+  var a = 1;
+
+  function unutrasnja() {
+    var b = 2;
+    console.log(a + b); // 3
+  } // <- zavrsetak bloka koda
+
+  console.log(a + b); // ReferenceError: b is not defined
+}
+```
