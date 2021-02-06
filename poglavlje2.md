@@ -63,3 +63,99 @@ typeof(foo.bar) // "string"
 ```
 
 ### Ugradjene metode tipova
+
+U _window_ objektu, koji je roditelj svih objekata, u sebi sadrzi omotacke objekte kao sto su String, Number i Boolean. A u njima su definisane metode koje su nama na usluzi.
+```js
+//Neke od metoda su:<br>
+a.lenght // broj karaktera u zadatom izrazu
+a.toUpperCase(); // menja sve slovne karaktere u velika slova
+a.toFixed(); // zaokruzuje broj na decimalu koja se zada kao parametar
+```
+Taj omotacki objekat je povezan sa odredjenim tipom vrednosti (Number sa "number"; String sa "string"; Boolean sa "boolean").
+
+### Poredjenje vrednosti
+
+Rezultat svake operacije poredjenja je tipa boolean (true || false), nebitno koje tipove vrednosti poredimo.
+
+#### Konverzije tipova vrednosti
+
+Do konverzije moze doci eksplicitnim i implicitnim nacinom.<br>
+**Eksplicitna** konverzija je kada u kodu mozemo videti da ce se jedan tip vrednosti konvertovati u drugi (parseInt(b); String(a); Number(a); parseFloat(a)...).<br>
+```js
+var a = "42"
+var b = Number(a);
+
+a; // "42" - string
+b; // 42 - number
+```
+**Implicitna** konverzija se moze javiti kao uzrok neadekvatnog koriscenja operacija na nekim vrednostima.
+```js
+var a = "42;
+var b = a * 1; // ovde je doslo do implicitne konverzije
+
+a; // "42" - string
+b; // 42 - number
+```
+
+#### Istinito i neistinito
+| Neistinito | Istinito |
+| ---------- | -------- |
+| "" (prazan znakovni niz) | "hello"|
+| 0, -0, NaN | 42 |
+| null, undefined | true |
+| false | [], [1, 2, "3"] (nizovi) |
+|       | {}, {a: 42} (objekti) |
+|       | function foo(){...} |
+> Ova tablica predstavlja kojim tipom vrednosti ce se petlja izvrsiti.<br>
+> Ako se kao parametar, implicitnom konverzijom, zadesi neka neistinita vrednost, petlja se nece izvrsiti
+
+#### Jednakost
+
+Razlika izmedju == i === je u strogoci ispitivanja vrednosti. == ispituje jednakost vrednosti (uz dozvoljenu implicitnu konverziju). === ispituje jednakost vrednosti ali i tip vrednosti (bez konverzije).
+```js
+"32" == 32 // true
+"32" === 32 // false
+```
+> string "32" se pretvara u number 32, kako bi se poredile te dve vrednosti
+
+* Ako jedna od vrednosti koje poredimo moze biti tipa _boolean_ onda koristi ===
+* Ako nesto poredimo sa [] || "" || 0, koristi ===
+* Za sve ostale slucajeve moze da se koristi ==
+
+> Ovo sve vazi i za poredjenje sa != && !==
+
+```js
+var a = [1, 2, 3];
+var b = [1, 2, 3];
+var c = "1, 2, 3";
+
+a == c //true
+b == c // true
+a == b // false
+```
+
+#### Nejednakost
+
+Poredjenje vrednosti sa <, >, <= i >=.
+```js
+var a = 42;
+var b = "43";
+var c = "44";
+
+a < b // true
+b < c // true
+```
+Ovde se isto desava implicitna konverzija. Nema operatora kojim mozemo izvristi striktno poredjenje.<br>
+Posto se prva vrednost, x, uzima kao [true](https://262.ecma-international.org/5.1/#sec-11.8.5) vrednost sa desne strane se konvertuje u tip vrednosti sa leve strane.
+
+```js
+var a = 42;
+var b = "foo";
+
+a < b // false
+a > b // false
+a == b // false
+```
+Ponovo, x se uzima kao true (vrednost number se uzima kao true), pa desnu stranu (string) implicitno konvertuje u number, gde dobija _NaN_. Poredjenje _number_ sa _NaN_ vraca _false_. 42 == NaN - false
+
+## Promenljive
