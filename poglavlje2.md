@@ -159,3 +159,134 @@ a == b // false
 Ponovo, x se uzima kao true (vrednost number se uzima kao true), pa desnu stranu (string) implicitno konvertuje u number, gde dobija _NaN_. Poredjenje _number_ sa _NaN_ vraca _false_. 42 == NaN - false
 
 ## Promenljive
+Ime promenljive mora poceti znacima **a-z, A-Z, $** i **_**. Nakon prvog znaka moze se koristiti 0-9. Kao ime promenljive ne mogu se koristiti rezervisane reci (for, if, switch) kao i undefined, null, true, false.
+
+### Opsezi vidljivosti
+Sa rezervisanom recju _var_ deklarisemo promenljivu koja pripada opsegu vidljivosti nekog bloka koda, a ako je kedlarisemo u najvisem nivou, onda pripada globalnom opsegu vidljivosti.
+
+#### Podizanje
+Prilikom prevodjenja prevodilac podize ('hoisting') promenljive na vrh bloka koda. Sto znaci da deklaracija promenljive moze da se nadje i na kraju bloka, a njen poziv na pocetku bloka i radi ce. Nije bas u primeni jer moze da dodje do gresaka, vec se preporucuje da se deklaracija obavi na pocetku bloka koda. Ono sto mozemo iskorisiti za hoisting jesu funkcije. Praksa je da se one prvo pozovu, pa tek onda deklarisu, ispod samog poziva.
+
+```js
+var a = 2;
+
+foo(); // evo ga i ovde hoisting
+
+function foo(){
+    a = 3;
+    console.log(a); // 3
+    var a; // ovde se desava hoisting; podize se na pocetak bloka koda
+}
+
+console.log(a); // 2
+```
+
+#### Ugnjezdeni opsezi vidljivosti
+```js
+function foo(){
+    var a = 1;
+
+    function bar(){
+        var b = 2;
+
+        function baz(){
+            var c = 3;
+            console.log(a, b, c); // 1 2 3
+        }
+
+        baz();
+        console.log(a, b); // 1 2 ReferenceError
+    }
+
+	bar();
+    console.log(a); // 1 ReferenceError ReferenceError
+}
+
+foo();
+```
+
+Ukoliko pokusam da dodelim vrednost nekoj nepostojecoj promenljivoj automatksi pravim promenljivu u globalnom opsegu vidljivosti.
+```js
+function foo(){
+    a = 1;
+}
+foo();
+a; // 1; napravljena globalna promenljiva
+```
+Kako bi izbegli pravljenje globalnih promenljivih u ES6 je ubacena rezervisana rec _let_ koja deklarise promenljivu, koja je dostupna samo u tom bloku vidljivosti.
+```js
+function foo(){
+    let a = 2;
+}
+foo();
+a; // ReferenceError: a is not defined
+```
+Ogranicavanje promenljivih na opseg vidljivosti bloka koda olaksava odrzavanje koda na duze staze.
+
+## Uslovni iskazi
+Umesto pukog ponavljanja _if..else_ bloka mozemo iskoristiti _switch_.
+```js
+switch(a){
+    case 2:
+        console.log("a je 2");
+        break;
+    default:
+        console.log("a je neki broj");
+}
+```
+> U slucaju da je parametar a = 2, izvrsi predstojeci blok koda, kada vidis break - stani.
+> "Bezuslovi prolaz" je kada za neki slucaj ne stavimo break, izvrsi ce se blok koda za slucaj ispod.
+```js
+let a = 2;
+switch(a){
+    case 2:
+    console.log("Ispisao sam");
+    case 10:
+        console.log("Prosao sam i sa 2");
+        break;
+}
+Ispisao sam
+Prosao sam i sa 2
+```
+
+**Uslovni operator** je drugi oblik iskaza za uslovno izvrsavanje.
+```js
+let a = 41;
+var b = (a>40) ? "hello" : "world";
+
+// Isto je kao i
+/*
+if(a>40){
+    b = "hello";
+} else{
+    b = "world";
+}
+*/
+```
+
+## Striktni rezim rada
+U ES5 verziji dodat je "striktni rezim rada" koji uvodi stroza pravila za odredjena ponasanja. Njihova svrha je da se pise bezbedniji kod koji nece neocekivano implicitno pretvoriti neku vaznu promenljivu. Takodje, striktni rezim rada olaksava kompajleru da optimizuje kod. Moze se ukljuciti samo za pojedinacnu funkciju ili za ceo dokument.
+```js
+function foo(){
+    "use strict";
+
+    // za ovaj blok vazi striktni rezim
+
+    function bar(){
+        // za ovaj blok vazi striktni rezim
+    }
+}
+
+// za ovaj blok NE vazi striktni rezim
+```
+Strikni rezim rada ne dozvoljava automatsko deklarisanje globalnih promenljivih
+```js
+function foo(){
+    "use strict";
+    a = 1;
+}
+foo();
+a; // ReferenceError
+```
+U slucaju da nesto ne radi tokom striktog rezima, nemoj ga iskljucivati / brisati. To je znak na nesto u programu ne valja, sto ce se mozda bez striktong rezima popraviti nekom implicitnom konverzijom...
+Preporucuje se da striktni rezim rada koristis u svakom programu.
