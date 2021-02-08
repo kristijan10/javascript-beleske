@@ -290,3 +290,81 @@ a; // ReferenceError
 ```
 U slucaju da nesto ne radi tokom striktog rezima, nemoj ga iskljucivati / brisati. To je znak na nesto u programu ne valja, sto ce se mozda bez striktong rezima popraviti nekom implicitnom konverzijom...
 Preporucuje se da striktni rezim rada koristis u svakom programu.
+
+## Funkcije kao vrednosti
+
+```js
+var foo = function(){
+    // blok koda
+}
+
+var x = function bar(){
+    // blok koda
+}
+```
+Prvi funkcijski izraz se zove anonimni funkcijski izraz jer nema ime.<br>
+Drugi je imenovani funkcijski izraz. Bolje resenje za koriscenje.
+
+### Funkcijski izrazi za trenutno izvrsavanje
+
+_IIFE_ (Immediately Invoked Function Expression), funkcijski izraz za trenutno izvrsavanje.
+```js
+(function IIFE(){
+    console.log("Hello");
+})()
+// "Hello"
+```
+> Prvi par zagrada je tu vise kao gramaticka deklaracija da kaze prevodiocu da to nije obicna deklaracija izraza.<br>
+> Drugi par zagrada je taj koji poziva funkciju
+
+```js
+/* foo je referenca na neku promenljivu / funkciju, koja se izvrsava parom zagrada */
+foo();
+
+/* (function IIFE(){}) je funkcijski izraz, koji se izvrsava parom zagrada */
+(function IIFE(){})();
+```
+IIFE pravi svoj opseg vidljivosti promenljive koje nece uticati na spoljasnji opseg.
+```js
+var a = 42;
+
+(function IIFE(){
+    var a = 10; // a = 10 bi vratilo vrednost na globalni opseg vidljivosti i onda bi
+    console.log(a); // 10
+})();
+
+console.log(a); // 42 // i ovde bilo 10
+```
+
+### Ograde
+
+Ograde (closure) je nacin da zapamtimo opseg vidljivosti vec izvrsene funkcije.
+```js
+function dodajx(x){
+    function dodajy(y){
+        return x + y;
+    }
+    return dodajy;
+}
+
+var dodajJedan = dodajx(1);
+var dodajDeset = dodajx(10);
+
+dodajJedan(4); // 5
+```
+
+Funkcija dodajx pamti x koji je prosledjen u trenutku izvrsavanja te iste funkcije.
+Ta funkcija se moze pozvati i sa:
+```js
+dodajx(1)(4);
+```
+Sto onda svodi na to da se moze krace napisati kao:
+```js
+var dodaj = x => y => x + y;
+dodaj(1)(4); // 5
+
+// ako zelim mogu da uvedem promenljivu za x
+var promX = dodaj(1);
+promX(4); // 5;
+// ali je isto kao sto sam pozvao i gornju dodaj funkciju
+```
