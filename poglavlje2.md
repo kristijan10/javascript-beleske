@@ -38,7 +38,7 @@ obj[b]; // "hello world"
 ```
 
 #### Nizovi
-Nemaju zaseban tip vrednosti array ili nizovi, vec su pripojeni tipu _object_. Ono pocemu se razliku je objecta jeste to sto nema imenovana svojstva vec se vrednosti indeksiraju numerickim vrednostima.
+Nemaju zaseban tip vrednosti array ili nizovi, vec su pripojeni tipu _object_. Ono po cemu se razlikuje od objecta jeste to sto nema imenovana svojstva vec se vrednosti indeksiraju numerickim vrednostima.
 ```js
 var a = [0, 1, 2, 3, 4];
 // Prva vrednost ima index 0, druga vrednost ima index 1
@@ -66,7 +66,7 @@ typeof(foo.bar) // "string"
 
 U _window_ objektu, koji je roditelj svih objekata, u sebi sadrzi omotacke objekte kao sto su String, Number i Boolean. A u njima su definisane metode koje su nama na usluzi.
 ```js
-//Neke od metoda su:<br>
+//Neke od metoda su:
 a.lenght // broj karaktera u zadatom izrazu
 a.toUpperCase(); // menja sve slovne karaktere u velika slova
 a.toFixed(); // zaokruzuje broj na decimalu koja se zada kao parametar
@@ -368,3 +368,88 @@ var promX = dodaj(1);
 promX(4); // 5;
 // ali je isto kao sto sam pozvao i gornju dodaj funkciju
 ```
+
+#### Moduli
+
+Omogucavaju da deklarisemo privatne promenljive, funkcije koje su skrivene od spoljasnjeg sveta, kao i javni API koji je dostupan spoljasnjem svetu i koji koristi te skrivene funkcije, promenljive.
+```js
+function User(){
+    var username, password;
+
+    function login(user, pass){
+        username = user;
+        password = pass;
+    }
+
+    var publicAPI = {
+        login: login
+    };
+
+    return publicAPI;
+}
+var fred = User();
+fred.login("fred", "12Battery34!");
+```
+> U fazi proucavanje, jer ne shvatam koncept
+
+
+## Indentifikator this
+
+Rezervisana rec _this_ obicno upucuje na vrednost tipa _object_. Na koji to objekat upucuje zavisi od nacina pozivanja funkcije. _This_ nije referenca na funkciju u kojoj se nalazi, sto je cesto shvaceno uzevsi u obzir rec **this**.
+
+```js
+function foo(){
+    console.log(this.bar);
+}
+
+var bar = "global";
+var obj1 = {
+    bar: "obj1",
+    foo: foo
+}
+var obj2 = {
+    bar: "obj2"
+}
+
+foo(); // "global"
+obj1.foo(); // "obj1"
+foo.call(obj2); // "obj2"
+new foo(); // undefined
+```
+
+Postoje cetiri pravila koja odredjuju koji objekat prikazuje _this_:
+1. Ako striktni rezim nije ukljicen, _this_ ukazuje na globalni opseg vidljivosti. To se u gore navedenom primeru moze videti. A ako je striktni rezim rada ukljucen, da smo na onakav primer pozvali _this.bar_ vratio bi nam _undefined_.
+2. obj1.foo() podesava this na objekat obj1
+3. foo.call(obj2) podesava this na objekat obj2
+4. new foo() pravi nov prazan objekat i zato sto nema definisane promenljive bar u tom foo objektu, vraca undefined.
+
+## Prototipovi
+
+To je nacin povezivanja dva opsega vidljivosti dva objekta.
+```js
+var foo = {
+    a: 42
+}
+
+var bar = Object.create(foo);
+bar.b = "hello world";
+
+bar.b // "hello world"
+bar.a // 42
+```
+>objekat _bar_ nema referencu a, ali posto je isti povezan sa objektom foo, kao svojim prototipom, JS prevodilac automatski trazi svojstvo a u objektu foo.
+
+```js
+foo
+ -------------------
+ |      a: 4       |
+ -------------------
+       ^
+       | prototipska veza
+bar    |
+ -------------------
+ | b: "hello world"|
+ -------------------
+```
+Najuobicaniji nacin da se iskoristi ova povezanost opsega vidljivosti jeste za oponasanje "klasa" koje omogucavaju "nasledjivanje".<br>
+Jos jedna korisna primena prototipova jeste upotreba sablona imena "delegiranje ponasanja" gde se objekti projektuju tako da jedan drugome zadaju potrebna ponasanja.
