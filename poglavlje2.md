@@ -453,3 +453,48 @@ bar    |
 ```
 Najuobicaniji nacin da se iskoristi ova povezanost opsega vidljivosti jeste za oponasanje "klasa" koje omogucavaju "nasledjivanje".<br>
 Jos jedna korisna primena prototipova jeste upotreba sablona imena "delegiranje ponasanja" gde se objekti projektuju tako da jedan drugome zadaju potrebna ponasanja.
+
+## Staro i novo
+
+Kako bi iskoristili najnovije mogucnosti _JS_ na starijim web browserima postoje mogucnosti **polifilovanje** i **transpajliranje**. Oni noviju sintaksu prebacuju u oblik poznat starijim citacima veba.
+
+### Polifilovanje
+
+Uzeti definicije novijih mogucnosti i napisati blok koda koji omogucava ekvivalentno ponasanje bez obzira na kojoj verziji ES-a korisnik pretrazuje veb.<br>
+Alatke za polifilovanje:
+* [ES5-Shim](https://github.com/es-shims/es5-shim)
+* [ES6-Shim](https://github.com/es-shims/es6-shim)
+
+### Transpajliranje
+
+Ime je nastalo od dve reci: transformacija + kompajliranje. Radi na nacin da mi pisemo js dokument najnovijom sintaksom, a da citacu veba saljemo transpajliran dokument. To se postize alatkom za transpajliranje.<br>
+<br>
+Prednost transpajliranja koda:
+* Kako bi dokument bio organizovanji pise se novijom sintaksom. Lakse je za citanje i razumevanje, a takodje i za dalje odrzavanje.
+* Ako transpajlirane js fajlove koristite samo na starijim citacima veba, a za moderne koristite fajlove sa novom sintaksom, omogucavate proizvodjacima veb citaca da koriste real-world primere. Takodje prednost novije sintakse jeste optimizacija js fajla prilikom citanja.<br>
+
+Primer transpajliranja koda. ES6 je uveo mogucnost "podrazumevana vrednost parametra".
+```js
+function foo(a = 2){
+    console.log(a);
+}
+
+foo(); // 2
+foo(42); // 42
+```
+Kako bi stariji citaci veba mogli ovo da postignu moramo izvrsiti transpajliranje, koje ce izgledati nesto ovako:
+```js
+function foo(){
+    var a = arguments[0] !== (void 0) ? arguments[0] : 2;
+    console.log(a);
+}
+```
+Funkcija utvrdju da li arguments[0] ima vrednost (void 0) tj. undefined i zadaje podrazumevanu vrednost 2. U ostalim slucajevima, zadaje vrednost prosledjenu parametrom.<br>
+Citanje transpajliranog koda omogucava nam da bolje razumemo nacim postizanja zadatog cilja.<br>
+Alatke za transpajliranje koda:
+* [Babel](https://babeljs.io)
+* [Traceur](https://github.com/google/traceur-compiler)
+
+## Rad u okruzenju koji nije JavaScript
+
+Neke funkcije koje svakodnevno korstimo nisu definisane u masini JS programskog jezika. Vec se koristi DOM metoda koja je ugradjena u sve citace veba pomocu programskog jezika nalik na C / C++. Neke od metoda koje koristimo su alert(), console.log(), document.getElementBy...().. To su sve funkcije koje su ugradjene u web browser. Ne u masini JS jezika.
