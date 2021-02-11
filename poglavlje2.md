@@ -497,4 +497,4 @@ Alatke za transpajliranje koda:
 
 ## Rad u okruzenju koji nije JavaScript
 
-Neke funkcije koje svakodnevno korstimo nisu definisane u masini JS programskog jezika. Vec se koristi DOM metoda koja je ugradjena u sve citace veba pomocu programskog jezika nalik na C / C++. Neke od metoda koje koristimo su alert(), console.log(), document.getElementBy...().. To su sve funkcije koje su ugradjene u web browser. Ne u masini JS jezika.
+Neke funkcije koje svakodnevno koristimo nisu definisane u masini JS programskog jezika. Vec se koristi DOM metoda koja je ugradjena u sve citace veba pomocu programskog jezika nalik na C / C++. Neke od metoda koje koristimo su alert(), console.log(), document.getElementBy...().. To su sve funkcije koje su ugradjene u web browser. Ne u masini JS jezika.
