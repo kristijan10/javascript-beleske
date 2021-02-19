@@ -20,6 +20,73 @@ Prilikom kompajliranja koda prolazi kroz tri koraka pre nego sto se taj isti kod
 
 - Generisanje koda
   - Postupak pretvaranja AST-a u masinski kod.
-  - Za AST vec navedenog primera _var a = 2_, se pretvara u masinski kod kojem je cilj da napravi promeljivu, da za nju rezervise mesto u memoriji i da zatim smesti zadatu vrednost toj istoj promenljivoj.
+  - Za AST vec navedenog primera _var a = 2_, se pretvara u masinski kod kojem je cilj da napravi promenljivu, da za nju rezervise mesto u memoriji i da zatim smesti zadatu vrednost toj istoj promenljivoj.
 
-Kompajler JS-a nema dovoljno vremena ostavljenog kao i neki drugi kompajlirani jezici. Kompajlira se u sekundama (milisekundama) pre njegovog izvrsavanja.
+Kompajler JS-a nema dovoljno vremena ostavljenog kao neki drugi kompajlirani jezici. Kompajlira se u sekundama (milisekundama) pre njegovog izvrsavanja.
+
+# Opis opsega vidljivosti
+
+Dijalog koji opisu nacin funkcionisanja opsega vidljivosti:
+
+### Uloge
+
+- Masina jezika
+  - odgovorna je za kompajliranje i izvrsavanje koda
+- Kompajler
+  - izvrsava rasclanjivanje i generise masinski kod
+- Opseg vidljivosti
+  - odrzava listu svih deklarisanih promenljivih i stara se da se postuju striktna pravila koja odredjuju koje promenljive su dostupne kojem delu izvrsnog koda
+
+> Kako bi razumeli nacin rada JavaScripta moramo poceti razmisljati kao Masina i njeni prijatelji<br>
+> Moramo postavljati ista pitanja i davati iste odgovore kao sto to Masina radi
+
+### Ja tebi, ti meni
+
+Na vec pomenuti primer var a = 2; Masina gleda kao dva iskaza. Jedan iskaz je onaj koji Kompajler obradjuje tokom kompaliranja, a drugi izraz koji Masina izvrsava.
+<br>
+**Tok pristupa izvrsavanju programa var a = 2;**<br>
+Kompajler obavlja leksicku analizu u potrazi za tokenima, koje ce rascaliniti i podeliti na stablo.<br>
+Prilikom generisanja koda Kompajler radi sledece:
+
+1. Kada naidje na deklaraciju _var a_ pita Opseg vidljivosti da li na svojoj listi promenljivih ima identifikator a. Ako ima, Kompajler zanemaruje deklaraciju i nastavlja dalje. U suprotnom, Kompajler od Opsega vidljivosti zahteva da na svoju listu deklarise novu promenljivu cije je ime a.
+2. Kompajler generise kod koji ce Masina kasnije izvrsiti. Kada Masina krene da izvrsava kod, prvo ce sebe upitati da li na svom listingu opsega vidljivosti postoji promenljiva imena a. Ako postoji, Masina nastavlja dalje izvrsavanje koda koristeci pronadjenu promenljivu. A ukoliko ne nadje, trazi ga na drugom mestu (ugnjezdeni opseg vidljivosti).
+
+Ako Masina na kraju pronadje promenljivu a dodaje joj vrednost 2, u suprotnom, prijavljuje gresku.
+
+**Ukratko**
+
+- pri dodeljivanju vrednosti promenljivoj odvijaju se dve akcije:
+  - Kompajler deklarise promenljivu (ako vec nije deklarisana) u tekucem Opsegu vidljivosti
+  - pri izvrsavanju koda Masina prazi promenljivu unutar Opsega vidljivosti i dodeljuje joj vrednost, ako je nadje
+
+## Terminologija kompajlera
+
+LHS - lefthand side
+RHS - righthand side
+
+> Strane operacije dodeljivanja vrednosti promenljivoj
+> Kada dodeljujemo vrednost nekoj promenljivoj tada se izvrsava LHS. Na primeru _var a = 2;_ dodeljujemo vrednost promenljivoj a, i Masina prilikom pretrage trazi sa leva na desno. Prvo vidi _var a_, kojem dodeli vrednost 2.<br>
+> Suprotno ovome RHS se koristi kada zelimo da pristupimo vrednosti neke promenljive.
+> Primer:
+
+```js
+var a = 2;
+// Masina ovde identifikatoru dodeljuje vrednost, pa cita sa leve na desno
+console.log(a);
+// Masina pretrazuje vrednost promenljive a, ne dodeljuje nista
+```
+
+> Ko je odrediste u operaciji? - pitanje za LHS<br>
+> Ko je izvor u operaciji? - pitanje za RHS
+
+```js
+function foo(a) {
+  console.log(a); // 2
+}
+
+foo(2);
+```
+
+> Primer i LHS, a i RHS pretrazivanja<br>
+> LHS, iako se ne primecuje, implicitno se desava sa foo(2) (a = 2)<br>
+> RHS se desava prilikom pozivanja console.log(a), gde se pretrazuje vrednost promenljive a
