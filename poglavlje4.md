@@ -90,3 +90,51 @@ foo(2);
 > Primer i LHS, a i RHS pretrazivanja<br>
 > LHS, iako se ne primecuje, implicitno se desava sa foo(2) (a = 2)<br>
 > RHS se desava prilikom pozivanja console.log(a), gde se pretrazuje vrednost promenljive a
+
+### Razgovor izmedju Masine i Opsega vidljivosti
+
+_Za primer:_
+
+```js
+function foo(a) {
+  console.log(a);
+}
+
+foo(2);
+```
+
+Masina: obraca se Opsegu vidljivosti i trazi RHS referencu foo (RHS jer mu nema dodeljivanja vrednosti, vec mu treba vrednost)<br>
+Opseg vidljivosti: Imam je, to je funkcija. _Prosledjuje blok koda na izvrsavanje_ <br>
+Masina: _Izvrsava foo_<br>
+Masina: Pita Opseg vidljivosti da li ima vrednost koju bi dodelila referenci a (parametru), RHS (jer se dodeljuje vrednost promenljivoj a)<br>
+Opseg vidljivost: Da, kompajler ju je deklarisao kao parametar funkcije foo. _Predaje joj vrednost_<br>
+Masina: _Dodeljuje 2 promenljivoj a_<br>
+Masina: _Nailazi na console_, pa pita Opseg da li zna sta je to<br>
+Opseg vidljivosti: Da, znam. To je ugradjena funkcija, evo ti blok koda koji sadrzi taj objekat<br>
+Masina: _Pretrazuje log u obilju metoda_. Pronalazi i shvata da je to funkcija, uzima blok koda<br>
+Masina: _Trazi od Opsega vidljivosti RHS referencu a_ (treba mu vrednost a kako bi izvrsio log())<br>
+Opseg vidljivosti: To je ona ista promenljiva, nije se nista promenilo. _Prosledjuje vrednost promenljive a_<br>
+Masina: Prosledjuje vrednost promenljive a, sto je 2, funkciji log(...)
+
+#### Kviz
+
+1. Napisi dijalog izmedju Masine i Opsega vidljivosti, ali ti glumi da si Masina
+
+```js
+function foo(a) {
+  var b = a;
+  return a + b;
+}
+
+var c = foo(2);
+```
+
+Masina: _Izvrsavam LHS referencu c, kojoj se dodeljuje vrednost foo()_. Trazim od Opsega vidljivosti RHS referencu foo.<br>
+Opseg vidljivosti: Prosledjuje blok koda za foo, sto utvrdjuje da je funkcija.<br>
+Masina: Izvrsavam funkciju foo. Trazim od Opsega LHS referencu a.<br>
+Opseg vidljivosti: Nasao sam je, definisana je kao parametar funkcije foo. Prosledjuje vrednost 2.<br>
+Masina: Dodeljujem vrednost 2 promenljivoj a. Trazim od Opsega LHS referencu b, kojoj se dodeljuje a. Pitam Opseg da li zna za a, sto je RHS (citanje vrednosti).<br>
+Opseg vidljivosti: Da znam, to je ona ista promenljiva, nije se promenila, evo ti vrednost.<br>
+Masina: Naisao sam na return, sto znaci da ne izvrsavam dalje blok koda, vec vracam neku vrednost pozivaocu funkcije. Proveravam sa Opsegom da li se promenila vrednost neke od promenljivih a i b, RHS \*2 (cita vrednost promenljivih a, pa b)<br>
+Opseg vidljivosti: Ne, nisu se promenile, evo ti vrednosti.<br>
+Masina: Izvrsava racunsku operaciju sabiranja dve vrednosti promenljivih a i b. Rezultat vraca mestu sa kojeg je pozvana, odnosno, dodeljuje vrednost sabiranja promenljivoj c.
