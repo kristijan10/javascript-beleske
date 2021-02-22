@@ -138,3 +138,51 @@ Opseg vidljivosti: Da znam, to je ona ista promenljiva, nije se promenila, evo t
 Masina: Naisao sam na return, sto znaci da ne izvrsavam dalje blok koda, vec vracam neku vrednost pozivaocu funkcije. Proveravam sa Opsegom da li se promenila vrednost neke od promenljivih a i b, RHS \*2 (cita vrednost promenljivih a, pa b)<br>
 Opseg vidljivosti: Ne, nisu se promenile, evo ti vrednosti.<br>
 Masina: Izvrsava racunsku operaciju sabiranja dve vrednosti promenljivih a i b. Rezultat vraca mestu sa kojeg je pozvana, odnosno, dodeljuje vrednost sabiranja promenljivoj c.
+
+## Ugnjezdeni opsezi vidljivosti
+
+Masina tokom pretrazivanja vrednosti u Opsegu vidljivosti prvo pretrazuje opseg u kojem je pozvana promenljiva. Ako je tu ne nadje, trazi u sledecem, visljem, opsegu vidljovsti i tako sve dok ne dodje do poslednjeg (globalnog opsega).<br>
+Dijalog bi tekao na sledeci nacin:
+
+```js
+function foo(a) {
+  console.log(a + b);
+}
+var b = 2;
+foo(2); // 4
+```
+
+Masina: _obraca se opsegu vidljivosti funkcije foo_. Potrebna mi je RHS referenca b, da li si cuo za nju?
+Opseg vidljivosti: Ne, nisam cuo. Pokusaj da trazis dalje.
+Masina: _izlazi iz opsega vidljivosti funkcije foo u visi nivo i shvata da je to globalni opseg_. Posto si ti globalni opseg vidljivosti, zanima me da li si cuo za promenljivu b, posto mi je potrebna RHS referenca?
+Opseg vidljivosti: Da, cuo sam. Izvoli vrednost promenljive b.<br>
+
+**Sazeto**:
+Masina prvo pretrazuje opseg vidljivosti tekuce funkcije koja se izvrsava; ako tamo ne nadje promenljivu, prelazi na prvi sledeci okruzujuci opseg i tako dalje. Kada dodje do globalnog opsega pretrazivanje se zavrsava, bez obzira da li je promenljiva pronadjena ili nije.<br>
+
+### Gradnja na metaforama
+
+Pretrazivanje ugnjezdenih opsega vidljivosti moze se zamisliti kao neboder. Tekuci opseg vidljivosti je prizemlje. Ako tamo ne nadjes osobu koju trazis, ides sprat vislje. Ako nije na prvo spratu, ides na drugi. I tako sve do poslednjeg sprata, gde prekidas pretragu, jer ta osoba nije u zgradi.
+
+## Greske
+
+```js
+function foo(a) {
+  console.log(a + b);
+  b = a;
+}
+foo(2);
+```
+
+Bitno je koja vrsta pretrage se izvrsava (RHS / LHS).
+Kada se pretrazuje vrednost (RHS), a ako ne postoji definisana promenljiva sa tim nazivom, generise se greska _ReferenceError_.<br>
+Kada se vrsi LHS pretraga, ako dodje do globalnog a da ne pronadje promenljivu (ako ne radi u striktnom rezimu) generise se nova, globalna promenljiva sa tim imenom (to je ovaj prikazani slucaj, gde nema definisanje promenljive).<br>
+Kada Masina pretrazuje RHS pretragom, ukoliko je nad vrednoscu uradjeno nesto sto nije moguce, Masina generise _TypeError_ gresku, koja nam govori da smo pogresili prilikom dodeljivanja / menjanja vrednosti.
+
+## Sazetak poglavlja
+
+Opseg vidljivosti je skup pravila kojima se odreduje gde i kako se pronalaze date promenljive. Razlog te pretrage moze biti dodeljivanje vrednosti (LHS) ili ucitavanje iste (RHS).<br>
+Masina JS-a prvo kompajlira kod pre nego sto ga izvrsi, pri cemu deli iskaze programa, kao sto je _var a = 2;_ u dva koraka:
+
+1. Prvo izvrsava deo _var a_, kako bi deklarisala promenljivu u tekucem opsegu vidljivosti. To se odvija pre izvrsavanja koda.
+2. Zatim izvrsava deo a = 2; pronadje LHS referencu _a_ i dodeli joj vrednost 2.
