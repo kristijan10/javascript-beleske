@@ -71,3 +71,114 @@ var myReallyCoolLibrary = {
 
 Druga mogucnost za izbegavanje sukoba je _modularni pristup_, pomocu neke od alatki koje ne dozvoljavaju da se kod iz neke biblioteke ubacuju u globalni opseg vidljovsti, nego te alatke nekim mehanizmima uvoze kod u poseban opseg vidljivosti. <br>
 Resenje je pisati "defanzivan" kod i tako postignemo iste rezultate kao sto ta alatka i cini. Vise reci ce biti u poglavlju 8.
+
+## Funkcije kao opsezi vidljivosti
+
+Problem kod obmotavanja (skrivanja promenljivih) funkcijom jeste sto moramo da deklarise funkciju, sto "zagadjuje" spoljasni opseg vidljivosti, a problem je taj i sto moramo pozvati tu funkciju. Resenje toga su IIFE (Immediately Invoked Function Expression).
+
+```js
+(function foo() {
+  var a = 2;
+  console.log(a);
+})(); // <- odmah se i poziva
+```
+
+Sada masina prilikom izvrsavanja ovaj blok koda tretira kao funkcijski izraz, ne deklaracija.
+Ono sto je prednost funkcijsog izraza za razliku od samo definicije, pa pozivanja, je ta sto ime funkcije nije dostupno u spoljasnjem opsegu vidljivosti u kojem se nalazi. Poziv po imenu moze da radi samo iz bloka koda funkcije foo().
+
+```js
+(function foo() {
+  var a = 2;
+  console.log(a);
+  foo(); // iako smo napravili infinitiv loop, ovde poziv radi
+});
+foo(); // ReferenceError: foo is not defined
+```
+
+### Anonimne i imenovane funkcije
+
+```js
+setTimeout(function () {
+  // funkcija nema ime, anonimna je
+  console.log("Sacekao sam 1 sekund");
+}, 1000);
+```
+
+Nedostaci anonimnih funkcija:
+
+1. Nemaju ime koje bi se prikazalo na stablu pozivanja funkcija, sto bi moglo da oteza otkrivanje gresaka
+2. U slucaju da je potrebno pozvati rekurzijom, nema ime koje bi se referenciralo
+3. Manjak citljivosti koda, jer nema ime koje bi opisivalo zasta je ta funkcija
+
+Resenje tih nedostataka bilo bi dodati ime funkciji. Zadavanje imena funkcijom izrazu je preporucljivo.
+
+```js
+setTimeout(function timeoutHandler() {
+  console.log("Sacekao sam 1 sekund");
+}, 1000);
+```
+
+### Trenutno izvrsavanje funkcijskih izraza (IIFE)
+
+```js
+var a = 2;
+(function foo() {
+  var a = 3;
+  console.log(a); // 3
+})();
+console.log(a); // 2
+```
+
+> Prvi par zagrada od funkcije pravi izraz, dok drugi izvrsava
+
+Obicno se IIFE-ovima ne zadaju imena, ali zbog resenja nedostataka preporucljivo je zadati joj ime.<br>
+Jos jedna varijacija poivanja IIFE unkcijog izraza izgleda: (function foo(){...}());<br>
+Kako bi uporedili sa vec koristenim, i uobicajnim izrazom: (function foo(){...})();<br>
+IIFE-ima moze proslediti i neke reference iz spoljasnje opsega vidljivosti pomocu parametara:
+
+```js
+var b = 2;
+(function foo(num) {
+  var a = 3;
+  console.log(a + num); // 5
+})(b); // <- ovo je parametar
+```
+
+```js
+(function iife(undefined) {
+  var a;
+  if (a === undefined) console.log("Ovde je bezbedan");
+})(); // Ovde je bezbedan
+```
+
+> Ako funkciji definisemo kao parametar rezervisanu rec undefined, a ne proledimo joj nista, idenifikator undefuned je tip undefined u tom bloku koda
+
+```js
+var a = 2;
+(function IIFE(def) {
+  def(window);
+})(function def(global) {
+  var a = 3;
+  console.log(a); // 3
+  console.log(global.a); // 2
+});
+```
+
+Izgleda opsirnije ali evo sta radi:
+Definisemo funkcijski izraz imena IIFE, koji ima identifikator _def_ kao parametar. U bloku koda tog IIFE-a pozivamo parametar kao funkciju i dodeljujemo joj parametar _window_. Kao parametar prilikom izvrsavanja funkcije (u posledji par zagrada koji je odgovoran za izvrsavanje funkcijskog izraza) definisemo funkciju def, koja ima promenljive u sebi.
+
+```js
+var a = 2;
+
+function IIFE(def) {
+  def(window);
+}
+
+function def(global) {
+  var a = 3;
+  console.log(a);
+  console.log(global.a);
+}
+
+IIFE(def);
+```
