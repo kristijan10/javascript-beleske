@@ -182,3 +182,114 @@ function def(global) {
 
 IIFE(def);
 ```
+
+## Blokovi kao opsezi vidljivosti
+
+```js
+for(var i = 0; i<10; i++){
+  console.log(i);
+)
+```
+
+> Cilj je da promenljive koje koristimo deklarisemo sto blize funkciji u kojoj cemo ih koristiti.<br>
+> Takav je slucaj i ovde, ali posto var predstavlja globalnu promenljivu, bilo gde da je deklarisemo, ona ce se pojaviti u globalnom opsegu vidljivosti<br>
+
+Ogranicavanje odredjenih promenljivih na blok omogucice nam da izbegnemo greske promene vrednosti odredjenih promenljivih u daljem kodu - otklanja mogucnost pojavljivanja greske.
+
+### Struktura try / catch
+
+```js
+try {
+  undefined();
+} catch (err) {
+  console.log(err); // TypeError: undefined is not a function
+}
+console.log(err); // ReferenceError: err is not defined
+```
+
+_catch_ ogranicava svoj kod na opseg vidljivosti bloka. Samo on moze da vidi err.
+
+> Optimizatori koda se nekada bune ako koristimo vise try/catch struktura i kada parametrima damo isto ime err<br>
+> Iako je svaki catch ogranicen na blok, sto znaci da se nece dogoditi nikakva greska sa mesanjem promenljivih<br>
+> Ali kako bi to resili, samo dodaj broj greske (err1, err2)...
+
+### Rezervisana rec let
+
+_*let*_ je novina ubacena u ES6 verziju koja je omogucila da se deklarisu promenljive na opseg vidljivosti bloka.
+
+```js
+var foo = true;
+if (foo) {
+  let bar = foo * 2;
+  bar = something(bar);
+  console.log(bar);
+}
+console.log(bar); // ReferenceError: bar is not defined
+```
+
+Ne postoje sve dok se ne deklarisu, ne dizu se promenljive na vrh opsega kao sto se to radi sa _var_ promenljivima
+
+```js
+console.log(a); // ReferenceError
+let a = 2;
+```
+
+#### Sakupljanje smeca
+
+```js
+function process(data){
+  // radi nesto zanimljivo
+}
+
+// Sve sto je deklarisano u ovom eksplicitnom bloku koda
+// moze da se oslobodi iza njega
+{
+  let reallyBigData = {..}
+  process(reallyBigData);
+}
+var btn=document.getElementById('my_btn');
+btn.addEventListener('click', function click(evt){
+  console.log("pritisnuo je dugme");
+}, /*capturingPhase=*/false);
+```
+
+> Kada se izvrsi funkcija process, _sakupljac smeca_ (gabage collection) moze da oslobodi tu strukturu podataka koja zauzima mnogo memorije
+
+#### Deklarisanje let u petljama
+
+```js
+for (let i = 0; i < 10; i++) {
+  console.log(i);
+}
+console.log(i); // ReferenceError
+```
+
+```js
+var foo = true,
+  baz = 10;
+if (foo) {
+  let bar = 3;
+
+  if (baz > bar) {
+    console.log(baz);
+  }
+}
+console.log(bar, baz); // ReferenceError: bar is not defined
+```
+
+### Rezervisana rec const
+
+_*const*_, kao i let definise promenljivu u opsegu vidljivosti bloka, jedino po cemu se razlikuju je to sto promenljive definisane sa const ne mogu menjati svoju vrednost.
+
+```js
+var foo = true;
+if (foo) {
+  var a = 2;
+  const b = 3;
+
+  a = 3; // okej
+  b = 4; // ne moze!
+}
+console.log(a); // 3
+console.log(b); // ReferenceError
+```
