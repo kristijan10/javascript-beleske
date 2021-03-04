@@ -101,4 +101,112 @@ for (let i = 1; i <= 5; i++) {
 }
 ```
 
-Promenljiva definisana sa let ce se svakom iteracijom menjati, za razliku od proemnljive definisane sa var, koja se podize. U svakoj iteraciji i ce poprimiti vrednost koju je imala na kraju prethodne iteracije.
+Promenljiva definisana sa let ce se svakom iteracijom menjati, za razliku od promenljive definisane sa var, koja se podize. U svakoj iteraciji i ce poprimiti vrednost koju je imala na kraju prethodne iteracije.
+
+## Moduli
+
+```js
+function module() {
+  var something = "cool";
+  var another = [1, 2, 3];
+
+  function doSomething() {
+    console.log(something);
+  }
+
+  function doAnother() {
+    console.log(another.join(" ! "));
+  }
+  return {
+    doSomething: doSomething,
+    doAnother: doAnother,
+  };
+}
+var foo = module();
+foo.doSomething(); // cool
+foo.doAnother(); // 1 ! 2 ! 3
+module().doSomething(); // cool
+```
+
+> Pozivanjem funkcije module pravimo instancu modula, kako bi mogli da pristupimo vrednostima vracenog objekta
+
+Kako bi nesto bilo modul mora ispuniti sledece:
+
+1. Mora postojati spoljasnja, okruzujuca, funkcija koja se poziva makar jedanput (svaki poziv pravi novu instancu modula)
+2. Ta okruzujuca mora vracati barem jednu internu funkciju, koja ogradjuje unutrasnji privatni opseg vidljivosti i moze da pristupa tom privatnom stanju modula i/ili da ga menja
+
+Objekat koji stavlja na raspolaganje samo funkciju za pristupanje odredjenom svojstvu nije modul. Objekat koji vraca funkciju nakon pozivanja i koji ima samo svojstva koja predstavljaju podatke ali ne i interne ogradjujuce funkcije, nije modul.<br>
+Gore naveden primer mozes pozivati bezbroj puta, i svaki put se pravi nova instanca. Ali ako ti treba unikatan modul, onda se to postize na sledeci nacin:
+
+```js
+var foo = (function module() {
+  var something = "cool";
+  var another = [1, 2, 3];
+
+  function doSomething() {
+    console.log(something);
+  }
+
+  function doAnother() {
+    console.log(another.join(" ! "));
+  }
+
+  return {
+    doSomething: doSomething,
+    doAnother: doAnother,
+  };
+})();
+
+foo.doSomething(); // cool
+foo.doAnother(); // 1 ! 2 ! 3
+```
+
+Posto su moduli obicne funkcije, mogu imati parametre:
+
+```js
+function module(id) {
+  function identify() {
+    console.log(id);
+  }
+
+  return {
+    identify: identify,
+  };
+}
+var foo1 = module("foo1");
+var foo2 = module("foo2");
+
+foo1.identify(); // foo1
+foo2.identify(); // foo2
+```
+
+Mocna varijanta koja se moze postici jeste da imenujemo objekat koji vracamo:
+
+```js
+var foo = (function module(id) {
+  function identify1() {
+    console.log(id);
+  }
+  function identify2() {
+    console.log(id.toUpperCase());
+  }
+  function change() {
+    // ovo sam ja izmenio kako bi moglo vise puta da se 'change'-uje
+    if (publicAPI.identify == identify1) publicAPI.identify = identify2;
+    else publicAPI.identify = identify1;
+  }
+
+  var publicAPI = {
+    identify: identify1,
+    change: change,
+  };
+
+  return publicAPI;
+})("foo module");
+
+foo.identify(); // foo module
+foo.change();
+foo.identify(); // FOO MODULE
+foo.change(); //  ovo sam ja dodao, a i ovo ispod
+foo.identify(); // foo module
+```
