@@ -210,3 +210,88 @@ foo.identify(); // FOO MODULE
 foo.change(); //  ovo sam ja dodao, a i ovo ispod
 foo.identify(); // foo module
 ```
+
+### Savremeni moduli
+
+```js
+var myModules = (function Manager() {
+  var modules = {};
+  function define(name, deps, impl) {
+    for (var i = 0; i < deps.lenght; i++) {
+      deps[i] = modules[deps[i]];
+    }
+    modules[name] = impl.apply(impl, deps);
+  }
+
+  function get(name) {
+    return modules[name];
+  }
+
+  return {
+    define: define,
+    get: get,
+  };
+})();
+
+myModules.define("bar", [], function () {
+  function hello(who) {
+    return "Let me introduce: " + who;
+  }
+
+  return {
+    hello: hello,
+  };
+});
+
+myModules.define("foo", [bar], function (bar) {
+  var hungry = "hippo";
+
+  function awesome() {
+    console.log(bar.hello(hungry).toUpperCase());
+  }
+
+  return {
+    awesome: awesome,
+  };
+});
+
+var bar = myModules.get("bar");
+var foo = myModules.get("foo");
+console.log(bar.hello("hippo")); // Let me introduce: hippo
+foo.awesome(); // LET ME INTRODUCE: HIPPO
+```
+
+### Buduci moduli
+
+ES6 je dodao sintaksnu podrsku konceptu modula. Jedna datoteka - jedan modul. Svaki modul moze da uvozi kompletne druge module ili pojedine clanove API-ja, kao i da izvozi svoje javne clanove API-ja.
+
+```js
+// bar.js
+function hello(who){
+  return "Let me introduce: " + who;
+}
+
+export hello;
+
+// foo.js
+import hello from 'bar'; // uvozi samo funkciju
+
+var hungry = "hippo";
+
+function awesome(){
+  console.log(hello(hungry).toUpperCase());
+}
+
+export awesome;
+
+// baz.js
+module bar from 'bar'; // uvozi kompletne module (ceo kod);
+module foo from 'foo';
+
+console.log(bar.hello('rhino'));
+foo.awesome();
+```
+
+_Import_ uvozi jedan ili vise clanova API-ja modula u opseg vidljivosti vezan za promenljivu (hello, awesome).<br>
+Operator _module_ uvozi ceo API modula i vezuje ga za promenljivu (bar, foo).<br>
+_Export_ izvozi zadati identifikator (promenljiva ili funkcija) iz javnog API-ja tekuceg modula.
