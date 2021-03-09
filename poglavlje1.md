@@ -17,7 +17,9 @@ a = b * 2;
 
 Ovaj izraz govori racunaru da ucita vrednost _b_, zatim je pomnozi sa _2_ i dobijeni rezultat cuva u promenljivoj _a_.
 
-> _a_ i _b_ su promenljive; mogu se zamisliti kao kutije u kojima se mogu cuvati razne stvari.<br> >_2_ je vrednost, _literal_; pojavljije se samostalno i nije smestena u promenljivu.<br> > \*\*_ i _=\* su operatori; izvrsavaju akciju sa zadatim vrednostima.<br>
+> _a_ i _b_ su promenljive; mogu se zamisliti kao kutije u kojima se mogu cuvati razne stvari.<br> 
+> _2_ je vrednost, _literal_; pojavljuje se samostalno i nije smestena u promenljivu.<br> 
+> _*_ i _=_ su operatori; izvrsavaju akciju sa zadatim vrednostima.<br>
 
 ## Izrazi
 
@@ -29,10 +31,10 @@ a = b * 2;
 
 > 2 je izraz sa literalnom vrednoscu<br>
 > b je izraz s promenljivom<br>
-> b _ 2 je artitmeticki izraz, spojen operacijom<br>
-> a = b _ 2 je izraz dodeljivanja vrednosti<br>
+> b * 2 je artitmeticki izraz, spojen operacijom<br>
+> a = b * 2 je izraz dodeljivanja vrednosti<br>
 
-Iskaz izraza ja opsti izraz koji se moze navesti samostalno. Primer istog je poziv funkcije. Ne koristi se cesto jer se vrenost izraza na cuva, ne menja ishod programa.
+Iskaz izraza ja opsti izraz koji se moze navesti samostalno. Primer istog je poziv funkcije. Ne koristi se cesto jer se vrednost izraza na cuva, ne menja ishod programa.
 
 ```js
 alert(a);
@@ -49,12 +51,14 @@ _Javascript_, iako izgleda kao da koristi interpreter, zapravo radi na princip *
 
 Postoje dva nacina prikaza rezultata nekoz izraza - **_console.log(parametar)_** i **_alert(parametar)_**.
 
-> console.log() se sastoji od dva dela<br> >**console.** je naziv objekta; tackom se poziva property u tom istom objektu<br> >**log()** je naziv funkcije, koja se nalazi u objektu **console**
+> console.log() se sastoji od dva dela<br> 
+> **console.** je naziv objekta; tackom se poziva property u tom istom objektu<br>
+> **log()** je naziv funkcije, koja se nalazi u objektu **console** <br>
 > kao parametar prihvata _"Tekst"_, _32_ (vrednost) ili _a_ (promenljive)
 
 ## Unosenje ulaznih podataka
 
-Iako se to najcesce radi preko [HTML formi](https://www.w3schools.com/html/html_forms.asp) - nekog polja u koje korisnik unese tekst, vrednost. Zatim se ta vrednost stavi u premenljivu preko _JavaScript-a_ i koristi na drugim mestima.<br>
+Iako se to najcesce radi preko [HTML formi](https://www.w3schools.com/html/html_forms.asp) - nekog polja u koje korisnik unese tekst, vrednost. Zatim se ta vrednost stavi u promenljivu preko _JavaScript-a_ i koristi na drugim mestima.<br>
 Za svrhe ucenja ulazni podaci se prihvataju preko **prompt(parametar)** funkcije.
 
 ## Operatori
@@ -100,7 +104,7 @@ console.log("99.99" == 99.99); // true
 
 > String "99.99" se pretvara u tip number => 99.99, pa se zatim poredi sa tipom number, sto vraca true, tacno.
 
-Implicitna konverzija, ako je osmisljena da pomogne, zbunjuje programere. Cak je nazivaju i greskom u dizajnu jezika.
+Implicitna konverzija, iako je osmisljena da pomogne, zbunjuje programere. Cak je nazivaju i greskom u dizajnu jezika.
 
 ## Komentari u kodu
 
@@ -126,7 +130,7 @@ Kako bi olaksali razumevanje napisanog koda drugim programerima vazno je da bira
 
 > Ovaj nacin odredjivanja tipova koristi jezik C, u kojem moras da definises tip vrednosti; int c = 9;
 
-**Dinamicko** odredjivanje tipa vrednosti koristi _JS_. Omogucava fleksibilnost programa.
+**Dinamicko** odredjivanje tipa vrednosti koje koristi _JS_. Omogucava fleksibilnost programa.
 
 ```js
 var c = 45;
@@ -183,7 +187,7 @@ var cena = 99.99;
 
 ## Uslovni iskazi
 
-Kako vi proverili da je je neki izraz tacan, i u potvrdnom odgovoru izvrsili neki blok koda, koristimo _**if**_.
+Kako bi proverili da je je neki izraz tacan, i u potvrdnom odgovoru izvrsili neki blok koda, koristimo _**if**_.
 
 ```js
 if (parametar) {
