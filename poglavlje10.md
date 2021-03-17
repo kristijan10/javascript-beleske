@@ -162,3 +162,105 @@ var obj = {
 var a = "global";
 doFoo(obj.foo); // global
 ```
+
+### Eksplicitno povezivanje
+
+Sve definisane funkcije imaju metode _call(..)_ i _apply(..)_ koje nam omogucavaju da zadamo na sta ce _this_ upucivati.<br>
+Metode prihvataju jedan parametar, a to je objekat sa kojim ce se _this_ povezati.
+
+```js
+function foo() {
+  console.log(this.a);
+}
+
+var obj = {
+  a: 2,
+};
+
+foo.call(obj); // 2
+```
+
+Ako se umesto objekta, funkcijama _call_ i _apply_, prosledi neki drugi tip (string, number, boolean) ta vrednost tipa number ce se pretvoriti u svoj ekvivalentni objekat sa new Number. Ovo pretvaranje prostog tipa u objekat naziva se **pakovanje (boxing)**
+
+#### Cvrsto povezivanje
+
+Kako bi resili problem gubljenja implicitne veze nastalo je cvrsto povezivanje
+
+```js
+function foo() {
+  console.log(this.a);
+}
+
+var obj = {
+  a: 2,
+};
+
+var bar = function () {
+  foo.call(obj); // 2
+};
+
+bar(); // 2
+setTimeout(bar, 100); // 2
+bar.call(window); // 2
+```
+
+Identifikatoru bar implicitno dodeljujemo poziv funkcije foo, kojoj za this podesavamo objekat _obj_. Svakim pozivom _bar_ mi pozivamo funkciju _foo_, cije _this_ predstavlja opseg identifikatora _obj_.<br>
+Ne bitno kako pozovemo _bar_, _this_ funkcije foo ce uvek biti prikacen na _obj_, sto se zove **cvrsto povezivanje (hard-binding)**<br>
+Najuobicajniji nacin umotavanja funkcije u crvstu vezu formira prolaz za sve argumente koje prosledite i povratnu vrednost koju dobijete:
+
+```js
+function foo(something) {
+  console.log(this.a, something);
+  return this.a + something;
+}
+
+var obj = {
+  a: 2,
+};
+
+var bar = function () {
+  return foo.apply(obj, arguments);
+};
+
+var b = bar(3);
+console.log(b);
+```
+
+```js
+function foo(something) {
+  return this.a + something;
+}
+
+function bind(fn, obj) {
+  return function () {
+    return fn.apply(obj, arguments);
+  };
+}
+
+var obj = {
+  a: 2,
+};
+
+var bar = bind(foo, obj);
+var b = bar(3);
+console.log(b);
+```
+
+Posto je cvrsto povezivanje cesto koriscenja metoda u ES5 je dodata metoda funkcije Function.prototype.bind koji se koristi na sledeci nacin:
+
+```js
+function foo(something) {
+  console.log(this.a, something);
+  return this.a + something;
+}
+
+var obj = {
+  a: 2,
+};
+
+var bar = foo.bind(obj);
+var b = bar(3); // 2 3
+console.log(b); // 5
+```
+
+Metoda bind(..) vraca funkciju koja poziva izvornu funkciju (foo()) sa kontekstom za this koji zadamo kao parametar funkciji bind.
