@@ -222,8 +222,8 @@ var bar = function () {
   return foo.apply(obj, arguments);
 };
 
-var b = bar(3);
-console.log(b);
+var b = bar(3); // 2 3
+console.log(b); // 5
 ```
 
 ```js
@@ -243,7 +243,7 @@ var obj = {
 
 var bar = bind(foo, obj);
 var b = bar(3);
-console.log(b);
+console.log(b); // 5
 ```
 
 Posto je cvrsto povezivanje cesto koriscenja metoda u ES5 je dodata metoda funkcije Function.prototype.bind koji se koristi na sledeci nacin:
@@ -264,3 +264,230 @@ console.log(b); // 5
 ```
 
 Metoda bind(..) vraca funkciju koja poziva izvornu funkciju (foo()) sa kontekstom za this koji zadamo kao parametar funkciji bind.
+
+#### Pozivanje API-ja s parametrom 'context'
+
+Funckije iz mnogih biblioteka, kao i nove funkcije imaju neobavezan parametar _context_.<br>
+Svrha mu je da interno pozove funkciju bind / call / apply i da podesi _this_ na zadatki objekat.
+
+```js
+function foo(el) {
+  console.log(el, this.id);
+}
+
+var obj = {
+  id: "awesome",
+};
+
+[1, 2, 3].forEach(foo, obj); // this se, za funkciju foo, postavlja u obj
+// 1 awesome
+// 2 awesome
+// 3 awesome
+```
+
+### Povezivanje funkcija pomocu operatora new
+
+**Konstruktor** je funkcija kojoj prethodi operator new. Nisu nikakve specijalne funkcije; ne generisu klase niti su vezane za njih.<br>
+Kada bi neku funkciju / metodu pozvali sa _new_ onda bi taj funkcijski poziv postao konstruktorski poziv funkcije. Ono sto se desava prilikom konstruktorskog poziva funkcije je sledece:
+
+1. Konstruise se potpuno novi objekat
+2. Novonastali objekat se povezuje sa [[Prototype]]
+3. Na taj objekat, prilikom poziva funkcije, upucuje _this_
+4. Funkcija pozvana sa operatorom new automatski vraca novonastali objekat
+
+```js
+function foo(a) {
+  this.a = a;
+}
+
+var bar = new foo(2);
+console.log(bar); // Object {a: 2}
+console.log(bar.a); // 2
+```
+
+## Uvek po pravilu
+
+Ukoliko se nadje vise pravila na jednom mestu, postoje prioriteti po kojima gleda koje je pravilo "jace".<br>
+_Podrazumevano povezivanje_ je najnizeg prioriteta.<br>
+_Implicitno povezivanje_ je sledeg prioriteta<br>
+_Eksplicitno / cvrsto povezivanje_<br>
+_Povezivanje sa new_
+
+```js
+function foo(something) {
+  this.a = something;
+}
+
+var obj1 = {};
+
+var bar = foo.bind(obj1);
+bar(2);
+console.log(obj1.a); // 2
+
+var baz = new bar(3);
+console.log(obj1.a); // 2
+console.log(baz.a); // 3
+```
+
+```js
+function foo(p1, p2) {
+  this.val = p1 + p2;
+}
+
+var bar = foo.bind(null, "p1");
+var baz = new bar("p2");
+console.log(baz); // Object: {val: "p1p2"}
+console.log(baz.val); // p1p2
+```
+
+### Odredjivanje sta this predstavlja
+
+Postavi sebi sledeca pitanja i odredi na sta _this_ ukazuje.
+
+1. Da li je funkcija pozvana sa operatorom _new_? Ako jeste _this_ predstavlja novonastali objekat.
+
+```js
+var bar = new foo();
+```
+
+2. Da li je funkcija pozvana pomocu metode _call(..)_ ili _apply(..)_, ili cak umetnuta u cvrsto povezivanje pomocu funkcije _bind(..)_? Ako jeste _this_ predstavlja eksplicitno zadat objekat.
+
+```js
+var bar = foo.apply(obj);
+var bar = foo.call(obj);
+var bar = (function baz(
+  foo.bind(obj);
+))();
+```
+
+3. Da li je funcija pozvana sa zadatim kontekstom (implicitno povezivanje)? Ako jeste _this_ predstavlja taj zadati objekat.
+
+```js
+var bar = obj.foo();
+```
+
+4. U ostalim slucajevima, _this_ predstavlja podrazumevani objekat. Ako vazi striktni rezim, to je _undefined_ objekat, a ako ne vazi, to je _window_ objekat.
+
+```js
+var bar = foo();
+```
+
+## Izuzeci od pravila za povezivanje this
+
+### Zanemareni this
+
+Kada metodama _bind(..)_, _call(..)_ i _apply(..)_ prosledimo objekat koji je _null_ ili _undefined_ automatski se _this_ prebacuje na _podrazumevano povezivanje_.
+
+```js
+function foo() {
+  console.log(this.a);
+}
+
+var a = 2;
+foo.call(null); // 2
+```
+
+Ako funkciji koju pozivamo nije bitno na sta this upucuje, potrebna nam je zamena za taj objekat, a _null_ i _undefined_ su dobar izbor.
+
+```js
+function foo(a, b) {
+  console.log("a: " + a + ", b: " + b);
+}
+
+// izdvajanje vrednosti parametra iz niza
+foo.apply(null, [1, 2]); // a: 1, b:2
+
+// parcanje parametara
+var bar = foo.apply(null, 1);
+bar(2); // a: 1, b: 2
+```
+
+Problem sa stalnim povezivanjem _this_ sa _null_, u nekim third-party biblioteci, moze slucajno izmeniti globalni objekat _window_.
+
+#### Bezbedniji this
+
+Kako ne bi doslo do neocekivanih gresaka, umesto _null_ upotrebicemo prazan objekat, sto ogranicava this samo na taj prazan objekat i uklanja mogucnost pojavljivanja greske. Taj objekat se zove **DMZ** (demiliterizovana zona).
+
+```js
+var ∅ = Object.create(null);
+var npo = {}; // moze i ovako, ali onda se povezuje za tu promenljivu Object.prototype, sto onda nije prazan objekat.
+
+console.log(∅, npo); // {}
+                     // {<prototype>: Object{...}};
+```
+
+```js
+function foo(a, b){
+  console.log("a: "+a+", b: "+b);
+}
+
+var ∅ = Object.create(null);
+
+foo.apply(∅, [1, 2]); // a: 1, b: 2
+
+var bar = foo.bind(∅, 1);
+bar(2); // a: 1, b: 2
+```
+
+### Indirekcija
+
+Jedan od najcescih razloga pojave indirektne refernce jeste dodeljivanje vrednosti. Tada se primenuje podrazumevano povezivanje.
+
+```js
+function foo() {
+  console.log(this.a);
+}
+
+var a = 2;
+var o = { a: 3, foo: foo };
+var p = { a: 4 };
+
+o.foo(); // 3
+(p.foo = o.foo)(); // 2; indirektna referenca
+```
+
+### Labavo povezivanje
+
+```js
+// Functija za labavo povezivanje
+if (!Function.prototype.softBind) {
+  Function.prototype.softBind = function (obj) {
+    var fn = this,
+      curried = [].slice.call(arguments, 1),
+      bound = function bound() {
+        return fn.apply(
+          !this ||
+            (typeof window !== "undefined" && this === window) ||
+            (typeof global !== "undefined" && this == global)
+            ? obj
+            : this,
+          curried.concat.apply(curried, arguments)
+        );
+      };
+    bound.prototype = Object.create(fn.prototype);
+    return bound;
+  };
+}
+```
+
+> Povezuje tako sto zadatu funkciju umotava u logiku koja u vreme izvrsavanja ispituje stra je _this_, pa ako je global ili undefined, povezuje ga sa zadatim alternativnim podrazumevanim objektom.
+
+```js
+function foo() {
+  console.log("name: " + this.name);
+}
+
+var obj = { name: "obj" },
+  obj2 = { name: "obj2" },
+  obj3 = { name: "obj3" };
+
+var fooOBJ = foo.softBind(obj);
+fooOBJ(); // name: obj
+
+obj2.foo = foo.softBind(obj);
+obj2.foo(); // name: obj2
+
+fooOBJ.call(obj3); // name: obj3
+
+setTimeout(obj2.foo, 10); // name: obj
+```
