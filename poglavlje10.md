@@ -204,9 +204,9 @@ setTimeout(bar, 100); // 2
 bar.call(window); // 2
 ```
 
-Identifikatoru bar implicitno dodeljujemo poziv funkcije foo, kojoj za this podesavamo objekat _obj_. Svakim pozivom _bar_ mi pozivamo funkciju _foo_, cije _this_ predstavlja opseg identifikatora _obj_.<br>
+Identifikatoru bar implicitno dodeljujemo poziv funkcije foo, kojoj za _this_ podesavamo objekat _obj_. Svakim pozivom _bar_ mi pozivamo funkciju _foo_, cije _this_ predstavlja opseg identifikatora _obj_.<br>
 Ne bitno kako pozovemo _bar_, _this_ funkcije foo ce uvek biti prikacen na _obj_, sto se zove **cvrsto povezivanje (hard-binding)**<br>
-Najuobicajniji nacin umotavanja funkcije u crvstu vezu formira prolaz za sve argumente koje prosledite i povratnu vrednost koju dobijete:
+Najuobicajniji nacin umotavanja funkcije u cvrstu vezu formira prolaz za sve argumente koje prosledite i povratnu vrednost koju dobijete:
 
 ```js
 function foo(something) {
@@ -267,7 +267,7 @@ Metoda bind(..) vraca funkciju koja poziva izvornu funkciju (foo()) sa konteksto
 
 #### Pozivanje API-ja s parametrom 'context'
 
-Funckije iz mnogih biblioteka, kao i nove funkcije imaju neobavezan parametar _context_.<br>
+Funkcije iz mnogih biblioteka, kao i nove funkcije imaju neobavezan parametar _context_.<br>
 Svrha mu je da interno pozove funkciju bind / call / apply i da podesi _this_ na zadatki objekat.
 
 ```js
@@ -412,8 +412,8 @@ Kako ne bi doslo do neocekivanih gresaka, umesto _null_ upotrebicemo prazan obje
 var ∅ = Object.create(null);
 var npo = {}; // moze i ovako, ali onda se povezuje za tu promenljivu Object.prototype, sto onda nije prazan objekat.
 
-console.log(∅, npo); // {}
-                     // {<prototype>: Object{...}};
+console.log(∅, npo); // ∅: {}
+                     // npo: {<prototype>: Object{...}};
 ```
 
 ```js
@@ -491,3 +491,61 @@ fooOBJ.call(obj3); // name: obj3
 
 setTimeout(obj2.foo, 10); // name: obj
 ```
+
+## Leksicki this
+
+Funkcija sa strelicom ima drugaciji nacin povezivanja; ne prati ona cetiri pravila. _This_ preuzima samo iz okruzujuceg opsega vidljivosti (opseg funkcije ili globalni).
+
+```js
+function foo() {
+  return (a) => {
+    console.log(this.a);
+  };
+}
+
+var obj1 = {
+  a: 2,
+};
+
+var obj2 = {
+  a: 3,
+};
+
+var bar = foo.apply(obj1);
+bar.call(obj2);
+```
+
+Leksicki se preuzima this onakvo kakvo je bilo prilikom poziva funkcije foo. To je pozvano sa foo.apply(obj1), sto znaci da _this_ upucuje na obj1.<br>
+Najcesce se koristi kod povratih funkcija, kao sto su obradjivaci dogadjaja i tajmeri:
+
+```js
+function foo() {
+  setTimeout(() => {
+    console.log(this.a);
+  }, 100);
+}
+
+var obj = {
+  a: 2,
+};
+
+foo.call(obj); // 2
+```
+
+```js
+function foo() {
+  var self = this;
+  setTimeout(function () {
+    console.log(self.a);
+  }, 100);
+}
+
+var obj = {
+  a: 2,
+};
+
+foo.call(obj); // 2
+```
+
+_self = this_ je trik koji se koristio pre ES6 verzije kako bi se koristio leksicki opseg vidljivosti. Zaobilazi se prava primena this mehanizma!<br>
+Iskljucuju standardni mehanizam this radi poznatijeg leksickog opsega vidljivosti. Koriscenjem arrow function zaobilazimo da koristimo, i ucimo this.
