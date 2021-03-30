@@ -146,3 +146,173 @@ Ako pukusamo da dodelimo svojstvo koje se moze protumaciti kao broj, ono ce se s
 arr["3"] = "baz";
 console.log(arr); // Array(4) ["foo", 42, "bar", "baz"];
 ```
+
+### Dupliranje objekata
+
+```js
+function anotherFunction() {
+  /* .. */
+}
+var anotherObj = {
+  c: true,
+};
+var anotherArr = [];
+var myObj = {
+  a: 2,
+  b: anotherObj, // referenca
+  c: anotherArr, // referenca
+  d: anotherFunction, // referenca
+};
+anotherArr.push(anotherObj, myObj);
+```
+
+Pitanje je da li se radi plitko ili duboko dupliranje.<br>
+Ako se radi o plitkom, novi objekat (duplirani) ima kopiju kljuca _a_ i kopiju vrednosti _2_. A sto se tice _b_, _c_ i _d_ dupliranog objekta, predstavljaju samo reference na mesta koje prikazuje i izvorni objekat.<br>
+Ako je u pitanju duboka kopija, osim dupliranog myObj, mora se klonirati i anotherObj i anotherArr. A posto anotherArr sadrzi reference iz anotherObj i myObj znaci da i oni moraju da se dupliraju. Nije dobro, jer se javio problem cirkularnog dupliranja.<br>
+Jedino delimicno resenje jeste da se bezbedni objekti za konverziju u JSON, pretvore u isti sa komandom
+
+```js
+var newObj = JSON.parse(JSON.stringify(someObj));
+```
+
+Posto plitka kopija pravi znatno manje problema, ES6 je dodao metodu Object.assign(..); Kao parametre prihvata ciljni objekat, praceno sa jednim ili vise izvornih objekata.
+
+```js
+var newObj = Object.assign({}, myObj);
+newObj.a; // 2
+newObj.b == anotherObject; // true
+newObj.c == anotherArr; // true
+newObj.d == anotherFunction; // true
+```
+
+### Deskriptori svojstava
+
+Pre ES5 nije se moglo upravljati karakteristikama vrednosti svojstava (read-only, read-write...).<br>
+Od ES5 sva svojstva se opisuju pomocu **desriptora svojstava** (property descriptor).
+
+```js
+var myObj = {
+  a: 2,
+};
+
+Object.getOwnPropertyDescriptor(myObj, "a");
+// {
+//  configurable: true
+//  enumerable: true
+//  value: 2
+//  writable: true
+// }
+```
+
+Svojstvo objekta ne predstavlja samo vrednost 2, vec pored toga i tri karakteristike: _configurable_, _enumerable_ i _writable_.<br>
+Ako _configurable: true_ => mozemo menjati karakteristike.<br>
+
+```js
+var myObj = {};
+
+Object.defineProperty(myObj, "a", {
+  value: 2,
+  writable: true,
+  configurable: true,
+  enumerable: true,
+});
+
+myObj.a; // 2
+```
+
+Eksplicitni nacin definisanja svojstava, ne koristi se cesto, vec samo kada se menjaju karakteristike.
+
+#### Karakteristika Writable
+
+Kada se postavi na _false_, jednom zadata vrednost se ne moze menjati.
+
+```js
+var myObj = {};
+
+Object.defineProperty(myObj, "a", {
+  value: 2,
+  writable: false,
+  configurable: true,
+  enumerable: true,
+});
+
+myObj.a = 3;
+myObj.a; // 2
+```
+
+Kada je program u strikton rezimu, izbaci ce TypeError prilikom pokusaja menjanja vrednosti.
+
+```js
+var myObj = {};
+
+Object.defineProperty(myObj, "a", {
+  value: 2,
+  writable: false,
+  configurable: true,
+  enumerable: true,
+});
+
+myObj.a = 3; // TypeError
+```
+
+#### Karakteristika Configurable
+
+Kada se configurable prebaci na vrednost _false_ zakljucavaju se vrednosti ostale dve karakteristike (enumeable, writable).
+
+> Izuzetak je writable; kada je true, moze se prebaciti u false, ali se nakon toga ne moze vratiti na true
+
+```js
+var myObj = {};
+myObj.a = 3;
+myObj.a; // 3
+
+Object.defineProperty(myObj, "a", {
+  value: 4,
+  writable: true,
+  configurable: false,
+  enumerable: true,
+});
+
+myObj.a; // 4
+myObj.a = 5;
+myObj.a; // 5
+
+Object.defineProperty(myObj, "a", {
+  value: 4,
+  writable: true,
+  configurable: true, // pokusao sam da vratim vrednost na true
+  enumerable: true,
+});
+// TypeError
+```
+
+Upozorenje: menjanje _configurable: false_ je jednosmerna akcija koja se ne moze ponistiti!<br>
+"Utisava" koriscenje _delete_ nad svojstvima, ako je podeseno _configurable: false_.
+
+```js
+var myObj = {
+  a: 2,
+};
+myObj.a; // 2
+delete myObj.a;
+myObj.a; // undefined
+
+Object.defineProperty(myObj, "a", {
+  value: 3,
+  writable: true,
+  configurable: false,
+  enumerable: true,
+});
+
+myObj.a; // 3
+delete myObj.a;
+myObj.a; // 3
+```
+
+Funkcija delete se koristi za uklanjanje svojstva samog objekta.<br>
+Ukoliko sa funkcijom delete izbrisemo neku referencu na objekat/funkciju, cistac smeca sledecim izvrsavanjem brise reference na taj prethodno povezani objake/funkciju.<br>
+
+#### Karakteristika Enumerable
+
+Ova karakteristika dozvoljava vrednostima svojstava da se pojavljuju u petljama.<br>
+Ukoliko podesimo _enumerable: false_ ukidamo mogucnost koriscenja tog svojstva u petljama (npr: for..in petlji). Ali iako podesimo ovu karakteristiku, jos uvek mozemo pristupati vrednosti svojstva.
