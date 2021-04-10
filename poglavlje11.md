@@ -316,3 +316,27 @@ Ukoliko sa funkcijom delete izbrisemo neku referencu na objekat/funkciju, cistac
 
 Ova karakteristika dozvoljava vrednostima svojstava da se pojavljuju u petljama.<br>
 Ukoliko podesimo _enumerable: false_ ukidamo mogucnost koriscenja tog svojstva u petljama (npr: for..in petlji). Ali iako podesimo ovu karakteristiku, jos uvek mozemo pristupati vrednosti svojstva.
+
+### Nepromenljivost
+
+Kako bi svojstva nekog objekta ucinili nepromenljivima postoji vise metoda:
+
+1. Objektna konstanta<br>
+   Definisemo svojstvo sa metodom defineProperty, u kojem cemo zadati _value:(neka vrednost)_, _writable: false_, _configurable:false_
+2. Sprecavanje dopunjavanja objekta<br>
+   Metoda preventExtensions(object) sprecava dodavanje novih svojstava.
+
+```js
+var obj = {
+  a: 2,
+};
+Object.preventExtensions(obj);
+obj.b = 4;
+obj.b; // undefined; ako je striktni rezim, rezultuje TypeError
+```
+
+3. Zapecacivanje objekta<br>
+   Object.seal(object) u sebi poziva funkciju preventExtensions(...) (ne mogu se dodavati svojstva), a karakteristiku _configurable_ postojecih svojstava menja u _false_. Dozvoljava menjanje vrednosti postojecih svojstava.
+
+4. Zamrzavanje objekta<br>
+   Najvisi nivo nepromenljivosti objekta. Object.freeze(object) u sebi poziva Object.seal(...) i svojstvima menja karakt _writable_ na _false_.
