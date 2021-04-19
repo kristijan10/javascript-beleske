@@ -340,3 +340,108 @@ obj.b; // undefined; ako je striktni rezim, rezultuje TypeError
 
 4. Zamrzavanje objekta<br>
    Najvisi nivo nepromenljivosti objekta. Object.freeze(object) u sebi poziva Object.seal(...) i svojstvima menja karakt _writable_ na _false_.
+
+### Operacija [[Get]]
+
+Operacija [[Get]] je ustvari ugradjena funkcija u svaki objekat. Pomaze prilikom pristupanja vrednosti neke promenljive.
+
+```js
+var obj = {
+  a: 2,
+};
+obj.a; // 2
+obj.b; // undefined
+```
+
+Kada nema identifikatora koji pretrazujemo funkcija [[Get]] vraca _undefined_.
+
+### Operacija [[Put]]
+
+Posto postoji operacija za citanje vrednosti, tako mora postojati operacija i za dodeljivanje tih vrednosti. Funkcija [[Put]] prilikom dodeljivanja vrednosti proverava vise cinilaca:
+
+1. Ako je svojstvo kojem dodeljuje vrednost deskriptor prisutne funkcije poziva se funkcija za dodeljivanje vrednosti (ukoliko postoji)
+2. Ako je svojstvo deskriptor podatakagde je _writable: false_ izvrsavanje operacije _put_ se prekida u tisini (ako nije ukljucen striktni rezim), ili vraca TypeError (ako je striktni rezim ukljucen).
+3. U ostalim slucajevima vrednost postojeceg svojstva menja se na uobicajan nacin.
+
+Ako svojstvo ne postoji u objektu, onda operacija [[Put]] postaje jos slozenija. (razmatra se u poglavlju 13)
+
+### Ucitavanje i zadavanje vrednosti svojstava
+
+ES5 je uveo nov nacin definisanja svojstva pomocu funkcije za ucitavanje (getter) i funkcije za zadavanje (setter).Ove funkcije pozivaju skrivene funkcije koje ucitavaju / zadaju vrednost. Prilikom definisanja deskriptora svojstva uz pomoc funkcije getter ili setter zanemaruju se deskriptori _value_ i _writable_.
+
+```js
+var obj = {
+  get a() {
+    return 2;
+  },
+};
+
+Object.defineProperty(obj, "b", {
+  // deskriptor svojstva
+  get: function () {
+    // definicija funkcije za ucitavanje svojstva "b"
+    return this.a * 2;
+  },
+  enumerable: true, // omogucava da "b" bude vidljivo kao svojstvo objekta
+});
+
+Object.defineProperty(obj, "c", {
+  get: function () {
+    return 6;
+  },
+  enumerable: true,
+});
+
+console.log(obj); //Object { a: Getter, b: Getter, c: Getter }
+obj.a; // 2
+obj.b; // 4
+obj.c; // 6
+```
+
+```js
+var obj = {
+  a: 2,
+};
+
+Object.defineProperty(obj, "b", {
+  get: function () {
+    return this.a * 2;
+  },
+  enumerable: true,
+});
+
+console.log(obj); // Object { a: 2, b: Getter };
+obj.a; // 2
+obj.b; // 4
+```
+
+```js
+var obj = {
+  get a() {
+    return 2;
+  },
+};
+
+obj.a = 3;
+obj.a; // 2
+```
+
+Svojstvu a je definisana funkcija za ucitavanje,ako pokusamo da joj dodelimo vrednost operacija ce se izvrisiti u tisini.
+
+```js
+var obj = {
+  // ucitava svojstvo a
+  get a() {
+    return this._a_;
+  },
+  // zadaje svojstvo a
+  set a(value) {
+    this._a_ = value * 2;
+  },
+};
+
+obj.a = 2;
+obj.a; // 4
+```
+
+> U fazi razmatranja, jer ne razumem
