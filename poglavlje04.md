@@ -64,9 +64,9 @@ Ako Masina na kraju pronadje promenljivu a dodaje joj vrednost 2, u suprotnom, p
 LHS - lefthand side
 RHS - righthand side
 
-> Strane operacije dodeljivanja vrednosti promenljivoj
+> Strane operacije dodeljivanja vrednosti promenljivoj<br>
 > Kada dodeljujemo vrednost nekoj promenljivoj tada se izvrsava LHS. Na primeru _var a = 2;_ dodeljujemo vrednost promenljivoj a, i Masina prilikom pretrage trazi sa leva na desno. Prvo vidi _var a_, kojem dodeli vrednost 2.<br>
-> Suprotno ovome RHS se koristi kada zelimo da pristupimo vrednosti neke promenljive.
+> Suprotno ovome RHS se koristi kada zelimo da pristupimo vrednosti neke promenljive.<br>
 > Primer:
 
 ```js
@@ -106,7 +106,7 @@ foo(2);
 Masina: obraca se Opsegu vidljivosti i trazi RHS referencu foo (RHS jer mu nema dodeljivanja vrednosti, vec mu treba vrednost)<br>
 Opseg vidljivosti: Imam je, to je funkcija. _Prosledjuje blok koda na izvrsavanje_ <br>
 Masina: _Izvrsava foo_<br>
-Masina: Pita Opseg vidljivosti da li ima vrednost koju bi dodelila referenci a (parametru), RHS (jer se dodeljuje vrednost promenljivoj a)<br>
+Masina: Pita Opseg vidljivosti da li ima vrednost koju bi dodelila referenci a (parametru), LHS (jer se dodeljuje vrednost promenljivoj a)<br>
 Opseg vidljivost: Da, kompajler ju je deklarisao kao parametar funkcije foo. _Predaje joj vrednost_<br>
 Masina: _Dodeljuje 2 promenljivoj a_<br>
 Masina: _Nailazi na console_, pa pita Opseg da li zna sta je to<br>
