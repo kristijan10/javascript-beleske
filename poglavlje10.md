@@ -1,11 +1,13 @@
 # Sada this postaje jasnije
 
-> Podsetnik:<br>
+> Podsetnik:
+>
 > This je veza koja se uspostavlja sa funkcijom u zavisnosti od nacina pozivanja te iste funkcije
 
 ## Mesto pozivanja
 
-**Mesto pozivanja (call-site)** je mesto u kodu na kome se poziva funkcija (ne deklaracija).<br>
+**Mesto pozivanja (call-site)** je mesto u kodu na kome se poziva funkcija (ne deklaracija).
+
 Kako bi pronasli mesto na kome se funkcija poziva moramo na umu imati **stablo pozivanja (call-stack)**, koje cine sve funkcije koje su bile pozvane pre nego sto smo stigli do poziva funkcije.
 
 ```js
@@ -33,12 +35,13 @@ function foo() {
 baz(); // evo ga poziv u globalnom opsegu; 1
 ```
 
-Treba pronaci stvarno mesto poziva funkcije u stablu pozivanja kako bi shvatili sa cim se _this_ povezao.<br>
+Treba pronaci stvarno mesto poziva funkcije u stablu pozivanja kako bi shvatili sa cim se _this_ povezao.
+
 Upotrebom ugradjenih alatki za debug mozemo otkriti stablo pozivanja funkcija.
 
 ## Samo po pravilu
 
-Potrebno je da ispitamo mesto pozivanja funkcije i utvrdimo koja od cetiri pravila vaze kako bi znali na sta _this_ upucuje.<br>
+Potrebno je da ispitamo mesto pozivanja funkcije i utvrdimo koja od cetiri pravila vaze kako bi znali na sta _this_ upucuje.
 
 ### Podrazumevano povezivanje (samostalan poziv funkcije)
 
@@ -54,10 +57,14 @@ var a = 2;
 foo(); // 2
 ```
 
-Prvo na sta treba obratiti paznju jeste to da su promenljive, koje su deklarisane u globalnom opsegu, sinonimi za svojstva globalnog objekta istog imena. _a_ == _window.a_<br>
-Drugo, prilikom poziva funkcije _foo()_ _this_ se povezuje sa globalnim objektom.<br>
-Zasto se bas primenilo podrazumevano povezivanje?<br>
-U navedenom primeru _foo()_ se poziva u obliku obicne i nedekorisane reference same funkcije.<br>
+Prvo na sta treba obratiti paznju jeste to da su promenljive, koje su deklarisane u globalnom opsegu, sinonimi za svojstva globalnog objekta istog imena. _a_ == _window.a_
+
+Drugo, prilikom poziva funkcije _foo()_ _this_ se povezuje sa globalnim objektom.
+
+Zasto se bas primenilo podrazumevano povezivanje?
+
+U navedenom primeru _foo()_ se poziva u obliku obicne i nedekorisane reference same funkcije.
+
 Da je bio ukljucen striktni rezim, ne bi moglo da dodje do podrazumevanog povezivanja (globalni objekat nije upotrebljiv) pa bi _this_ bilo povezano sa _undefined_.
 
 ```js
@@ -71,7 +78,8 @@ var a = 2;
 foo(); // TypeError: this is undefined
 ```
 
-> globalni objekat je upotrebljiv za podrazumevano povezivanje samo ako u bloku koda iste funkcije nije definisan striktni rezim<br>
+> globalni objekat je upotrebljiv za podrazumevano povezivanje samo ako u bloku koda iste funkcije nije definisan striktni rezim
+>
 > za mesto pozivanja funkcije nije bitno da li je ukljucen striktni rezim
 
 ```js
@@ -104,7 +112,8 @@ var obj = {
 obj.foo(); // 2
 ```
 
-Kada pozivu funkcije prethodi referenca ne neki objekat znaj da se _this_ implicitno povezuje sa blokom koda tog objekta.<br>
+Kada pozivu funkcije prethodi referenca ne neki objekat znaj da se _this_ implicitno povezuje sa blokom koda tog objekta.
+
 Vazan je samo poslednji u lancu poziva:
 
 ```js
@@ -142,7 +151,8 @@ var a = "global";
 bar(); // global
 ```
 
-> izgubili smo implicitnu vezu jer smo promenljivoj bar dodali referencu na funkciju foo<br>
+> izgubili smo implicitnu vezu jer smo promenljivoj bar dodali referencu na funkciju foo
+>
 > kako smo rekli, bitno je gde je funkcija pozvana, ovde imamo samo _bar()_ sto je obican poziv funkcije i zato se primenilo podrazumevano povezivanje
 
 ```js
@@ -165,7 +175,8 @@ doFoo(obj.foo); // global
 
 ### Eksplicitno povezivanje
 
-Sve definisane funkcije imaju metode _call(..)_ i _apply(..)_ koje nam omogucavaju da zadamo na sta ce _this_ upucivati.<br>
+Sve definisane funkcije imaju metode _call(..)_ i _apply(..)_ koje nam omogucavaju da zadamo na sta ce _this_ upucivati.
+
 Metode prihvataju jedan parametar, a to je objekat sa kojim ce se _this_ povezati.
 
 ```js
@@ -204,8 +215,10 @@ setTimeout(bar, 100); // 2
 bar.call(window); // 2
 ```
 
-Identifikatoru bar implicitno dodeljujemo poziv funkcije foo, kojoj za _this_ podesavamo objekat _obj_. Svakim pozivom _bar_ mi pozivamo funkciju _foo_, cije _this_ predstavlja opseg identifikatora _obj_.<br>
-Ne bitno kako pozovemo _bar_, _this_ funkcije foo ce uvek biti prikacen na _obj_, sto se zove **cvrsto povezivanje (hard-binding)**<br>
+Identifikatoru bar implicitno dodeljujemo poziv funkcije foo, kojoj za _this_ podesavamo objekat _obj_. Svakim pozivom _bar_ mi pozivamo funkciju _foo_, cije _this_ predstavlja opseg identifikatora _obj_.
+
+Ne bitno kako pozovemo _bar_, _this_ funkcije foo ce uvek biti prikacen na _obj_, sto se zove **cvrsto povezivanje (hard-binding)**
+
 Najuobicajniji nacin umotavanja funkcije u cvrstu vezu formira prolaz za sve argumente koje prosledite i povratnu vrednost koju dobijete:
 
 ```js
@@ -267,7 +280,8 @@ Metoda bind(..) vraca funkciju koja poziva izvornu funkciju (foo()) sa konteksto
 
 #### Pozivanje API-ja s parametrom 'context'
 
-Funkcije iz mnogih biblioteka, kao i nove funkcije imaju neobavezan parametar _context_.<br>
+Funkcije iz mnogih biblioteka, kao i nove funkcije imaju neobavezan parametar _context_.
+
 Svrha mu je da interno pozove funkciju bind / call / apply i da podesi _this_ na zadatki objekat.
 
 ```js
@@ -287,7 +301,8 @@ var obj = {
 
 ### Povezivanje funkcija pomocu operatora new
 
-**Konstruktor** je funkcija kojoj prethodi operator new. Nisu nikakve specijalne funkcije; ne generisu klase niti su vezane za njih.<br>
+**Konstruktor** je funkcija kojoj prethodi operator new. Nisu nikakve specijalne funkcije; ne generisu klase niti su vezane za njih.
+
 Kada bi neku funkciju / metodu pozvali sa _new_ onda bi taj funkcijski poziv postao konstruktorski poziv funkcije. Ono sto se desava prilikom konstruktorskog poziva funkcije je sledece:
 
 1. Konstruise se potpuno novi objekat
@@ -307,11 +322,15 @@ console.log(bar.a); // 2
 
 ## Uvek po pravilu
 
-Ukoliko se nadje vise pravila na jednom mestu, postoje prioriteti po kojima gleda koje je pravilo "jace".<br>
-_Podrazumevano povezivanje_ je najnizeg prioriteta.<br>
-_Implicitno povezivanje_ je sledeg prioriteta<br>
-_Eksplicitno / cvrsto povezivanje_<br>
-_Povezivanje sa new_
+Ukoliko se nadje vise pravila na jednom mestu, postoje prioriteti po kojima gleda koje je pravilo "jace".
+
+- _Podrazumevano povezivanje_ je najnizeg prioriteta.
+
+- _Implicitno povezivanje_ je sledeg prioriteta
+
+- _Eksplicitno / cvrsto povezivanje_
+
+- _Povezivanje sa new_
 
 ```js
 function foo(something) {
@@ -346,25 +365,25 @@ Postavi sebi sledeca pitanja i odredi na sta _this_ ukazuje.
 
 1. Da li je funkcija pozvana sa operatorom _new_? Ako jeste _this_ predstavlja novonastali objekat.
 
-```js
-var bar = new foo();
-```
+    ```js
+    var bar = new foo();
+    ```
 
 2. Da li je funkcija pozvana pomocu metode _call(..)_ ili _apply(..)_, ili cak umetnuta u cvrsto povezivanje pomocu funkcije _bind(..)_? Ako jeste _this_ predstavlja eksplicitno zadat objekat.
 
-```js
-var bar = foo.apply(obj);
-var bar = foo.call(obj);
-var bar = (function baz(
-  foo.bind(obj);
-))();
-```
+    ```js
+    var bar = foo.apply(obj);
+    var bar = foo.call(obj);
+    var bar = (function baz(
+      foo.bind(obj);
+    ))();
+    ```
 
 3. Da li je funcija pozvana sa zadatim kontekstom (implicitno povezivanje)? Ako jeste _this_ predstavlja taj zadati objekat.
 
-```js
-var bar = obj.foo();
-```
+    ```js
+    var bar = obj.foo();
+    ```
 
 4. U ostalim slucajevima, _this_ predstavlja podrazumevani objekat. Ako vazi striktni rezim, to je _undefined_ objekat, a ako ne vazi, to je _window_ objekat.
 
@@ -515,7 +534,8 @@ var bar = foo.apply(obj1);
 bar.call(obj2);
 ```
 
-Leksicki se preuzima this onakvo kakvo je bilo prilikom poziva funkcije foo. To je pozvano sa foo.apply(obj1), sto znaci da _this_ upucuje na obj1.<br>
+Leksicki se preuzima this onakvo kakvo je bilo prilikom poziva funkcije foo. To je pozvano sa foo.apply(obj1), sto znaci da _this_ upucuje na obj1.
+
 Najcesce se koristi kod povratih funkcija, kao sto su obradjivaci dogadjaja i tajmeri:
 
 ```js
@@ -547,5 +567,6 @@ var obj = {
 foo.call(obj); // 2
 ```
 
-_self = this_ je trik koji se koristio pre ES6 verzije kako bi se koristio leksicki opseg vidljivosti. Zaobilazi se prava primena this mehanizma!<br>
+_self = this_ je trik koji se koristio pre ES6 verzije kako bi se koristio leksicki opseg vidljivosti. Zaobilazi se prava primena this mehanizma!
+
 Iskljucuju standardni mehanizam this radi poznatijeg leksickog opsega vidljivosti. Koriscenjem arrow function zaobilazimo da koristimo, i ucimo this.

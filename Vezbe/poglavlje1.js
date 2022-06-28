@@ -1,5 +1,5 @@
 /*
-* Napisi program koji izracunava ukupan iznos kupovine telefona. Kupujes telefone (naznaka: u pretlji!) dok imate dovoljno novca na racunu u banci.
+Napisi program koji izracunava ukupan iznos kupovine telefona. Kupujes telefone (naznaka: u pretlji!) dok imate dovoljno novca na racunu u banci.
 Uz telefone kupujes i dopunsku opremu sve dok je ukupan iznos kupovine ispod praga trosenja koji zadas.
 */
 

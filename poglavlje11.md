@@ -28,9 +28,12 @@ Proste primitivne vrednosti (number, string, boolean, null i undefined) nisu tip
 > typeof null; // "object"
 > ```
 
-Iako se ova greska pojavljuje, null je zaseban primitivni tip.<br>
-Nije sve u JavaScriptu objekat, kao sto kazu, ali postoje podtipovi objekata (slozeni literali).<br>
-U slozene literale spadaju funkcije i nizovi.<br>
+Iako se ova greska pojavljuje, null je zaseban primitivni tip.
+
+Nije sve u JavaScriptu objekat, kao sto kazu, ali postoje podtipovi objekata (slozeni literali).
+
+U slozene literale spadaju funkcije i nizovi.
+
 Za funkcije se kaze da su objekti prve klase jer su, funkcije, u osnovi samo objekti koji imaju pridodatu semantiku za povezivanje.
 
 ### Ugradjeni objekti
@@ -60,15 +63,19 @@ stringObject instanceof String; // true
 console.log(stringObject); // String{ "Kristijan" };
 ```
 
-String "Kristijan" (ili bilo koji drugi) je prost primitivni tip (literal), a da bi nad njim izvrsavali metode kao sto su _lenght()_, _charAt()_ prevodilac inplicitno nas string pretvara u podtip objekta - String odakle uzima reference na definisane funkcije, odnosno metode. To se isto desava i sa drugim prostim vrednostima (number, boolean).<br>
+String "Kristijan" (ili bilo koji drugi) je prost primitivni tip (literal), a da bi nad njim izvrsavali metode kao sto su _lenght()_, _charAt()_ prevodilac inplicitno nas string pretvara u podtip objekta - String odakle uzima reference na definisane funkcije, odnosno metode. To se isto desava i sa drugim prostim vrednostima (number, boolean).
+
 Null i undefined nemaju svoj omotacki oblik tipa object. Suprotno njima objekat Date nema svoj prost tip koji omotava.
-Object, Array, Function i RegExp su objekti, bez obzira da li uporebljavamo literalni ili konstruisani oblik deklaracije objekta. Uglavnom se koristi literalni oblik. A ako su potrebne dodatne opcije, koristi se konstruisani oblik.<br>
+Object, Array, Function i RegExp su objekti, bez obzira da li uporebljavamo literalni ili konstruisani oblik deklaracije objekta. Uglavnom se koristi literalni oblik. A ako su potrebne dodatne opcije, koristi se konstruisani oblik.
+
 Error se ne definise toliko cesto eksplicitno, ali se automatski javlja kada se dogodi izuzetak.
 
 ## Sadrzaj objekta
 
-Svaki objekat se sastoji od vrednosti (values) koje su smestene na imenovane lokacije koje se zovu svojstva (properies / keys).<br>
-Svojstva, kao i vrednosti se ne cuvaju na jednoj lokaciji (kada je to skup podataka, obicno se pomisli da su sve deklarisane promenljive u jednoj zajednickoj adresi u memoriji, ali to nije tako). Masina jezika cuva promenljive, kao i vrednosti povezane sa njima, na random mestima u memoriji. Kada se deklarise objekat na njegovoj adresi se cuvaju lokacije adresa na kojima se nalaze promenljive deklarisane u njegovom opsegu vidljivosti.<br>
+Svaki objekat se sastoji od vrednosti (values) koje su smestene na imenovane lokacije koje se zovu svojstva (properies / keys).
+
+Svojstva, kao i vrednosti se ne cuvaju na jednoj lokaciji (kada je to skup podataka, obicno se pomisli da su sve deklarisane promenljive u jednoj zajednickoj adresi u memoriji, ali to nije tako). Masina jezika cuva promenljive, kao i vrednosti povezane sa njima, na random mestima u memoriji. Kada se deklarise objekat na njegovoj adresi se cuvaju lokacije adresa na kojima se nalaze promenljive deklarisane u njegovom opsegu vidljivosti.
+
 Kako bi pristupili vrednosti nekog svojstva objekta koriste se jedna od dve sintakse:
 
 1. obj.a; pristupanje svojstvu
@@ -104,7 +111,8 @@ obj["foobaz"]; // world
 
 ### Svojstva i metode
 
-Programeri vole da naprave razliku kada je deklarisana funkcija kao jedan od svojstava, i onda za tu funkciju kazu da je metoda.<br>
+Programeri vole da naprave razliku kada je deklarisana funkcija kao jedan od svojstava, i onda za tu funkciju kazu da je metoda.
+
 Ali autor knjige ne vidi zasto praviti razliku. Svojstvo funkcije ce vratiti vrednost ma kakvog god tipa da je. A ako kao vrednost dobijemo funkciju, ona na tom mestu, nikakvom carolijom, ne postaje "metoda". Nema niceg posebnog u definisanju funkcije kao vrednost svojstva (jedino sto omogucava je implicitno povezivanje this).
 
 ```js
@@ -123,13 +131,16 @@ someFoo; // function foo(){..}
 obj.someFoo; // function foo(){..}
 ```
 
-Da je funkcija foo bila definisana sa referencom this, onda bi jedina uocljiva razlika bila to sto se this implicitno povezao sa _obj_.<br>
-Nema nikakvog razloga da funkciju u objektu nazivamo "metoda".<br>
+Da je funkcija foo bila definisana sa referencom this, onda bi jedina uocljiva razlika bila to sto se this implicitno povezao sa _obj_.
+
+Nema nikakvog razloga da funkciju u objektu nazivamo "metoda".
+
 Zakljucak: "funkcija" i "metoda" se mogu koristiti kao sinonimi
 
 ### Nizovi
 
-Posto su nizovi podtip objekata, znaci da nasledjuju neka ponasanja istih.<br>
+Posto su nizovi podtip objekata, znaci da nasledjuju neka ponasanja istih.
+
 Jedan od nasledjenih ponasanja jeste dodavanje svojstva.
 
 ```js
@@ -139,7 +150,8 @@ console.log(arr.baz); // "baz"
 console.log(arr); // Array(3) ["foo", 42, "bar"]; nije se promenila duzina niza iako smo dodali baz
 ```
 
-Objekti se koriste za cuvanje parova kljuc/vrednost, a nizove za cuvanje vrednosti smestenim na numberickim indeksima.<br>
+Objekti se koriste za cuvanje parova kljuc/vrednost, a nizove za cuvanje vrednosti smestenim na numberickim indeksima.
+
 Ako pukusamo da dodelimo svojstvo koje se moze protumaciti kao broj, ono ce se smatrati numerickim indeksom:
 
 ```js
@@ -166,9 +178,12 @@ var myObj = {
 anotherArr.push(anotherObj, myObj);
 ```
 
-Pitanje je da li se radi plitko ili duboko dupliranje.<br>
-Ako se radi o plitkom, novi objekat (duplirani) ima kopiju kljuca _a_ i kopiju vrednosti _2_. A sto se tice _b_, _c_ i _d_ dupliranog objekta, predstavljaju samo reference na mesta koje prikazuje i izvorni objekat.<br>
-Ako je u pitanju duboka kopija, osim dupliranog myObj, mora se klonirati i anotherObj i anotherArr. A posto anotherArr sadrzi reference iz anotherObj i myObj znaci da i oni moraju da se dupliraju. Nije dobro, jer se javio problem cirkularnog dupliranja.<br>
+Pitanje je da li se radi plitko ili duboko dupliranje.
+
+Ako se radi o plitkom, novi objekat (duplirani) ima kopiju kljuca _a_ i kopiju vrednosti _2_. A sto se tice _b_, _c_ i _d_ dupliranog objekta, predstavljaju samo reference na mesta koje prikazuje i izvorni objekat.
+
+Ako je u pitanju duboka kopija, osim dupliranog myObj, mora se klonirati i anotherObj i anotherArr. A posto anotherArr sadrzi reference iz anotherObj i myObj znaci da i oni moraju da se dupliraju. Nije dobro, jer se javio problem cirkularnog dupliranja.
+
 Jedino delimicno resenje jeste da se bezbedni objekti za konverziju u JSON, pretvore u isti sa komandom
 
 ```js
@@ -187,7 +202,8 @@ newObj.d == anotherFunction; // true
 
 ### Deskriptori svojstava
 
-Pre ES5 nije se moglo upravljati karakteristikama vrednosti svojstava (read-only, read-write...).<br>
+Pre ES5 nije se moglo upravljati karakteristikama vrednosti svojstava (read-only, read-write...).
+
 Od ES5 sva svojstva se opisuju pomocu **desriptora svojstava** (property descriptor).
 
 ```js
@@ -204,8 +220,9 @@ Object.getOwnPropertyDescriptor(myObj, "a");
 // }
 ```
 
-Svojstvo objekta ne predstavlja samo vrednost 2, vec pored toga i tri karakteristike: _configurable_, _enumerable_ i _writable_.<br>
-Ako _configurable: true_ => mozemo menjati karakteristike.<br>
+Svojstvo objekta ne predstavlja samo vrednost 2, vec pored toga i tri karakteristike: _configurable_, _enumerable_ i _writable_.
+
+Ako _configurable: true_ => mozemo menjati karakteristike.
 
 ```js
 var myObj = {};
@@ -286,7 +303,8 @@ Object.defineProperty(myObj, "a", {
 // TypeError
 ```
 
-Upozorenje: menjanje _configurable: false_ je jednosmerna akcija koja se ne moze ponistiti!<br>
+Upozorenje: menjanje _configurable: false_ je jednosmerna akcija koja se ne moze ponistiti!
+
 "Utisava" koriscenje _delete_ nad svojstvima, ako je podeseno _configurable: false_.
 
 ```js
@@ -309,37 +327,44 @@ delete myObj.a;
 myObj.a; // 3
 ```
 
-Funkcija delete se koristi za uklanjanje svojstva samog objekta.<br>
-Ukoliko sa funkcijom delete izbrisemo neku referencu na objekat/funkciju, cistac smeca sledecim izvrsavanjem brise reference na taj prethodno povezani objake/funkciju.<br>
+Funkcija delete se koristi za uklanjanje svojstva samog objekta.
+
+Ukoliko sa funkcijom delete izbrisemo neku referencu na objekat/funkciju, cistac smeca sledecim izvrsavanjem brise reference na taj prethodno povezani objake/funkciju.
 
 #### Karakteristika Enumerable
 
-Ova karakteristika dozvoljava vrednostima svojstava da se pojavljuju u petljama.<br>
+Ova karakteristika dozvoljava vrednostima svojstava da se pojavljuju u petljama.
+
 Ukoliko podesimo _enumerable: false_ ukidamo mogucnost koriscenja tog svojstva u petljama (npr: for..in petlji). Ali iako podesimo ovu karakteristiku, jos uvek mozemo pristupati vrednosti svojstva.
 
 ### Nepromenljivost
 
 Kako bi svojstva nekog objekta ucinili nepromenljivima postoji vise metoda:
 
-1. Objektna konstanta<br>
-   Definisemo svojstvo sa metodom defineProperty, u kojem cemo zadati _value:(neka vrednost)_, _writable: false_, _configurable:false_
-2. Sprecavanje dopunjavanja objekta<br>
-   Metoda preventExtensions(object) sprecava dodavanje novih svojstava.
+1. Objektna konstanta
 
-```js
-var obj = {
-  a: 2,
-};
-Object.preventExtensions(obj);
-obj.b = 4;
-obj.b; // undefined; ako je striktni rezim, rezultuje TypeError
-```
+    Definisemo svojstvo sa metodom defineProperty, u kojem cemo zadati _value:(neka vrednost)_, _writable: false_, _configurable:false_
 
-3. Zapecacivanje objekta<br>
-   Object.seal(object) u sebi poziva funkciju preventExtensions(...) (ne mogu se dodavati svojstva), a karakteristiku _configurable_ postojecih svojstava menja u _false_. Dozvoljava menjanje vrednosti postojecih svojstava.
+2. Sprecavanje dopunjavanja objekta
 
-4. Zamrzavanje objekta<br>
-   Najvisi nivo nepromenljivosti objekta. Object.freeze(object) u sebi poziva Object.seal(...) i svojstvima menja karakt _writable_ na _false_.
+    Metoda preventExtensions(object) sprecava dodavanje novih svojstava.
+
+    ```js
+    var obj = {
+      a: 2,
+    };
+    Object.preventExtensions(obj);
+    obj.b = 4;
+    obj.b; // undefined; ako je striktni rezim, rezultuje TypeError
+    ```
+
+3. Zapecacivanje objekta
+
+    Object.seal(object) u sebi poziva funkciju preventExtensions(...) (ne mogu se dodavati svojstva), a karakteristiku _configurable_ postojecih svojstava menja u _false_. Dozvoljava menjanje vrednosti postojecih svojstava.
+
+4. Zamrzavanje objekta
+
+    Najvisi nivo nepromenljivosti objekta. Object.freeze(object) u sebi poziva Object.seal(...) i svojstvima menja karakt _writable_ na _false_.
 
 ### Operacija [[Get]]
 
@@ -360,14 +385,18 @@ Kada nema identifikatora koji pretrazujemo funkcija [[Get]] vraca _undefined_.
 Posto postoji operacija za citanje vrednosti, tako mora postojati operacija i za dodeljivanje tih vrednosti. Funkcija [[Put]] prilikom dodeljivanja vrednosti proverava vise cinilaca:
 
 1. Ako je svojstvo kojem dodeljuje vrednost deskriptor prisutne funkcije poziva se funkcija za dodeljivanje vrednosti (ukoliko postoji)
+
 2. Ako je svojstvo deskriptor podatakagde je _writable: false_ izvrsavanje operacije _put_ se prekida u tisini (ako nije ukljucen striktni rezim), ili vraca TypeError (ako je striktni rezim ukljucen).
+
 3. U ostalim slucajevima vrednost postojeceg svojstva menja se na uobicajan nacin.
 
 Ako svojstvo ne postoji u objektu, onda operacija [[Put]] postaje jos slozenija. (razmatra se u poglavlju 13)
 
 ### Ucitavanje i zadavanje vrednosti svojstava
 
-ES5 je uveo nov nacin definisanja svojstva pomocu funkcije za ucitavanje (getter) i funkcije za zadavanje (setter).Ove funkcije pozivaju skrivene funkcije koje ucitavaju / zadaju vrednost. Prilikom definisanja deskriptora svojstva uz pomoc funkcije getter ili setter zanemaruju se deskriptori _value_ i _writable_.
+ES5 je uveo nov nacin definisanja svojstva pomocu funkcije za ucitavanje (getter) i funkcije za zadavanje (setter).
+
+Ove funkcije pozivaju skrivene funkcije koje ucitavaju / zadaju vrednost. Prilikom definisanja deskriptora svojstva uz pomoc funkcije getter ili setter zanemaruju se deskriptori _value_ i _writable_.
 
 ```js
 var obj = {
@@ -426,7 +455,7 @@ obj.a = 3;
 obj.a; // 2
 ```
 
-Svojstvu a je definisana funkcija za ucitavanje,ako pokusamo da joj dodelimo vrednost operacija ce se izvrisiti u tisini.
+Svojstvu _a_ je definisana funkcija za ucitavanje,ako pokusamo da joj dodelimo vrednost operacija ce se izvrisiti u tisini.
 
 ```js
 var obj = {

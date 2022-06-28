@@ -9,7 +9,8 @@ JavaScript koristi leksicki opseg vidljivosti, dok neki jezici kao sto su Perl i
 
 ## Vreme za lekseme
 
-Prva faza kompajliranja koda jeste razlaganje na tokene (lekseme). Ta faza je razlog zbog kojeg je ova vrsta opsega vidljivosti dobila ime.<br>
+Prva faza kompajliranja koda jeste razlaganje na tokene (lekseme). Ta faza je razlog zbog kojeg je ova vrsta opsega vidljivosti dobila ime.
+
 Naime, leksicki opseg vidljivosti je onaj koji se utvrdi leksickom analizom (odnosno, fazom razlaganja na tokene). Zavisi od mesta na kojem smo postavili promenljive i definisali blokove opsega vidljivosti.
 
 ```js
@@ -23,15 +24,19 @@ funcion foo(a){
 foo(2); // 2, 4, 12
 ```
 
-> Postoje tri opsega vidljivosti<br>
-> Jedan okruzuje funkciju bar, i sadrzi promenljivu c<br>
-> Drugi (vislji) okruzuje funkciju foo, sadrzi promenljive a, b, bar<br>
+> Postoje tri opsega vidljivosti
+>
+> Jedan okruzuje funkciju bar, i sadrzi promenljivu c
+>
+> Drugi (vislji) okruzuje funkciju foo, sadrzi promenljive a, b, bar
+>
 > Treci, i poslednji, globalni opseg, sadrzi promenljivu foo
 
 ### Pretrazivanje opsega vidljivosti
 
-U prethodnom primeru koda, masina izvrsava console.log(..) i trazi tri promenljive a, b, c. Pretragu krece od najnizeg opsega vidljivosti (funkcije bar) gde ne nalazi referencu a. Krece prema visljem nivou, sto je opseg vidljivosti funkcije foo, gde nalazi promenljivu a. Tako isto i za b i c. Da je postojala deklarisana promenljiva c i u opsegu vidljivosti funkcije bar(..) a i u opsegu funkcije foo(..), uvek bi koristila vrednost definisane promenljive iz opsega vidljivosti funkcije bar(..).<br>
-_*Zaklanjanje*_ (shadowing):
+U prethodnom primeru koda, masina izvrsava console.log(..) i trazi tri promenljive a, b, c. Pretragu krece od najnizeg opsega vidljivosti (funkcije bar) gde ne nalazi referencu a. Krece prema visljem nivou, sto je opseg vidljivosti funkcije foo, gde nalazi promenljivu a. Tako isto i za b i c. Da je postojala deklarisana promenljiva c i u opsegu vidljivosti funkcije bar(..) a i u opsegu funkcije foo(..), uvek bi koristila vrednost definisane promenljive iz opsega vidljivosti funkcije bar(..).
+
+_Zaklanjanje_ (shadowing):
 
 ```js
 var a = 2;
@@ -63,8 +68,10 @@ foo("var b = 3", 1); // 1 3
 foo("function bar(){console.log("Radi i ovo")};bar()", 1); // Radi i ovo /n 1 2 (2 se prikazuje jer ima globalna promenljiva b)
 ```
 
-Ono sto eval radi zapravo je sledece:<br>
-Kda postavimo kljucno rec eval, kao parametar mu prosledjujemo kod koji bi pisali na tom mestu. Ako ti treba funkcija, neka nova promenljiva samo to napises kao parametar funkcije eval i ona ce utisnuti taj kod u vec napisan kod. Uglavnom se koristi za izvrsavanje dinamicki generisanog koda, jer dinamicko izvrsavanje statickog koda (kao sto je ovde primer var b = 3) nema nikakve prednosti nego da smo napisali taj kod bez funkcije eval.<br>
+Ono sto eval radi zapravo je sledece:
+
+Kada postavimo kljucno rec eval, kao parametar mu prosledjujemo kod koji bi pisali na tom mestu. Ako ti treba funkcija, neka nova promenljiva samo to napises kao parametar funkcije eval i ona ce utisnuti taj kod u vec napisan kod. Uglavnom se koristi za izvrsavanje dinamicki generisanog koda, jer dinamicko izvrsavanje statickog koda (kao sto je ovde primer var b = 3) nema nikakve prednosti nego da smo napisali taj kod bez funkcije eval.
+
 Kada definisemo neku promenljivu funkcijom eval mi menjamo opseg vidljivosti tekuce funkcije u kojoj se eval nalazi.
 
 > Kada se funkcija eval koristi u striktom rezimu ona pravi svoj sopstveni opseg vidljivosti, pa ne utice na opseg okruzujuce funkcije
@@ -86,7 +93,7 @@ setTimeout("var a = 10;", 0);
 console.log(a); // 10
 ```
 
-_*Preporuka je da se funkcija eval(..) ne upotrebljava u kodu*_, iako ima opravdanog razloga za upotrebu sa dinamicki generisanim kodom, ali posto je ona izuzetno mala, najbolje je ne latiti se tog posla.
+**Preporuka je da se funkcija eval(..) ne upotrebljava u kodu**, iako ima opravdanog razloga za upotrebu sa dinamicki generisanim kodom, ali posto je ona izuzetno mala, najbolje je ne latiti se tog posla.
 
 ### Rezervisana rec with
 
@@ -132,8 +139,10 @@ console.log(o2.a); // undefined
 console.log(a); // 2
 ```
 
-> Napravljena je globalna promenljiva a.<br>
-> Razlog tome je sto u objektu o2 ne postoji definisana promenljiva a koju bi with mogla da promeni, trazi u visljem opsegu (funkcije foo), gde je isto ne nalazi, pa stize do globalnog opsega gde isto ne nalazi promenljivu a.<br>
+> Napravljena je globalna promenljiva a.
+>
+> Razlog tome je sto u objektu o2 ne postoji definisana promenljiva a koju bi with mogla da promeni, trazi u visljem opsegu (funkcije foo), gde je isto ne nalazi, pa stize do globalnog opsega gde isto ne nalazi promenljivu a.
+>
 > Posto je nije nasao, striktni rezim nije ukljucen, pravi se nova, globalna promenljiva a = 2.
 
 ### Performanse

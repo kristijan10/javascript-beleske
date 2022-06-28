@@ -19,15 +19,18 @@ console.log(a); // undefined
 var a = 2;
 ```
 
-> Razlog zasto nije izpisan ReferenceError jeste taj sto se promenljiva podigla, ali ne i njena vrednost.<br>
+> Razlog zasto nije izpisan ReferenceError jeste taj sto se promenljiva podigla, ali ne i njena vrednost.
+>
 > Promenljiva postoji, definisana je u programu, samo sto nije stigla masina da joj dodeli vrednost 2
 
 Mozemo zakljuciti da je jaje starije od koke. Odnosno, prvo ide deklaracija pa onda dodeljivanje vrednosti.
 
 ## Kompajler uzvraca udarac
 
-Prilikom kompajliranja prvo sto se dogadja jeste to da se obradjuju sve deklaracije - promenljivih i funkcija, a zatim se izvrsava ostatak koda.<br>
-Kada masina naidje na iskaz _var a = 2;_, iako izgledao kao jedan iskaz, za JS su to dva: _var a_ i _a = 2;_.<br>
+Prilikom kompajliranja prvo sto se dogadja jeste to da se obradjuju sve deklaracije - promenljivih i funkcija, a zatim se izvrsava ostatak koda.
+
+Kada masina naidje na iskaz _var a = 2;_, iako izgledao kao jedan iskaz, za JS su to dva: _var a_ i _a = 2;_.
+
 Prvi blok koda, pod naslovom _Sta je starije, koka ili jaje?_, moze se zamisliti:
 
 ```js
@@ -52,7 +55,8 @@ function foo() {
 }
 ```
 
-> Funkcije se takodje podizu, sto omogucava da pozovemo izvrsavanje pre njene deklaracije.<br>
+> Funkcije se takodje podizu, sto omogucava da pozovemo izvrsavanje pre njene deklaracije.
+>
 > Takodje se promenljive u opsegu vidljivosti funkcije foo, podizu.
 
 ```js
@@ -90,7 +94,7 @@ bar = function () {
 };
 ```
 
-Moze se zamisliti kao
+Moze se zamisliti kao:
 
 ```js
 function foo(){..}
@@ -100,8 +104,9 @@ bar(); // da se stavio poziv nakon dodeljivanja vrednosti, logovao bi vrednost 2
 bar = function(){..}
 ```
 
-Deklaracija funkcije se podize pre deklaracije promenljivih<br>
-Ukoliko imamo vise dupiranih funkcija istog imena, izvrsi ce se posljednje deklarisana
+Deklaracija funkcije se podize pre deklaracije promenljivih.
+
+Ukoliko imamo vise dupiranih funkcija istog imena, izvrsi ce se posljednje deklarisana.
 
 ```js
 foo(); // Dupliran

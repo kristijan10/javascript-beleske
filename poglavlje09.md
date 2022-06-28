@@ -21,7 +21,8 @@ var me = {
 speak(me);
 ```
 
-Mehanizam this pruza elegantan nacin da imlicitno prosledino referencu na odredjeni objekat.<br>
+Mehanizam this pruza elegantan nacin da imlicitno prosledino referencu na odredjeni objekat.
+
 Poredjenje sa:
 
 ```js
@@ -63,8 +64,10 @@ for (var i = 0; i < 10; i++) {
 console.log(foo.count); // 0; funkcija foo, kao sto mozemo videti je pozvana 4 puta, ali se count (brojac) nije promenio
 ```
 
-> Ono sto se dogodilo je sledece:<br>
-> posto this u funkciji upucuje na globalni window objekat, u kojem masina nije mogla da nadje promenljivu count, ona ga je sama napravila, posto nije ukljucen striktni rezum<br>
+> Ono sto se dogodilo je sledece:
+>
+> posto this u funkciji upucuje na globalni window objekat, u kojem masina nije mogla da nadje promenljivu count, ona ga je sama napravila, posto nije ukljucen striktni rezum
+>
 > napravila ga je, a za vrednost stavila NaN iz razloga sto nije postavljena vrednost, nego je _nesto_ inkrementirano
 
 Mnogi programeri, kako bi resili problem uradili bi sledece:
@@ -86,7 +89,8 @@ for (var i = 0; i < 10; i++) {
 console.log(data.count); // 4
 ```
 
-Ali ono sto rade je to da zaobilaze mnogo veci problem nerazumavanja this mehanizma.<br>
+Ali ono sto rade je to da zaobilaze mnogo veci problem nerazumavanja this mehanizma.
+
 Ili bi umesto this referencirali samu funkciju:
 
 ```js
@@ -104,7 +108,8 @@ for (var i = 0; i < 10; i++) {
 console.log(foo.count); // 4
 ```
 
-Ali opet, zaobilazimo mehanizam this i koristimo se sa onim sto nam je poznato - leksicki opseg vidljivosti.<br>
+Ali opet, zaobilazimo mehanizam this i koristimo se sa onim sto nam je poznato - leksicki opseg vidljivosti.
+
 Jos jedno moguce resenje je da podesimo this da referencira na funkciju foo (sa foo.call());
 
 ```js
@@ -124,7 +129,8 @@ console.log(foo.count); // 4
 
 ### opseg vidljivosti na koji se odnosi this
 
-this ni na koji nacin ne moze da referencira opseg vidljivosti funkcije.<br>
+this ni na koji nacin ne moze da referencira opseg vidljivosti funkcije.
+
 Iako je opseg vidljivosti jedan vid objekta, ali on je dostupan samo masini jezika, ne kodu.
 
 ```js
@@ -144,6 +150,8 @@ Povezivanje opsega vidljivosti funkcija bar i foo nije moguc. Ne postoji most. I
 
 ## Sta je this?
 
-This se povezuje prilikom izvrsavanja programa, ne tokom njegovog pisanja. funkcinise na nacin dinamickog opsega vidljivosti.<br>
-Nije mu bitno gde je deklarisana funkcija vec kako je pozvana.<br>
+This se povezuje prilikom izvrsavanja programa, ne tokom njegovog pisanja. funkcinise na nacin dinamickog opsega vidljivosti.
+
+Nije mu bitno gde je deklarisana funkcija vec kako je pozvana.
+
 Prilikom pozivanja funkcije stvara se stablo pozivanja. U tom stablu sadrze se informacije o tome kako je funkcija pozvana, a i informacija o tome na sta this ukazuje.

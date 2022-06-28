@@ -4,7 +4,8 @@ Prvi deo knjige je namenjen onima koji nisu imali dodira sa programiranjem, ali 
 
 ## Programski kod
 
-Program je sastavljen od skupa specijalnih naredbi koje racunaru govore sta treba da uradi.<br>
+Program je sastavljen od skupa specijalnih naredbi koje racunaru govore sta treba da uradi.
+
 Sintaksa / racunarski jezik je skup pravila pisanja koje racunar razume. Kao i sa govornim jezikom; pravila pisanja reci, pravila sastavljanja gramaticko ispravnih recenica.
 
 ## Programski iskazi
@@ -17,22 +18,24 @@ a = b * 2;
 
 Ovaj izraz govori racunaru da ucita vrednost _b_, zatim je pomnozi sa _2_ i dobijeni rezultat cuva u promenljivoj _a_.
 
-> _a_ i _b_ su promenljive; mogu se zamisliti kao kutije u kojima se mogu cuvati razne stvari.<br> 
-> _2_ je vrednost, _literal_; pojavljuje se samostalno i nije smestena u promenljivu.<br> 
-> _*_ i _=_ su operatori; izvrsavaju akciju sa zadatim vrednostima.<br>
+> _a_ i _b_ su promenljive; mogu se zamisliti kao kutije u kojima se mogu cuvati razne stvari.
+>
+> _2_ je vrednost, _literal_; pojavljuje se samostalno i nije smestena u promenljivu.
+>
+> _*_ i _=_ su operatori; izvrsavaju akciju sa zadatim vrednostima.
 
 ## Izrazi
 
-Izrazi predstavljaju svaku referencu na promenljivu ili vrednost, a i na skup promenljivih ili literala kombinovanih pomocu operatora.<br>
+Izrazi predstavljaju svaku referencu na promenljivu ili vrednost, a i na skup promenljivih ili literala kombinovanih pomocu operatora.
 
 ```js
 a = b * 2;
 ```
 
-> 2 je izraz sa literalnom vrednoscu<br>
-> b je izraz s promenljivom<br>
-> b * 2 je artitmeticki izraz, spojen operacijom<br>
-> a = b * 2 je izraz dodeljivanja vrednosti<br>
+> 2 je izraz sa literalnom vrednoscu
+> b je izraz s promenljivom
+> b _*_ 2 je artitmeticki izraz, spojen operacijom
+> a = b * 2 je izraz dodeljivanja vrednosti
 
 Iskaz izraza ja opsti izraz koji se moze navesti samostalno. Primer istog je poziv funkcije. Ne koristi se cesto jer se vrednost izraza na cuva, ne menja ishod programa.
 
@@ -42,46 +45,55 @@ alert(a);
 
 ## Izvrsavanje programa
 
-Graficki prikaz **a = b \* 2;** ne predstavlja nista za racunar. Kako bi on izvrsio dodeljivanje vrednosti promenljivoj **a** potrebna je jedna alatka - kompajler / interpreter.<br>
-Neki racunarski jezici koriste **interpreter**. Kada zelis da pokrenes program, interpreter cita naredbe, liniju po liniju i tada ih prevodi.<br>
-Dok se za druge jezike koristi **kompajler**. Radi na princip da kako se pisu komande, on ih prevodi na masinski jezik i kada pokrenes program, pokrenu se vec prevedene naredbe.<br>
+Graficki prikaz **a = b \* 2;** ne predstavlja nista za racunar. Kako bi on izvrsio dodeljivanje vrednosti promenljivoj **a** potrebna je jedna alatka - kompajler / interpreter.
+
+Neki racunarski jezici koriste **interpreter**. Kada zelis da pokrenes program, interpreter cita naredbe, liniju po liniju i tada ih prevodi.
+
+Dok se za druge jezike koristi **kompajler**. Radi na princip da kako se pisu komande, on ih prevodi na masinski jezik i kada pokrenes program, pokrenu se vec prevedene naredbe.
+
 _Javascript_, iako izgleda kao da koristi interpreter, zapravo radi na princip **kompajlera**.
 
 ## Rezultati izvrsavanja programa
 
 Postoje dva nacina prikaza rezultata nekoz izraza - **_console.log(parametar)_** i **_alert(parametar)_**.
 
-> console.log() se sastoji od dva dela<br> 
-> **console.** je naziv objekta; tackom se poziva property u tom istom objektu<br>
-> **log()** je naziv funkcije, koja se nalazi u objektu **console** <br>
+> console.log() se sastoji od dva dela
+>
+> **console.** je naziv objekta; tackom se poziva property u tom istom objektu
+>
+> **log()** je naziv funkcije, koja se nalazi u objektu **console**
+>
 > kao parametar prihvata _"Tekst"_, _32_ (vrednost) ili _a_ (promenljive)
 
 ## Unosenje ulaznih podataka
 
-Iako se to najcesce radi preko [HTML formi](https://www.w3schools.com/html/html_forms.asp) - nekog polja u koje korisnik unese tekst, vrednost. Zatim se ta vrednost stavi u promenljivu preko _JavaScript-a_ i koristi na drugim mestima.<br>
+Iako se to najcesce radi preko [HTML formi](https://www.w3schools.com/html/html_forms.asp) - nekog polja u koje korisnik unese tekst, vrednost. Zatim se ta vrednost stavi u promenljivu preko _JavaScript-a_ i koristi na drugim mestima.
+
 Za svrhe ucenja ulazni podaci se prihvataju preko **prompt(parametar)** funkcije.
 
 ## Operatori
 
-Odredjuju akcije koje izvrsavamo sa promenljivima i vrednostima.<br>
+Odredjuju akcije koje izvrsavamo sa promenljivima i vrednostima.
 
-| Ime                                    | Operator         |
-| -------------------------------------- | ---------------- |
-| Dodeljivanje vrednosti                 | =                |
-| Matematicki                            | +, -, \*, /      |
-| Kombinovani sa dodeljivanjem vrednosti | +=, -=, \*=, /=  |
-| Inkrementacija / dektementacija        | ++, --           |
-| Pristupanje svojstu objekta            | . (tacka)        |
-| Jednakost                              | ==, ===, !=, !== |
-| Poredjenje                             | <, >, <=, >=     |
-| Logicki                                | &&, \|\|         |
+| Ime                                    | Operator        |
+| -------------------------------------- | ----------------|
+| Dodeljivanje vrednosti                 | =               |
+| Matematicki                            | +, -, \*, /     |
+| Kombinovani sa dodeljivanjem vrednosti | +=, -=, \*=, /= |
+| Inkrementacija / dektementacija        | ++, --          |
+| Pristupanje svojstu objekta            | . (tacka)       |
+| Jednakost                              | ==, ===, !=, !==|
+| Poredjenje                             | <, >, <=, >=    |
+| Logicki                                | &&, \|\|        |
 
 ## Vrednosti i tipovi
 
-Tipovi su ustvari razliciti nacini prikazivanja vrednosti.<br>
+Tipovi su ustvari razliciti nacini prikazivanja vrednosti.
 
-> Ako ti treba broj, tip te vrednosti je **number**.<br>
-> Ako treba da prikazes neku vrednost na ekranu, treba ti **string**.<br>
+> Ako ti treba broj, tip te vrednosti je **number**.
+>
+> Ako treba da prikazes neku vrednost na ekranu, treba ti **string**.
+>
 > Kada treba da doneses odluku koristis tip **boolean**.
 
 ### Konverzije tipova
@@ -175,8 +187,9 @@ var cena = 99.99;
 }
 ```
 
-> Iako je ovo ispravno, ne vidja se cesto u _JS_ programima.<br>
-> Obicno se koristi uz neki od upravljackih izraza (if, for, while...)<br>
+> Iako je ovo ispravno, ne vidja se cesto u _JS_ programima.
+>
+> Obicno se koristi uz neki od upravljackih izraza (if, for, while...)
 >
 > ```js
 > var a = 11;
@@ -195,9 +208,12 @@ if (parametar) {
 }
 ```
 
-> if ocekuje vrednost tipa _boolean_ kao svoj parametar.<br>
-> U slucaju da to nije, radi se implicitna konverzija.<br>
-> Blok koda se nece izvrsiti ako je parametru prosledjena _**0**_ ili _**""**_.<br>
+> if ocekuje vrednost tipa _boolean_ kao svoj parametar.
+>
+> U slucaju da to nije, radi se implicitna konverzija.
+>
+> Blok koda se nece izvrsiti ako je parametru prosledjena _**0**_ ili _**""**_.
+>
 > Sve druge vrednosti se smatraju tacnim, pa ce se blok koda izvrsiti.
 
 ```js
@@ -221,12 +237,13 @@ while (brojKupaca > 0) {
 }
 ```
 
-> **Iteracija** je jedno izvrsavanje bloka.<br>
+> **Iteracija** je jedno izvrsavanje bloka.
+>
 > Uslov se svaki put proverava kada prodje iteracija.
 
 Glavna razlika izmedju while i do..while jeste to sto while proverava uslov pre iteracije. Do..while izvrsi iteraciju pa tek onda proverava uslov.
 
-**For**
+### For
 
 ```js
 for (var i = 0; i <= 9; i++) {
@@ -234,9 +251,12 @@ for (var i = 0; i <= 9; i++) {
 }
 ```
 
-> Petlja for ima tri odredbe :<br>
-> inicijalizaciju (var i = 0)<br>
-> uslov dokle ce se blok izvrsavati (i <= 9)<br>
+> Petlja for ima tri odredbe :
+>
+> inicijalizaciju (var i = 0)
+>
+> uslov dokle ce se blok izvrsavati (i <= 9)
+>
 > odredbu azuriranja (i++)
 
 **Petlja se izvrsava dok njen uslov ne prestane da bude ispunjen**, bez obzira na vrstu iste.
@@ -253,8 +273,10 @@ function imeFunkcije(parametar) {
 
 ### Opseg vidljivosti promenljivih
 
-Ako od prodavca mobilnih telefona zatrazis neki model koji nemaju u prodavnici, on nece moci da ti proda taj isti model. Moraces da potrazis u drugoj prodavnici.<br>
-**Opseg vidljivosti** (_scope_) je skup promenljivih i pravila po kojim se moze pristupiti tim istim promenljivima.<br>
+Ako od prodavca mobilnih telefona zatrazis neki model koji nemaju u prodavnici, on nece moci da ti proda taj isti model. Moraces da potrazis u drugoj prodavnici.
+
+**Opseg vidljivosti** (_scope_) je skup promenljivih i pravila po kojim se moze pristupiti tim istim promenljivima.
+
 Svaki blok koda stvara opseg vidljivosti za sebe. U istom opsegu vidljivosti ne mogu biti dve promenljive istog imena. Dok u dva razlicita opsega vidljivosti mozes imati dve promenljive istog imena.
 
 ```js

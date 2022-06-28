@@ -1,6 +1,7 @@
 # Polifilovanje opsega vidljivosti velicine bloka
 
-Kako bi koristili prednosti opsega vidljivosti velicine bloka u ranijim vezijama ES-a preporucljivo je da koristimo alatke koje kod ES6 pretvaraju u kod koji razumeju ranije verzije ES.<br>
+Kako bi koristili prednosti opsega vidljivosti velicine bloka u ranijim vezijama ES-a preporucljivo je da koristimo alatke koje kod ES6 pretvaraju u kod koji razumeju ranije verzije ES.
+
 Primer rezultata tih alatki:
 
 ```js
@@ -49,18 +50,20 @@ let (a=2){
 console.log(a);
 ```
 
-_Let_ iskaz, formira svoj eksplicitni blok za ciji se opseg vidljivosti vezuje.<br>
-Kao sto sam napisao u komentaru, let iskaz ne radi u ES6 verziji, ne sa tom sintaksom.<br>
+_Let_ iskaz, formira svoj eksplicitni blok za ciji se opseg vidljivosti vezuje.
+
+Kao sto sam napisao u komentaru, let iskaz ne radi u ES6 verziji, ne sa tom sintaksom.
+
 Kako bi resili to, postoje dva resenje:
 
 1. Kod mozemo formatirati uz primenu ES6 sintakse
 
-```js
-{
-  let a = 2;
-  console.log(a); // 2
-}
-console.log(a); // ReferenceError
-```
+    ```js
+    {
+      let a = 2;
+      console.log(a); // 2
+    }
+    console.log(a); // ReferenceError
+    ```
 
 2. Postoje alatke koje ce to uciniti umesto nas. [let-er](https://github.com/getify/let-er) je alatka koju je napravio autor knjige koja radi na princip transpajlera koda. Posao mu je da pronadje sve oblike iskaza let i da ih konvertuje u let deklaracije (let blok).

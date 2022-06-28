@@ -7,7 +7,8 @@ Svaka funkcija pravi svoj mehur - opseg vidljivosti. Identifikatori deklarisani 
 ## Skrivanje unutar opsega vidljivosti
 
 Promenljive i funkcije se mogu sakriti ako ih obglimo viticastim zagradam - funkcijom, sto stvara novi blok vidljivosti.
-Princip najmanje privilegije je nacin pisanja koda kojim ostavljamo javnim samo minimalan, neophodan deo koda, dok se sav ostali kod "sakriva".<br>
+Princip najmanje privilegije je nacin pisanja koda kojim ostavljamo javnim samo minimalan, neophodan deo koda, dok se sav ostali kod "sakriva".
+
 Razlog skrivanja promenljivih i funkcija jeste kako se ne bi dogodila greska, namernim ili nenamernim putem, sto moze da dovede to promene krajnjeg proizvoda.
 
 ```js
@@ -69,7 +70,8 @@ var myReallyCoolLibrary = {
 
 #### Upravljanje modulima
 
-Druga mogucnost za izbegavanje sukoba je _modularni pristup_, pomocu neke od alatki koje ne dozvoljavaju da se kod iz neke biblioteke ubacuju u globalni opseg vidljovsti, nego te alatke nekim mehanizmima uvoze kod u poseban opseg vidljivosti. <br>
+Druga mogucnost za izbegavanje sukoba je _modularni pristup_, pomocu neke od alatki koje ne dozvoljavaju da se kod iz neke biblioteke ubacuju u globalni opseg vidljovsti, nego te alatke nekim mehanizmima uvoze kod u poseban opseg vidljivosti.
+
 Resenje je pisati "defanzivan" kod i tako postignemo iste rezultate kao sto ta alatka i cini. Vise reci ce biti u poglavlju 8.
 
 ## Funkcije kao opsezi vidljivosti
@@ -131,9 +133,12 @@ console.log(a); // 2
 
 > Prvi par zagrada od funkcije pravi izraz, dok drugi izvrsava
 
-Obicno se IIFE-ovima ne zadaju imena, ali zbog resenja nedostataka preporucljivo je zadati joj ime.<br>
-Jos jedna varijacija poivanja IIFE unkcijog izraza izgleda: (function foo(){...}());<br>
-Kako bi uporedili sa vec koristenim, i uobicajnim izrazom: (function foo(){...})();<br>
+Obicno se IIFE-ovima ne zadaju imena, ali zbog resenja nedostataka preporucljivo je zadati joj ime.
+
+Jos jedna varijacija poivanja IIFE unkcijog izraza izgleda: (function foo(){...}());
+
+Kako bi uporedili sa vec koristenim, i uobicajnim izrazom: (function foo(){...})();
+
 IIFE-ima moze proslediti i neke reference iz spoljasnje opsega vidljivosti pomocu parametara:
 
 ```js
@@ -191,8 +196,9 @@ for(var i = 0; i<10; i++){
 )
 ```
 
-> Cilj je da promenljive koje koristimo deklarisemo sto blize funkciji u kojoj cemo ih koristiti.<br>
-> Takav je slucaj i ovde, ali posto var predstavlja globalnu promenljivu, bilo gde da je deklarisemo, ona ce se pojaviti u globalnom opsegu vidljivosti<br>
+> Cilj je da promenljive koje koristimo deklarisemo sto blize funkciji u kojoj cemo ih koristiti.
+>
+> Takav je slucaj i ovde, ali posto var predstavlja globalnu promenljivu, bilo gde da je deklarisemo, ona ce se pojaviti u globalnom opsegu vidljivosti
 
 Ogranicavanje odredjenih promenljivih na blok omogucice nam da izbegnemo greske promene vrednosti odredjenih promenljivih u daljem kodu - otklanja mogucnost pojavljivanja greske.
 
@@ -209,13 +215,15 @@ console.log(err); // ReferenceError: err is not defined
 
 _catch_ ogranicava svoj kod na opseg vidljivosti bloka. Samo on moze da vidi err.
 
-> Optimizatori koda se nekada bune ako koristimo vise try/catch struktura i kada parametrima damo isto ime err<br>
-> Iako je svaki catch ogranicen na blok, sto znaci da se nece dogoditi nikakva greska sa mesanjem promenljivih<br>
+> Optimizatori koda se nekada bune ako koristimo vise try/catch struktura i kada parametrima damo isto ime err
+>
+> Iako je svaki catch ogranicen na blok, sto znaci da se nece dogoditi nikakva greska sa mesanjem promenljivih
+>
 > Ali kako bi to resili, samo dodaj broj greske (err1, err2)...
 
 ### Rezervisana rec let
 
-_*let*_ je novina ubacena u ES6 verziju koja je omogucila da se deklarisu promenljive na opseg vidljivosti bloka.
+_let_ je novina ubacena u ES6 verziju koja je omogucila da se deklarisu promenljive na opseg vidljivosti bloka.
 
 ```js
 var foo = true;
@@ -279,7 +287,7 @@ console.log(bar, baz); // ReferenceError: bar is not defined
 
 ### Rezervisana rec const
 
-_*const*_, kao i let definise promenljivu u opsegu vidljivosti bloka, jedino po cemu se razlikuju je to sto promenljive definisane sa const ne mogu menjati svoju vrednost.
+_const_, kao i let definise promenljivu u opsegu vidljivosti bloka, jedino po cemu se razlikuju je to sto promenljive definisane sa const ne mogu menjati svoju vrednost.
 
 ```js
 var foo = true;

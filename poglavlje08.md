@@ -2,12 +2,13 @@
 
 ## Prosvetljenje
 
-U JavaScriptu ograde su ono nas,treba samo da ih prepoznamo i prihvatimo.<br>
-Nastaju kao rezultat pisanja koda koji se zasniva na leksickom opsegu. Jednostavno se stvaraju bez ikakvih naznaka. Na nama je da ih prepoznamo i prihvatimo.<br>
+U JavaScriptu ograde su ono nas,treba samo da ih prepoznamo i prihvatimo.
+
+Nastaju kao rezultat pisanja koda koji se zasniva na leksickom opsegu. Jednostavno se stvaraju bez ikakvih naznaka. Na nama je da ih prepoznamo i prihvatimo.
 
 ## Osnovne cinjenice
 
-Ogradjujuca funkcija je ona koja je u stanju da zapamti svoj leksicki opseg vidljivosti i da mu pristupa cak i kada se izvrsava izvan njega.<br>
+Ogradjujuca funkcija je ona koja je u stanju da zapamti svoj leksicki opseg vidljivosti i da mu pristupa cak i kada se izvrsava izvan njega.
 
 ```js
 function foo() {
@@ -25,7 +26,8 @@ var baz = foo();
 baz();
 ```
 
-> Pozivom foo funkcije mi dobijamo referencu na unutrasnju funkciju.<br>
+> Pozivom foo funkcije mi dobijamo referencu na unutrasnju funkciju.
+>
 > Ali posto smo taj poziv funkcije foo dodelili nekoj promenljivoj, funkcijskim pozivom te promenljive ustvari mi izvrsavamo unutrasnju funkciju bar
 
 Svaki od mnogobrojnih nacina na koje se funkcije mogu prosledjivati drugim funkcijama kao vrednost, a zatim njihovo pozivanje na drugim mestima je upotreba / formiranje ograda.
@@ -48,7 +50,7 @@ function bar(fn) {
 foo(); // 2
 ```
 
-**Bez obzira na nacin na koji transportujemo unutrasnju funkciju izvan njenog leksickog opsega vidljivosti, ona ce zadrzati referencu na svoj opseg vidljivosti u kojem je bila izvorno deklarasana**
+Bez obzira na nacin na koji transportujemo unutrasnju funkciju izvan njenog leksickog opsega vidljivosti, ona ce zadrzati referencu na svoj opseg vidljivosti u kojem je bila izvorno deklarasana.
 
 ## Sada jasno vidim
 
@@ -61,7 +63,7 @@ function wait(message) {
 wait("Ovo ogradjujem");
 ```
 
-Primer ograde. Unutrasnja funkcija _timer_, nalazi se u funkciji _setTimeout_. Funkcija _timer_ koristi parametar koji prosledimo ogradjujucoj funkciji _wait_.<br>
+Primer ograde. Unutrasnja funkcija _timer_, nalazi se u funkciji _setTimeout_. Funkcija _timer_ koristi parametar koji prosledimo ogradjujucoj funkciji _wait_.
 
 Iako se prica da je IIFE primer ograda, autor se sa time ne slaze. IIFE funkcije prave zaseban, sopstveni opseg vidljivosti, ali se izvrsavaju u opsegu vidljivosti u kojem su i napisane. One su pozevane sa ogradama, ali ih ne formiraju.
 
@@ -75,7 +77,8 @@ for (var i = 0; i <= 5; i++) {
 }
 ```
 
-Dogodila se greska. Umesto ocekivanog 1, 2, ...5 dobili smo 6. Razlog je taj sto pretlja vrti sve dok i nije <=5. Prekida se kada je i = 6. Rezultat odrzava posledju vrednost i nakon prestanka pretlje.<br>
+Dogodila se greska. Umesto ocekivanog 1, 2, ...5 dobili smo 6. Razlog je taj sto pretlja vrti sve dok i nije <=5. Prekida se kada je i = 6. Rezultat odrzava posledju vrednost i nakon prestanka pretlje.
+
 Kako bi ispravili to, potreban nam je zaseban opseg vidljivosti, koji ce sadrzati referencu na parametar i, koji ce se menjati, pa i dodati identifikatoru u unutrasnjem opsegu vidljivosti, koji cemo naprviti uz pomoc IIFE funkcije.
 
 ```js
@@ -135,7 +138,8 @@ Kako bi nesto bilo modul mora ispuniti sledece:
 1. Mora postojati spoljasnja, okruzujuca, funkcija koja se poziva makar jedanput (svaki poziv pravi novu instancu modula)
 2. Ta okruzujuca mora vracati barem jednu internu funkciju, koja ogradjuje unutrasnji privatni opseg vidljivosti i moze da pristupa tom privatnom stanju modula i/ili da ga menja
 
-Objekat koji stavlja na raspolaganje samo funkciju za pristupanje odredjenom svojstvu nije modul. Objekat koji vraca funkciju nakon pozivanja i koji ima samo svojstva koja predstavljaju podatke ali ne i interne ogradjujuce funkcije, nije modul.<br>
+Objekat koji stavlja na raspolaganje samo funkciju za pristupanje odredjenom svojstvu nije modul. Objekat koji vraca funkciju nakon pozivanja i koji ima samo svojstva koja predstavljaju podatke ali ne i interne ogradjujuce funkcije, nije modul.
+
 Gore naveden primer mozes pozivati bezbroj puta, i svaki put se pravi nova instanca. Ali ako ti treba unikatan modul, onda se to postize na sledeci nacin:
 
 ```js
@@ -292,6 +296,8 @@ console.log(bar.hello('rhino'));
 foo.awesome();
 ```
 
-_Import_ uvozi jedan ili vise clanova API-ja modula u opseg vidljivosti vezan za promenljivu (hello, awesome).<br>
-Operator _module_ uvozi ceo API modula i vezuje ga za promenljivu (bar, foo).<br>
+_Import_ uvozi jedan ili vise clanova API-ja modula u opseg vidljivosti vezan za promenljivu (hello, awesome).
+
+Operator _module_ uvozi ceo API modula i vezuje ga za promenljivu (bar, foo).
+
 _Export_ izvozi zadati identifikator (promenljiva ili funkcija) iz javnog API-ja tekuceg modula.
