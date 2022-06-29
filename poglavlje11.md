@@ -474,3 +474,203 @@ obj.a; // 4
 ```
 
 > U fazi razmatranja, jer ne razumem
+
+### Utvrdjivanje postojanja svojstva
+
+Proveravanje da li objekat ima definisano neko svojstvo bez da proveravamo njegovu vrednost:
+
+```js
+var obj = {
+  a: 2
+};
+
+("a" in obj); // true
+("b" in obj); // false
+
+obj.hasOwnProperty("a"); // true
+obj.hasOwnProperty("b"); // false
+```
+
+Operator _in_ ispituje postojanost svojstva u objektu ili u njegovom [Prototype] lancu.
+
+Metoda _hasOwnProperty(...)_ samo proverava da li dati objekat sadrzi ili ne sadrzi svojstvo i ne pregleda dalje.
+
+Objekti koji su napravljeni tako da ne upucuje na Object.prototype (pomocu metode _Object.create(null)_) nemaju pristup metodi _hasOwnProperty(...)_ tako da jedini nacin na koji se moze zaobici je to da se objekat eksplicitno poveze sa Object.prototype.
+
+```js
+Object.prototype.hasOwnProperty.call(obj, "a");
+```
+
+#### Nabrajanje svojstava
+
+```js
+var obj = {};
+
+Object.defineProperty(
+  obj,
+  "a",
+  // a je nabrojivo
+  {enumerable: true, value: 2}
+);
+
+Object.defineProperty(
+  obj,
+  "b",
+  // b je NEnabrojivo
+  {enumerable: false, value: 3}
+);
+
+obj.b; // 3
+(b in obj); // true
+obj.hasOwnProperty("b"); // true
+
+for(var k in obj){
+  console.log(k, obj[k]); // "a" 2
+}
+```
+
+Mozemo pristupiti svojstvu _b_, ali se prilikom iteracije kroz ceo objekat ono ne vidi. Razlog tome je sto je podeseno da svojstvo _b_ ne bude brojivo (enumerable).
+
+```js
+var obj = {};
+
+Object.defineProperty(
+  obj,
+  "a",
+  {enumerable: true, value: 2}
+);
+
+Object.defineProperty(
+  obj,
+  "b",
+  {enumerable: false, value: 3}
+);
+
+obj.propertyIsEnumerable("a"); // true
+obj.propertyIsEnumerable("b"); // false
+
+Object.keys(obj); // ["a"]
+Object.getOwnPropertyNames(obj); // ["a", "b"]
+```
+
+Ugradjena metoda **keys(...)** objekta _Object_ pregleda unutrasnji opseg zatatog objekta i trazi samo nabrojiva svojstva.
+
+Metoda **getOwnPropertyNames(...)** isto pregleda samo unutrasnjost zadatog objekta ali izlistava sva (nabrojiva i nenabrojiva) svojstva.
+
+## Iteracija kroz svojstva objekta
+
+ES5 je ubacio metode za prolazak i citanje vrednosti u nizovima kao sto su:
+
+- _forEach(..)_,
+- _every(..)_ i
+- _some(..)_
+
+Svaka od ovih alatki kao parametar prihvata povratnu funkciju koja obradjuje svaki element niza, a razlikuju se po tome kako reaguju na vrednosti povratne funkcije.
+
+>_forEach(..)_ pristupa svakoj vrednosti u nizu pri cemu zanemaruje vrednost iz povratne funkcije (koja je prosledjena kao parametar),
+>
+>_every(..)_ radi sve dok ne dodje do kraja niza ili dok joj povratna funkcija ne vrati vrednost _false_,
+>
+>_some(..)_ radi sve dok ne dodje do kraja niza ili dok joj povratna funkcija ne vrati vrednost _true_.
+
+Kako bi pristupili vrednostima svojstava niza ili objekta nastala je alatka **for..of**. Ona zahteva iteratorski objekat (@@iterator) za _stvar_ koju ce petlja obradjivati, a zatim se petlja izvrsava za sve povratne vrednosti koje se dobijaju pozivanjem metode _next()_ tog iteratorskog objekta, po jedanput u svakoj iteraciji petlje.
+
+Nizovi podrazumevano imaju ugradjen @@iterator, pa se lako obradjuju u petlji _for..of_:
+
+```js
+var myArray = [1, 2, 3];
+
+for(var k of myArray) console.log(k);
+// 1
+// 2
+// 3
+```
+
+Primer kako to radi ispod haube:
+
+```js
+var myArray = [1, 2, 3];
+var it = myArray[Symbol.iterator]();
+
+it.next(); // {value: 1, done: false}
+it.next(); // {value: 2, done: false}
+it.next(); // {value: 3, done: false}
+it.next(); // {done: true}
+```
+
+>Internom svojstvu @@iterator pristupamo pomocu sintakse Symbol.iterator
+>
+>@@iterator nije iteratorski objekat, vec funkcija koja vraca iteratorski objekat
+
+Povratna vrednost koja se dobija pozivanjem iteratorove metode _next()_ jeste objekat koji ima svojstva {value: .. , done: .. }.
+
+>value - vrednost u tekucoj iteraciji,
+>
+>done - vrednost tipa boolean koja pokazuje da li ima jos vrednosti za ucitavanje
+
+Iako je vrednost 3, iz primera u kodu, poslednja u nizu objekat ne vraca done: true, nego se mora pozivati metoda _next()_ i poslednji put da se uveri da je prosla kroz sve vrednosti niza. To petlja _for..of_ automatski radi.
+
+Obicni objekti, za razliku od nizova, nemaju @@iterator, ali to ne znaci da ne mozemo da ga mi napravimo:
+
+```js
+var myObject = {
+  a: 2,
+  b: 3
+};
+
+Object.defineProperty(
+  myObject,
+  Sumbol.iterator,
+  {
+    enumerable: false,
+    writable: false,
+    configurable: true,
+    value: function(){
+      var o = this;
+      var idx = 0;
+      var ks = Object.keys(o);
+      return {
+        next: function(){
+          return {
+            value: o[ks[idx++]],
+            done: (idx > ks.length)
+          };
+        }
+      };
+    }
+  }
+);
+
+// Rucna iteracija kroz objekat 'myObject'
+var it = myObject[Symbol.iterator]();
+it.next(); // {value: 2, done: false}
+it.next(); // {value: 3, done: false}
+it.next(); // {value: undefined, done: true}
+
+// Iteracija objekta 'myObject' u petlji for..of
+for(var k of myObject) console.log(k);
+// 2
+// 3
+```
+
+>U ovom slucaju mi smo definisali nenabrojivo svojstvo [Symbol.iterator] i sada objekat ima svojstva:
+>
+>myObject = {a: 2, b: 3, [Symbol.iterator]: function(){...}}
+
+## Sazetak poglavlja
+
+Objekti u JS-u imaju literalni (var a = { .. }) i konstruisani (var a = new Array( .. )) oblik. Tip koriscenja zavisi od potrebe opcija pri izradi objekta.
+
+~~Sve u JavaScriptu je objekat.~~
+
+Objekat -> kolekcija parova kljuc/vrednost.
+
+Kada god pristupam nekom svojstvu objekta masina jezika u pozadini poziva internu podrazumevanu operaciju [[Get]] (i [[Put]] ako zadaje vrednost svojstvu).
+
+Svako svojstvo objekta ima odredjene karakteristike koje se mogu odredjivati pomocu deskriptora svojstava (kao sto su writable i configurable).
+
+Promenljivost objekta se moze postaviti na razne nivoe nepromenljivosti pomocu metoda _Object.preventExtensions(..)_, _Object.seal(..)_ i _Object.freeze(..)_.
+
+Svojstva ne moraju imati vrednosti, mogu biti i "pristupna svojstva" s funkcijama za postavljanje/ucitavanje vrednosti svojstva. Mogu biti nabrojiva i nenabrojiva, cime se odredjuje da li su vidljiva iteracijama kroz sam objekat.
+
+U petljama se moze pristupiti i vrednostima unutar struktura podataka (nizovi, objekti itd.) pomocu _for..of_, koja zahteva ugradjen ili namenski @@iterator objekat koji ima metodu _next()_ za ucitavanje jedne po jedne vrednosti podatka.
