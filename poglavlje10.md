@@ -78,9 +78,9 @@ var a = 2;
 foo(); // TypeError: this is undefined
 ```
 
-> globalni objekat je upotrebljiv za podrazumevano povezivanje samo ako u bloku koda iste funkcije nije definisan striktni rezim
+>Globalni objekat je upotrebljiv za podrazumevano povezivanje samo ako u bloku koda iste funkcije nije definisan striktni rezim
 >
-> za mesto pozivanja funkcije nije bitno da li je ukljucen striktni rezim
+>Za mesto pozivanja funkcije nije bitno da li je ukljucen striktni rezim
 
 ```js
 function foo() {
