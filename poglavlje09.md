@@ -127,7 +127,7 @@ for (var i = 0; i < 10; i++) {
 console.log(foo.count); // 4
 ```
 
-### opseg vidljivosti na koji se odnosi this
+### Opseg vidljivosti na koji se odnosi this
 
 this ni na koji nacin ne moze da referencira opseg vidljivosti funkcije.
 
