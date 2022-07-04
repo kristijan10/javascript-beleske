@@ -1,8 +1,8 @@
-/*
-Napisi program koji izracunava ukupan iznos kupovine telefona. Kupujes telefone (naznaka: u pretlji!) dok imate dovoljno novca na racunu u banci.
-Uz telefone kupujes i dopunsku opremu sve dok je ukupan iznos kupovine ispod praga trosenja koji zadas.
-*/
+# Vezba 1
 
+Napisi program koji izracunava ukupan iznos kupovine telefona. Kupujes telefone (naznaka: u pretlji!) dok imate dovoljno novca na racunu u banci. Uz telefone kupujes i dopunsku opremu sve dok je ukupan iznos kupovine ispod praga trosenja koji zadas.
+
+```js
 var TAKSA = 0.08;
 var bankovni_racun = prompt("Koliko para imas na racunu?");
 var maksimum_trosak = prompt("Koliko si spreman da platis?");
@@ -29,3 +29,4 @@ while (bankovni_racun > dodatnaOprema) {
 }
 console.log("Telefona: " + i + "\nDodatne opreme:" + n);
 console.log("Ostalo ti je " + format(bankovni_racun));
+```

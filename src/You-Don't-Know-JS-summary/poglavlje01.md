@@ -8,7 +8,7 @@ Program je sastavljen od skupa specijalnih naredbi koje racunaru govore sta treb
 
 Sintaksa / racunarski jezik je skup pravila pisanja koje racunar razume. Kao i sa govornim jezikom; pravila pisanja reci, pravila sastavljanja gramaticko ispravnih recenica.
 
-## Programski iskazi
+### Programski iskazi
 
 Iskaz je svaka grupa reci, brojeva i operatora koja obavlja neku radnju.
 
@@ -43,7 +43,7 @@ Iskaz izraza ja opsti izraz koji se moze navesti samostalno. Primer istog je poz
 alert(a);
 ```
 
-## Izvrsavanje programa
+### Izvrsavanje programa
 
 Graficki prikaz **a = b \* 2;** ne predstavlja nista za racunar. Kako bi on izvrsio dodeljivanje vrednosti promenljivoj **a** potrebna je jedna alatka - kompajler / interpreter.
 
@@ -53,7 +53,7 @@ Dok se za druge jezike koristi **kompajler**. Radi na princip da kako se pisu ko
 
 _Javascript_, iako izgleda kao da koristi interpreter, zapravo radi na princip **kompajlera**.
 
-## Rezultati izvrsavanja programa
+### Rezultati izvrsavanja programa
 
 Postoje dva nacina prikaza rezultata nekoz izraza - **_console.log(parametar)_** i **_alert(parametar)_**.
 
@@ -65,7 +65,7 @@ Postoje dva nacina prikaza rezultata nekoz izraza - **_console.log(parametar)_**
 >
 > kao parametar prihvata _"Tekst"_, _32_ (vrednost) ili _a_ (promenljive)
 
-## Unosenje ulaznih podataka
+### Unosenje ulaznih podataka
 
 Iako se to najcesce radi preko [HTML formi](https://www.w3schools.com/html/html_forms.asp) - nekog polja u koje korisnik unese tekst, vrednost. Zatim se ta vrednost stavi u promenljivu preko _JavaScript-a_ i koristi na drugim mestima.
 
@@ -242,8 +242,6 @@ while (brojKupaca > 0) {
 > Uslov se svaki put proverava kada prodje iteracija.
 
 Glavna razlika izmedju while i do..while jeste to sto while proverava uslov pre iteracije. Do..while izvrsi iteraciju pa tek onda proverava uslov.
-
-### For
 
 ```js
 for (var i = 0; i <= 9; i++) {
