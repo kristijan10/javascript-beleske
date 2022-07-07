@@ -164,3 +164,87 @@ Zanimljiva posledica polimorfizma moze se konkretno videti na primeru metode _ig
 U tom slucaju definicija metode _ignition()_ je polimorfna (promenljiva), zavisno od toga cija je instanca klase koju referenciramo.
 
 **Svaka izvedena klasa ima kopiju onoga sto joj treba od roditeljske klase.**
+
+### Visestruko nasledjivanje
+
+Ako bi izvedenu klasu poredili sa detetom (nasledjuje DNK, dva roditelja) znaci da bi onda ta klasa trebala da ima kopiju i jedne i druge parent klase.
+
+To se u jezicima orijentisanim na klase praktikuje, ali je u JavaScriptu ta mogucnost izbacena.
+
+Razlog tome je kada se pogleda malo dublje. Ako bi zaista izvedena klasa trebala da ima kopiju i jedne i druge roditeljske klase, ukoliko su i one izvedene iz neke zajednicke klase, i ako se redefinise neka od metoda (polimorfizam), kako ce se znati koja se definicija metode poziva iz izvedene klase?
+
+```mermaid
+flowchart LR
+  subgraph RomboidniProblem
+    A --> B
+    A --> C
+    B --> D
+    C --> D
+  end
+```
+
+>Kako ce se sada znati koja definicija ce se koristit, ako se u klasama _B_ i _C_ redefinise neka polimorfna metoda iz klase _A_ i pozove u klasi D?
+
+## Mesaci
+
+Prilikom pravljenja instance klase, JS mehanizam ne kopira ponasanja automatski. U JavaScriptu neka "klasa" koje bi nasledjivale jedna drugu, vec ima samo objekte. A objekti se ne kopiraju u druge objekte, nego se medjusobno povezuju (vise o ovome u poglavlju 13).
+
+A posto drugi objektno orijentisani jezici podrazumevaju i kopiranje prilikom instanciranja klasa, JS programeri su nasli nacin da simuliraju to, a to je uz pomoc koriscenja **mesaca** (**mixin**).
+
+Mesaci se dele na:
+
+- eksplicitne
+- implicitne
+
+### Eksplicitni mesaci
+
+```js
+// pojednostavljen izgled funkcije mixin(..)
+// u JS bibliotekama / frejmvorkovima ta funkcija se cesto zove extend(..)
+
+function mixin(sourceObj, targetObj){
+  for(var key in sourceObj){
+    // kopirati samo ako targetObj[key] != sourceObj[key], ako nemaju isto ime metode
+    if(!(key in targetObj)) targetObj[key] = sourceObj[key];
+  }
+
+  return targetObj;
+}
+
+var Vehicle = {
+  engines: 1,
+
+  ignition: function(){
+    console.log("Pokrecem motor");
+  },
+  drive: function(){
+    this.ignition();
+    console.log("Vozilo je u pokretu");
+  }
+};
+
+var Car = mixin(Vehicle, {
+  wheels: 4,
+
+  drive: function(){
+    /*
+    // Pozivam metodu drive(..) iz objekta Vehicle,
+    // ali postavljajuci tako da se poziva iz konteksta
+    // objekta Car
+    //
+    // Odnosno, eksplicitno zadajemo objekat Vehicle
+    // po imenu i pozivamo njegovu funkciju drive(..)
+    */
+    Vehicle.drive.call(this);
+    console.log("Idem na " + this.wheels + " tocka");
+  }
+});
+```
+
+> Sada objekat _Car_ ima reference na svojstva i funkcije objekta _Vehicle_. Nista se ne kopira u drugi objekat. Svi su oni zasebni. Vec se samo iz jednog referencira na svojstva i metode izvornog objekta
+>
+> Primetiti da je uslov petlje funkcije _mixin(..)_ da "izvedeni" objekat ima metodu istog imena, i tada se izlazi iz uslova i nastavlja se kopiranje dalje. Znaci da se ne redefinise definicija metode "izvedenog" objekta
+
+#### Ponovo o polimorfizmu
+
+U jezicima orijentisanim na klase i koji imaju relativni polimorfizam, veza izmedju _Vehicle_ i _Car_ uspostavlja se jednom, na pocetku definicije klase, usled cega postoji samo jedno mesto za odrzavanje te veze.
