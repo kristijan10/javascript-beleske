@@ -248,3 +248,61 @@ var Car = mixin(Vehicle, {
 #### Ponovo o polimorfizmu
 
 U jezicima orijentisanim na klase i koji imaju relativni polimorfizam, veza izmedju _Vehicle_ i _Car_ uspostavlja se jednom, na pocetku definicije klase, usled cega postoji samo jedno mesto za odrzavanje te veze.
+
+#### Mesanje kopija
+
+Ime _"mesac"_ potice od alternativnog opisa celog postupka: u targetObj se "umesava" sadrzaj iz sourceObj.
+
+Posto se u JavaScript-u funkcije ne mogu duplirati, ono sto se ustvari dobija jeste duplirana referenca na isti deljeni objekat.
+
+Ako u jednom od deljenih objakata promenim nesto, to znaci da ce ta izmena biti primenjena i u roditeljskom, a i u svakom izvedenom objektu.
+
+Ako eksplicitno pokusam da umesam dva ili vise objekata u ciljni objekat, nema nacina da obradim sukob ako se ista metoda ili svojstvo kopira iz vise od jednog izvora.
+
+>Iako su programeri uspeli da nadju resenje za to, kao sto je primenjeno i u nekim od biblioteka, takozvana tehnika "kasnog povezivanja", zahteva vise truda a i daje slabije performanse
+
+**Preporuka** je da se mesaci koriste tamo gde oni doprinose da kod bude razumljiviji, a izbegavaj ako primetis da u tako dobijenom kodu teze otkrivas sta je uzrok greske ili ako formira nepotrebne i kompikovane zavisnosti izmedju objekata.
+
+_Ako pocinje da vam postaje teze da ispravno koristite mesace nego sto vam je bilo dok ih niste koristili, verovatno bi trebalo da odustanete od upotrebe mesaca.
+
+#### Parazitsko nasledjivanje
+
+Je varijanta eksplicitnog mesaca koji je istovremenom u jednom smisli eksplicitna, a u drugom smislu implicitna.
+
+```js
+function Vehicle() this.engines = 1;
+
+Vehicle.prototype.ignition = function(){
+  console.log("Pokrecem motor");
+}
+
+Vehicle.prototype.drive = function(){
+  this.ignition();
+  console.log("Vozilo je u pokretu");
+}
+
+// Parazitska klasa 'Car'
+function Car(){
+  var car = new Vehicle();
+
+  car.wheels = 4;
+
+  // kopija reference na Vehicle::drive()
+  var vehDrive = car.drive;
+
+  // redefinise Vehicle::drive()
+  car.drive = function(){
+    vehDrive.call(this);
+    console.log("Vozim na " + this.wheels + " tocka");
+  }
+
+  return car;
+}
+
+var myCar = new Car();
+
+myCar.Drive();
+// Pokrecem motor
+// Vozilo je u pokretu
+// Vozim na 4 tocka
+```
