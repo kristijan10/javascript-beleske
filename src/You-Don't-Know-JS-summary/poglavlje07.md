@@ -117,3 +117,11 @@ function foo() {
   console.log("Dupliran");
 }
 ```
+
+## Sazetak poglavlja
+
+Na prvi pogled _var a = 2;_ bi smarali jednim iskazom, ali masina JavaScript-a to vidi kao dva zasebna iskaza, _var a_ i _a = 2_ (prvi je namenjen fazi kompajliranja, a drugi fazi izvrsavanja koda).
+
+Posledica toga je da se sve deklaracije u jednom opsegu vidljivosti, bez obzira na mesto gde se pojavljuju, odredjuju pre izvrsavanja koda. Sve deklaracije se "premestaju" (podizu) na sam pocetak svojih opsega vidljivosti.
+
+Podizu se samo deklaracije, a operacija dodele vrednosti se izvrsava tamo gde se ta linija koda pojavljuje.

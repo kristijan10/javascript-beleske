@@ -4,6 +4,8 @@ Mogucnost cuvanja i modifikacija vrednosti promenljivih je ono sto odredjuje tek
 
 **Opseg vidljivosti (scope)** je skup pravila kojim se odreduje na kom mestu ce se sacuvati vrednost promenljive, kao i kasnije pronalazenje istih.
 
+## Teorija kompajlera
+
 Prilikom kompajliranja koda prolazi kroz tri koraka pre nego sto se taj isti kod izvrsi:
 
 - Razlaganje na tokene / leksicka analiza

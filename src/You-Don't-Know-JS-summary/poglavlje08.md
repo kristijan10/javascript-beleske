@@ -301,3 +301,12 @@ _Import_ uvozi jedan ili vise clanova API-ja modula u opseg vidljivosti vezan za
 Operator _module_ uvozi ceo API modula i vezuje ga za promenljivu (bar, foo).
 
 _Export_ izvozi zadati identifikator (promenljiva ili funkcija) iz javnog API-ja tekuceg modula.
+
+## Sazetak poglavlja
+
+Ogradjivanje nastaje kada je funkcija u stanju da zapamti svoj leksicki opseg vidljivosti i moze mu pristupiti cak i kada je pozvana izvan njega.
+
+Za koriscenje modula. potrebne su nam dve kljucne karakteristike:
+
+1) pozivanje spoljne okruzujuce funkcije, koja formira okruzujuci opseg vidljivosti
+2) povratna vrednost te okruzujuce funkcije mora sadrzati referencu na barem jednu internu funkciju koja ogradjuje privatni unutrasnji opseg vidljivosti definisan okruzujucom funkcijom

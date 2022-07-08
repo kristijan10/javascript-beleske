@@ -301,3 +301,9 @@ if (foo) {
 console.log(a); // 3
 console.log(b); // ReferenceError
 ```
+
+## Sazetak poglavlja
+
+Promenljive i funkcije koje deklarisem unutar druge funkcije skrivene su za sve spoljasnje opsege vidljivosti, sto je nameran cilj principa dobrog dizajna softvera.
+
+Opseg vidljivosti velicine bloka odrazava ideju da promenljive i funkcije mogu pripadati i proizvodljo odredjenom bloku koda (obicno oivicen parom {} zagrada).

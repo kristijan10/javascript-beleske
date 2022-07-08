@@ -149,3 +149,18 @@ console.log(a); // 2
 
 Funkcija eval i with menjaju leksicki opseg vidljivosti u toku izvrsavanja koda tako sto definisu nov ili menjaju vec postojeci opseg vidljivosti.
 Posto u masini JS-a postoje vise optimizacija, a jedna od njih jeste pronalazenje definisanih promenljivih i funkcija jer je tokom izvsavanja koda potrebno manje napora da pronadje vrednosti istih promenljivih. Ali kada masina naidje na eval ili with, moze da pretpostavi da sve sto je saznala o trenutim promenljivima moze biti netacno, iz razloga sto se sa eval i with menjaju opsezi vidljivosti i dodaju nove promenljive u toku izvrsavanja koda, pa se kod ne moze bas dobro optimizovati, sto trpi na performansama. Masina u ovom slucaju ne vrsi optimizacu koda, jer gubi svrhu.
+
+## Sazetak poglavlja
+
+Leksicki opseg vidljivosti znaci da je opseg vidljivosti definisan u vreme pisanja koda na osnovu odluka autora u vezi s deklaracijama funkcija. Leksicka analiza tokom faze kompajliranja koda uglavnom moze da odredi gde su i kako definisani svi identifikatori u programu, pa zato i da predvidi kako ce se oni traziti tokom izvrsavanja koda.
+
+Dva mehanizma u JavaScript-u mogu da omoguce "varanje" sa leksickim opsegom vidljivosti:
+
+- _eval(..)_
+- _with_
+
+_eval(..)_ moze da (u vreme izvrsavanja koda) izmeni postojeci leksicki opseg vidljivosti tako sto izvrsava "kod" zadat u obliku niza znakova koji sadrze jednu ili vise deklaracija.
+
+_with_ pravi novi opseg vidljivosti (u toku izvrsavanja koda) tako sto referencu na objekat tretira kao da je opseg vidljivosti a svojstva objekta kao identifikatore unutar tog opsega.
+
+Losa strana tih mehanizama je sto onemogucava masini jezika da tokom kompajliranja koda optimizuje pretrazivanje opsega vidljivosti. Posledica je da ce kod raditi sporije. Zato ih nemoj koristiti!
