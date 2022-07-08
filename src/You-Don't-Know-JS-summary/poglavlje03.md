@@ -43,3 +43,9 @@ Iako nikada necemo moci _sve_ da znamo o JS-u, posto stalno izlaze novi koncepti
 Opisuje nacin na koji treba da savladamo nove koncepte koji tek dolaze sledecim verzijama ES-a.
 
 **Buducnost JavaScripta je svetla. Sada je vreme da pocnemo da ga ucimo!**
+
+## Sazetak poglavlja
+
+Nicijie misljenje, nijedna pretpostavka u vezi s radnim okruzenjem i nijedan rok zavrsetka projekta ne bi trebalo da bude izgovor da nikada ne naucite i ne shvatite sustinu JavaScript-a.
+
+**Ucenje nije krajnji cilj, vec neprekidan proces.**

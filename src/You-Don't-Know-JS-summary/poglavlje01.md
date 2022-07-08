@@ -306,3 +306,18 @@ function spoljasnja() {
   console.log(a + b); // ReferenceError: b is not defined
 }
 ```
+
+## Sazetak poglavlja
+
+Da bi sagradio visoku kulu, pocinjes tako sto redjas ciglu jednu na drugu. Isto vazi i za programiranje.
+
+Osnovni gradivni blokovi koji se koriste u programiranju:
+
+- Trabaju nam _operatori_ pomocu kojih izvrsavamo odredjene akcije nad vrednostima
+- Trebaju nam vrednosti i _tipovi_ da bi izvrsavali razne vrste akcij, matematicke operacije nad vrednostima tipa _number_ ili prikazivali rezultate pomocu vrednosti tipa _string_
+- Trebaju nam _promenljive_ da bi cuvali podatke (stanje) tokom izvrsavanja programa
+- Trebaju nam uslovni iskazi, kao sto je iskaz if, da bi donosili odluke
+- Trebaju nam petlje da bi ponavljali odredjene poslove dok zadati uslov ne prestane da bude ispunjen
+- Trebaju nam funkcije da bi organizovali svoj kod u logicke i visekratno upotrebljive celine
+
+Komentarisanje koda je efikasan nacin da pisemo citljiviji kod. Lakse se odrzava i kasnije ispravlja.
