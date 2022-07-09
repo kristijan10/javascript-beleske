@@ -306,3 +306,55 @@ myCar.Drive();
 // Vozilo je u pokretu
 // Vozim na 4 tocka
 ```
+
+### Implicitni mesaci
+
+Tesno su povezani sa eksplicitnim pseudopolimorfizmom, tako da ista pravila i ogranicenja vaze i za implicitne mesace.
+
+```js
+var something = {
+  cool: function(){
+    this.greeting = "Helo World!";
+    this.count = thic.count ? this.count + 1 : 1;
+  }
+};
+
+/*
+// Pozivam funkciju kako bi se napravo prototip,
+// i a postavile vrednosti promenljivih greeting i count
+*/
+something.cool(); 
+something.greeting; // Hello World!
+something.count; // 1
+
+var another = {
+  cool: function(){
+    // implicitno umesavanje 'something' u 'another'
+    something.cool.call(this);
+  }
+};
+
+another.cool();
+another.greeting; // Hello World!
+another.count; // 1
+```
+
+Pozivanjem _something.cool.call(this)_ (sto se najcesce cini u konstruktoru ili unutar metode) pozajmljujemo funkciju _something.cool()_ i pozivamo je kontekstu objekta _another_.
+
+Iako se cini da je ova tehnika koristi prednosti ponovnog povezivanja this, njegova najslabija tacka je sam poziv funkcije (_something.cool.call(this)_) i preporucuje se da se ova tehnika izbegne koristiti.
+
+## Sazetak poglavlja
+
+Klase su model za projektovanje softvera. Mnogi jezici nude sintaksu za projektovanje softvera koja se prirodno zasniva na klasa, a JS takodje ima slicnu sintaksu koja se ponasa malo drugacije.
+
+Klasa -> Kopija
+
+Kada pravim instancu tradicionalne klase, kopira se ponasanje iz klase u instancu.
+
+JavaScript ne pravi automatski kopije (kao sto klase podrazumevaju) izmedju objekata.
+
+Model mesanja se koristi da na neki nacin simuliramo kopiranje klasa, ali obicno dovodi do ruze i krhe sintakse, sto automatski znaci tezi kod za odrzavanje i shvatanje.
+
+Eksplicitni mesaci nisu ni potpuno ekvivalentni kopiranju klasa, buduci da samo duplira deljenu referencu objekata i funkcija.
+
+Simuliranje klasa u JS-u cesto postavlja "nagazne mine" za buduce kodiranje, nego sto resava stvarne probleme.
