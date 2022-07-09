@@ -49,7 +49,7 @@ Arhitekta na crtez ucrtava sirinu, visinu, broj prozora, na kojoj visini, sirini
 
 Zatim preduzimac preuzima taj crtez i primenjuje ga na pravi svet, praveci stvarnu kopiju prema onome sto mu je arhitekta nacrtao. Moze se desiti da je na crtezu ucrtan neki deo koji ne moze biti primenjen na stvarnom svetu, pa ce morati biti dorade (menjanje svhe funkcije tako da odgovara izvedenoj klasi).
 
-Kada zavrsi sa tom zgradom, preduzimac moze da nastavi da gradi zgrade po tom istpom principu koji mu je predlozio arhitekta (mogu da izvodim vise klasa iz osnovne).
+Kada zavrsi sa tom zgradom, preduzimac moze da nastavi da gradi zgrade po tom istom principu koji mu je predlozio arhitekta (mogu da izvodim vise klasa iz osnovne).
 
 Crtez je samo klasa, sa njim ne mogu fizicki nista uraditi. Ako zelim otvoriti vrata zgrade, moram napraviti instancu crteza (moram izgraditi zgradu).
 
