@@ -116,3 +116,60 @@ Operacija ++ ekvivalenta je operaciji _myObj.a = myObj.a + 1_. Rezultat je pretr
 JavaScript nema apstraktne modele koji se zovu klase, on ima samo objekte.
 
 U JS-u ne mogu opisati sta jedan objekat moze da radi, jer on sam definise sopstveno ponasanje.
+
+### Funkcije "klase"
+
+Prilikom deklaracije funkcije, ona dobija javno, nenabrojivo svojstvo cije je ime _prototype_, i koje upucuje na neki proizvoljan objekat.
+
+```js
+function Foo(){
+  // ...
+}
+
+Foo.prototype; // { }
+```
+
+Svaki objekat napravljen pomocu rez. reci _new_ (_new Foo()_) biti povezan putem svojstva [[Prototype]] sa svojim "Foo tacka prototip" objektom.
+
+```js
+function Foo(){
+  // ...
+}
+
+var a = new Foo();
+
+Object.getPrototypeOf(a) === Foo.prototype; // true
+```
+
+Pozivanjem _new Foo()_ pravim svojstvo _a_, koje se, ispod haube, interno povezuje sa [[Prototype]] vezom objekta na koji upucuje _Foo.prototype_.
+
+U JS-u, za razliku od OOP jezika, pravljenjem instanci ustvari pravim internu vezu izmedju [[Prototype]] objekata instanciranih objekata.
+
+Rezultat pozivanja _new Foo()_ je novi objekat koji smo nazvali _a_, a taj novi objekat je interno, preko svog [[Prototype]], povezan s objektom Foo.prototype. To su ustvari samo dva medjusobno povezana objekta. Nista drugo. Nije instancirana ni jedna klasa. A nismo ni kopirali nikakvo ponasanje iz neke "klase".
+
+#### Sta je u imenu?
+
+**U JavaScriptu ne pravimo kopije jednog objekta ("klase") u drugi ("instancu"), nego uspostavljamo veze izmedju njih.**
+
+```mermaid
+flowchart RL
+  subgraph Foo
+  direction RL
+    a1 --> Foo.prototype
+    a2 --> Foo.prototype
+  end
+  subgraph Bar
+  direction RL
+    b1 --> Bar.prototype
+    b2 --> Bar.prototype
+  end
+  Bar.prototype --> Foo.prototype
+```
+
+Ovaj mehanizam se cesto naziva _prototipsko nasledjivanje_ (engl. _prototype inheritance_)
+
+Autor dodavanje reci "prototipsko" uz "nasledjivanje" poredi sa:
+
+>Kao kada drzimo u jednoj ruci pomorandzu, a u drugoj jabuku i uporno tvrdimo da je jabuka "crvena pomorandza". Bez obzira koliko zbunjujuci pridev dodamo ispred jabuka, to ne menja cinjenicu da je jedno voce pomorandza, a drugo jabuka.
+
+_Nasledjivanje_ podrazumeva operaciju _kopiranja_, a JavaScript ne kopira svojstva objekta. Umesto toga, JS uspostavlja vezu izmedju dva objekta,u kojoj jedan objekat **delegira** drugom objektu pristupanje datom svojstvu/funkciji.
