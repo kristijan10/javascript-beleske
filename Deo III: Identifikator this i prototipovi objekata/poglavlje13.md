@@ -173,3 +173,58 @@ Autor dodavanje reci "prototipsko" uz "nasledjivanje" poredi sa:
 >Kao kada drzimo u jednoj ruci pomorandzu, a u drugoj jabuku i uporno tvrdimo da je jabuka "crvena pomorandza". Bez obzira koliko zbunjujuci pridev dodamo ispred jabuka, to ne menja cinjenicu da je jedno voce pomorandza, a drugo jabuka.
 
 _Nasledjivanje_ podrazumeva operaciju _kopiranja_, a JavaScript ne kopira svojstva objekta. Umesto toga, JS uspostavlja vezu izmedju dva objekta,u kojoj jedan objekat **delegira** drugom objektu pristupanje datom svojstvu/funkciji.
+
+### "Konstruktori"
+
+```js
+function Foo(){
+  // ...
+}
+
+Foo.prototype.constructor === Foo; // true
+
+var a = new Foo();
+
+a.constuctor === Foo; // true
+```
+
+Objakat _Foo.prototype_ standardno dobija nenabrojivo, javno svojstvo _.constructor_ cija je vrednost referenca na objekat funkcije (u ovom slucaju Foo). Objekat _a_ napravljen konstruktorskim pozivom funkcije _Foo_ izgleda kao da ima sopstveno svojstvo _.constructor_ i koje isto upucuje na objekat koji ga je napravio (Foo).
+
+>To ustvari nije tacno.
+>
+>Objekat _a_ zapravo nema svojstvo _.constructor_, vec se to razrezava pregledom kroz [[Prototype]] lanac, gde nalazi u funkciji Foo
+
+#### Konstruktor ili konstruktorski poziv
+
+Funkcije nisu konstruktori, ali pozivi funkcija su "konstruktorski pozivi", ako i samo ako pritom upotrebim operator _new_.
+
+### Mehanika
+
+```js
+function Foo(name){
+  this.name = name;
+}
+
+Foo.prototype.myName = function(){
+  return this.name
+}
+
+var a = new Foo("a");
+var b = new Foo("b");
+
+a.myName(); // "a"
+b.myName(); // "b"
+```
+
+Ovaj primer prikazuje upotrebu dva dodatna "klasno orijentisana" trika:
+
+1) _this.name = name_ dodaje svojstvo _.name_ svakom objektu, slicno obliku u kojem instance kapsuliraju vrednosti podataka
+2) _Foo.prototype.myName = ..._ dodaje svojstvo (funkciju) objektu _Foo.prototype_.
+
+Zbog nacina na koji su napravljeni ovi objekti (povezani su s [[Prototype]] objektom funkcije _Foo_), mogu da pristupe funkciji _myName()_.
+
+#### Ponovo o "konstruktoru"
+
+**_.constructor_ ne znaci "objekat koji je konstruktor ovog objekta"**.
+
+Vrednost svojstva _Foo.constructor_ veoma je nepouzdana i nebezbedna referenca za upotrebu u kodu. Njihova upotreba se treba izbegavati gde god je to moguce.
