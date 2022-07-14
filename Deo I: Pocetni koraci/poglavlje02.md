@@ -444,8 +444,6 @@ var fred = User();
 fred.login("fred", "12Battery34!");
 ```
 
-> U fazi proucavanje, jer ne shvatam koncept
-
 ## Indentifikator this
 
 Rezervisana rec _this_ obicno upucuje na vrednost tipa _object_. Na koji to objekat upucuje zavisi od nacina pozivanja funkcije. _This_ nije referenca na funkciju u kojoj se nalazi, sto je cesto shvaceno uzevsi u obzir rec **this**.
