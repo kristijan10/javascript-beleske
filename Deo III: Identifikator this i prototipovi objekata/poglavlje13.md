@@ -228,3 +228,143 @@ Zbog nacina na koji su napravljeni ovi objekti (povezani su s [[Prototype]] obje
 **_.constructor_ ne znaci "objekat koji je konstruktor ovog objekta"**.
 
 Vrednost svojstva _Foo.constructor_ veoma je nepouzdana i nebezbedna referenca za upotrebu u kodu. Njihova upotreba se treba izbegavati gde god je to moguce.
+
+## (Prototipsko) nasledjivanje
+
+```js
+function Foo(name){
+  this.name = name;
+}
+
+Foo.prototype.myName = function(){
+  return this.name;
+}
+
+function Bar(name, label){
+  Foo.call(this, name);
+  this.label = label;
+}
+
+// Dodaje se novo svojstvo objekta Bar, prototype,
+// koji se povezuje s Foo.prototype
+Bar.prototype = Object.create(Foo.prototype);
+
+// Prethodnom linijom smo "izbrisali" svojstvo
+// `Bar.protoype.constructor`, pa ga zato sada
+// treba rucno ispraviti
+Bar.prototype.myLabel = function(){
+  return this.label;
+}
+
+var a = new Bar("a", "obj a");
+
+a.myName(); // "a"
+a.myLabel(); // "obj a"
+```
+
+>```js
+>Bar.prototype = Object.create(Foo.prototype);
+>```
+>
+>Linija koda koja pravi novo svojstvo _prototype_ u objektu _Bar_, koje interno povezuje sa [[Prototype]] lancem objekta _Foo_
+
+```js
+// Postoje jos dva nacina koja bi
+// mogla da padnu nekome napamet
+Bar.prototype = Foo.prototype;
+
+/*
+// Ovde bi svojstvo prototype objekta Bar bilo
+// povezano referencom na svojstvo prototype
+// objekta Foo.
+// U ovom bi slucaju, kada definisem svojstvo
+// myLabel() menjao deljenji (Foo.prototype)
+// sto znaci da bi to promena uticala na
+// svaki povezan objekat
+*/
+
+Bar.prototype = new Foo();
+
+/*
+// Ovaj poziv ne povezuje svojstvo prototype
+// objekta Bar sa prototype svojstvom objekta
+// Foo, vec pravi instancu celog objekta,
+// sto nam u ovom slucaju ne treba
+*/
+```
+
+ES6 je uveo standardizovan nacin povezivanja objekata _Bar.prototype_ i _Foo.prototype_:
+
+```js
+// pre ES6
+// odbacuje se postojeci objekat 'Bar.prototype'
+Bar.prototype = Object.create(Foo.prototype);
+
+// ES6
+// menja postojeci objekat 'Bar.prototype'
+Object.setPrototypeOf(Bar.prototype, Foo.prototype);
+```
+
+### Utvrdjivanje veza izmedju "klasa"
+
+**Introspekcija** (**refleksija**) proces ispitivanja da li objekat ima neki lanac, odnosno, da li je on napravljen tako da nasledjuje neki objekat.
+
+```js
+function Foo(){
+  // ...
+}
+
+Foo.prototype.blah = ...;
+
+var a = new Foo();
+```
+
+Jedan od resenja pitanja 'Kako saznati ko su preci objekta _a_' je koriscenje operatora _instanceof_.
+
+1) Nacin
+
+    ```js
+    a instanceof Foo; // true
+    ```
+
+    >Operator _instanceof_ sa svoj leve strane prima obican objekat, dok sa svoje desne strane ocekuje funkciju.
+    >
+    >Radi tako sto pregleda da li se negde u [[Prototype]] lancu objekta _a_ pojavljuje objekat na koji upucuje _Foo.prototype_
+
+    U slucaju da uporedjujem dva nasumicna objekta, koriscenje samo operatora _instanceof_ nece biti dovoljna.
+
+    ```js
+    /*
+    // pomocna funkcija za utvrdjivanje da li
+    // je objekat 'o1' povezan s objektom
+    // (delegira objektu) 'o2'
+    */
+    function isRelated(o1, o2){
+      function F();
+      F.prototype = o2;
+      return o1 instanceof F;
+    }
+
+    var a = {};
+    var b = Object.create(a);
+
+    isRealted(b, a); // true
+    ```
+
+    >Besmisleno je ispitivati povezanost dva objekta pomocu "klasnog" _instanceof_ prilaza.
+    >
+    >U f-ji _isRelated(..)_ ispitujem da li je _o1_ instanca novonapravljene _F_ f-je. Iako _o1_ nema nikakve veza sa _F_, f-ja je vratila potvrdan odgovor
+
+2) Cistiji nacin ispitivanja [[Prototype]] lanca:
+
+    ```js
+    Foo.prototype.isPrototypeOf(a); // true
+    ```
+
+    >Metoda _isPrototypeOf(..)_ odgovara na pitanje:
+    >
+    >u celom [[Prototype]] lancu objekta _a_, da li se negde pojavljuje isti objekat na koji upucuje i svojstvo _Foo.prototype_?
+
+JS programeri su smislili rec za naziv dve donje crtice __ - **dander (dunder)**.
+
+Zato bi se za "__prot\__" citalo _dander prots_.
