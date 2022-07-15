@@ -365,6 +365,123 @@ Jedan od resenja pitanja 'Kako saznati ko su preci objekta _a_' je koriscenje op
     >
     >u celom [[Prototype]] lancu objekta _a_, da li se negde pojavljuje isti objekat na koji upucuje i svojstvo _Foo.prototype_?
 
-JS programeri su smislili rec za naziv dve donje crtice __ - **dander (dunder)**.
+>JS programeri su smislili rec za naziv dve donje crtice __ - **dander (dunder)**.
+>
+>Zato bi se za "__prot\__" citalo _dander prots_.
 
-Zato bi se za "__prot\__" citalo _dander prots_.
+## Veze izmedju objekata
+
+[[Prototype]] je interna veza koja postoji u jednom objektu koji referencira neki drugi objekat.
+
+Ta veza se koristi kada se neka metoda/svojstvo poziva u prvom objektu, a u njemu samom to svojstvo/metoda ne postoji. U tom slucaju, [[Prototype]] veza pokazuje masini jezika u kojem povezanom objektu treba da trazi to svojstvo/metodu. Ako i taj povezani objekat nema to svojstvo/metodu, onda se dalje pretrazuje njegov lanac. Taj niz veza izmedju objekata se naziva **prototipski lanac**.
+
+### Uspostavljanje veza pomocu metode Create()
+
+```js
+var foo = {
+  something: function(){
+    console.log("Reci mi nesto..");
+  }
+}
+
+var bar = Object.create(foo);
+bar.something(); // "Reci mi nesto.."
+```
+
+_Object.create(..)_ nam omogucava da, bez ikakvih zezanja sa _.contructor_ i _.prototype_ svojstvima, dobijemo delegirajuci (izvedeni) objekat.
+
+Objekti sa praznim [[Prototype]] lance se cesto nazivaju "**recnici**", jer se obicno koriste za cuvanje podataka u obliku svostava (jer ne mogu proizvesti nikakav iznenadjujuci efekat zbog delegiranih svojstava/metoda kroz lanac).
+
+#### Polifil za metodu Object.create()
+
+```js
+if(!Object.create){
+  Object.create = function(o){
+    function F(){};
+    F.prototype = o;
+    return new F();
+  }
+}
+```
+
+Ovaj blok koda je backup za starije verzije EcmaScripta.
+
+_Object.create(..)_ je uveden u ES5.
+
+Ovaj oblik upotrebe _Object.create(..)_ najcesci je, jer je to deo koji se moze polifilovati. A postoji i drugi deo, dadatan skup funkcionalnosti koji pruza metoda _Object.create(..)_, a koji ne moze biti polifilovan.
+
+```js
+var anotherObj = {
+  a: 2
+}
+
+var myObj = Object.create(anotherObj, {
+  b: {
+    enumerable: false,
+    writable: true,
+    configurable: false,
+    value: 3
+  },
+  c: {
+    enumerable: true,
+    writable: false,
+    configurable: false,
+    value: 4
+  }
+});
+
+myObj.hasOwnProperty("a"); // false
+myObj.hasOwnProperty("b"); // true
+myObj.hasOwnProperty("c"); // true
+
+myObj.a; // 2
+myObj.b; // 3
+myObj.c; // 4
+```
+
+>Drugi argument functije _Object.create(..)_ cine imena svojstava koja se dodaju novonastalom objektu, a uz svako ime zadaje se i odgovarajuci _deskriptor svojstva_.
+
+To je ustvari ono sto se ne moze polifilovati, dodatak deskriptora svojstava.
+
+Neki programeri nalazu da, ako se ne moze polifilovati cela funkcija, onda ne treba ni pokusavati polifilovati, niti koristiti njeno ime za pravljenje polifilovanog oblika (stroze misljenje).
+
+```js
+// Stroze misljenje
+function createAnLink(o){
+  function F(){}
+  F.prototype = o;
+  return new F();
+}
+
+var anotherObj = {
+  a: 2
+}
+
+var myObj = createAndLink(anotherObj);
+
+myObj.a; // 2
+```
+
+### Prototipske veze jai rezervne mogucnosti?
+
+Iako se cini da bi mogucnosti [[Prototype]] lanca mogli da iskoristavamo kada  programer pozove funkciju koja nije definisana u lokalnom opsegu, vec ce krenuti dalje kroz lanac da je trazi, ali to nije bas dobar nacin dizajniranja softvera, jer tada se dogadja nesto "magicno", sto ce mozda zbuniti programere koji odrzavaju softver posle nas.
+
+Posto nije ocekivano da pozivanje nedefinisane funkcije u lokalnom opsegu radi, to je ono sto moze da izazove cvor u shvatanju koda.
+
+Zato se to resava tako sto napravimo drugu metodu unutar objekta iz kog pozivamo metodu/svojstvo koje je definisano u roditeljskom objektu i u njoj pozivamo to svojstvo/metodu iz roditeljskog objekta.
+
+```js
+var anotherObj = {
+  fun: function(){
+    console.log("cool");
+  }
+}
+
+var myObj = object.create(anotherObj);
+
+myObj.doFun = function(){
+  this.fun(); // interno delegiranje
+}
+
+myObj.doFun(); // "cool"
+```
