@@ -485,3 +485,13 @@ myObj.doFun = function(){
 
 myObj.doFun(); // "cool"
 ```
+
+## Sazetak poglavlja
+
+Kada pokusam da pristupim nekom svojstvu koje nije deklarisano u opsegu vidljivosti pozivanog objekta, operacija [[Get]] pretrazuje [[Prototype]] lanac. To kaskadno povezivanje s objekta na objekat definise "prototipski lanac" koji treba pretraziti radi razresenja svojstva.
+
+Svi objekti imaju ugradjen objekat Object.prototype na kraju svog prototipskog lanca, gde se zavrsava postupak razresenja svojstva ako ono nije nadjeno pre kraja lanca.
+
+Najuobicajniji nacin za uspostavljanje veze izmedju dva objekta je pomocu rezervisane reci _new_, koja se nalazi ispred poziva funkcije. Ovakva sintaksa (poziv funkcije uz rez. rec _new_) se naziva jos i "konstruktor".
+
+Iako ti mehanizmi (pokusaj kopiranja mehanizma klasa OOP jezika) mogu liciti na "instanciranje klasa" , kljucna razlika je to sto u JS-u se ne prave kopije niceg, vec se objekti povezuju jedan s drugim interno, preko [[Prototype]] lanca. Umesto toga, "delegiranje" je mnogo bolja rec za opisivanje nacina funkcionisanja povezanosti izmedju objekata, zato sto te veze izmedju objekata nisu kopije nego delegujuce veze.
