@@ -108,3 +108,24 @@ Ne mozemo formirati ciklus gde dva ili vise objekata delegiraju (dvosmerno) jeda
 Kada bi referencirao neko svojstvo/metodu koja ne postoji u ni u jednom objektu, dobijam beskonacnu rekurziju u [[prototype]] petlji.
 
 Ali i kada bi postojale, onda bi B mogao delegirati u A, sto znaci da bi mogao podesiti tako da jedan delegira u drugi, za razne poslove.
+
+#### Ispravljena greska
+
+Chrome, u vreme pisanja knjige, je imao razlicit nacin prikazivanja da li je objekat napravljen pomocu operatora _new_ ili je nepravljen pomocu metode _Object.create()_.
+
+```js
+function Foo(){}
+
+var a1 = new Foo();
+
+a1; // Foo{} (Chrome)
+a1; // Object{} (Firefox)
+```
+
+>Chrome u sustini kaze: "_a1_ je prazan objekat za ciju konstrukciju je odgovorna funkcija _Foo_"
+>
+>Firefox kaze: "_a1_ je prazan objekat konstruisan pomocu objekta _Object_"
+
+Ova greska bi trebala da je ispravljena.
+
+Ovo Chromovo specificno ucitavanje internog "imena konstruktora" korisno je samo ako u potpunosti primenjujemo stil kodiranja s klasama.
