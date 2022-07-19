@@ -543,3 +543,174 @@ AuthController.checkAuth();
 ```
 
 Postignuta je ista funkcionalnost, ali pomocu znatno jednostvanijeg programa.
+
+## Lepsa sintaksa
+
+ES6 sintaksa _class_ je dosta pojednostavila upotrebu "klasa" u JS-u.
+
+```js
+class Foo{
+  methodName(){
+    /...
+  }
+}
+```
+
+Uklonjena je upotreba rez. reci _function_ da deklaracije metoda, sto je dalo ideju da se to uradi i za OPDO stil koda. Tako da jedina sada razlika izmedju ES6 _class_-a i OPDO stila pisanja koda je sto u OPDO stilu koda metode moras razdvajati zarezom (jer su to ustvari svojstva objekta...).
+
+```js
+var LoginController = {
+  errors = [],
+  getUser(){
+    // vidi, nema rez. reci function
+  }
+  getPass(){
+    // ...
+  }
+}
+```
+
+ES6 je takodje omogucio noviju sintaksu za povezivanje objekata tako da delegira jedan drugom pomocu _Object.setPrototypeOf(obj1, obj2)_, gde je _obj1_ onaj koji delegira, a _obj2_ onaj u koji se delegira.
+
+```js
+var AuthController = {
+  errors: [],
+  checkAuth(){
+    // ...
+  },
+  server(url, data){
+    // ...
+  }
+}
+
+// povezivanje tako da AuthController delegira u LoginController
+Object.setPrototypeOf(AuthController, LoginController);
+```
+
+### Neleksicki deo
+
+Postoji jedna mala mana upotrebe novije, skracene verzije deklarisanja metoda - anonimna funkcija.
+
+```js
+var obj = {
+  foo(){
+    // ...
+  },
+  bar: function bar(){
+    // ...
+  }
+}
+```
+
+Kako bi izgledalo bez sintaksnih skracenica:
+
+```js
+var obj = {
+  foo: function(){
+    // ...
+  },
+  bar: function bar(){
+    // ...
+  }
+}
+```
+
+Anonimne funkcije nemaju _name_ kojim bi se mogle pozvati prilikom poziva u lokalnom opsegu. Primer:
+
+```js
+var obj = {
+  bar: function(x){
+    if(x<10) return obj.bar(x*2);
+    return x;
+  },
+  foo: function foo(x){
+    if(x<10) return foo(x*2);
+    return x;
+  }
+}
+```
+
+Ovo je sada jednostavan primer, ali da imam kompleksniji kod gde objekat _obj_ delegira u neki drugi objekat ili on delegira nekom drugom objektu moze se desiti zbrka sa pozivom tog svojstva _obj.bar(x*2)_.
+
+Resenje: ako imam metodu gde mi treba sam njen poziv u lokalnom opsegu, promeni iz skracene u puniju sintaksu i daj funkciji ime!
+
+## Introspekcija tipova
+
+Introspekcija tipova (engl. type introspection) sluzi za utvrdjivanje strukture/karakteristika datog objekta na osnovu toga _kako je on bio napravljen_.
+
+```js
+function Foo(){
+  // ...
+}
+
+Foo.prototype.something = function(){
+  // ...
+}
+
+var a1 = new Foo();
+a1.prototype = Object.create(Foo.prototype);
+
+if(a1 prototypeof Foo){
+  a1.something();
+}
+```
+
+U ovom ce slucaju _a1.something()_ biti izvrseno => _a1_ jeste "nasledio" Foo "klasu".
+
+```js
+function Foo(){/*...*/}
+Foo.prototype/*...*/;
+
+function Bar(){/*...*/}
+Bar.prototype = Object.create(Foo.prototype);
+
+var b1 = new Bar("b1");
+
+// veza izmedju Foo i Bar
+Bar.prototype instanceof Foo; // true
+Object.getPrototypeOf(Bar.prototype) === Foo.prototype; // true
+Foo.prototype.isPrototypeOf(Bar.prototype); // true
+
+// veze izmedju b1, Foo, Bar
+b1 instanceof Bar; // true
+b1 instanceof Foo; // true
+Object.getPrototypeOf(b1) === Bar.prototype; // true
+Foo.prototype.isPrototypeOf(b1); // true
+Bar.prototype.isPrototypeOf(b1); // true
+```
+
+Kompleksna sintaksa dovodi do kasnijeg zbunjivanja i zapeljavanja. Igled predvodi na koriscenje klasa, sto mi se bas ne svidja.
+
+OPDO stil koda ponovo pobedjuje:
+
+```js
+var Foo = {
+  // ...
+}
+
+var Bar = Object.create(Foo);
+Bar/*...*/;
+
+var b1 = Object.create(Bar);
+
+// veza izmedju Foo i Bar
+Foo.isPrototypeOf(Bar); // true
+Object.getPrototypeOf(Bar) === Foo; // true
+
+// veza izmedjub1, Foo, Bar
+Foo.isPrototypeOf(b1); // true
+Bar.isPrototypeOf(b1); // true
+Object.getPrototypeOf(b1) == Bar; // true
+```
+
+Sada je potrebno da postavimo pitanje "Da li si ti prototip mene?". Nema potrebebe za indirekcijom nepotrebnih stvari _Foo.prototype_...
+
+## Sazetak poglavlja
+
+Klase i nasledjivanje su modeli projektovanja koji mozete izabrati ili ne izabrati za svoju softversku arhitekturu. Vecina projektanata uzima zdravo za gotovo da su klase jedini (ispravan) nacin organizovanja koda, ali se ipak dokazalo da postoji jos jedan, prilicno mocan model - **delegiranje ponasanja**.
+
+Delegiranje ponasanja podrazumeva da su objekti potpuno ravnopravni i da medjusobno delegiraju funkcije i metode, umesto da izmedju njih postoje veze kao izmedju roditeljskih i nasledjenih klasa.
+
+Kada projektujes kod koji radi iskljucivo s objektima, to ne samo sto pojednostavljuje sintaksu programa vec cesto i njegovo strukturu.
+
+OPDO (Objekti povezani drugim objektima) je stil pisanja koda u kojem se objekti direktno prave i povezuju jedni s drugima, bez apstrakcije klasa. Pomocu mehanizma [[Prototype]] OPDO sasvim prirodno implementira delegiranje ponasanja.
