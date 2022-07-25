@@ -18,7 +18,7 @@ Postoji sedam ugradjenih tipova:
 6. object
 7. symbol
 
-Prilikom ispitivanja kojeg je tipa _null_ JS vraca gresku, prikazuje ga kao _objekat_.
+Prilikom ispitivanja kojeg je tipa _null_ JS ga prikazuje kao _objekat_.
 
 ```js
 typeof null === "object"; // true
@@ -38,9 +38,7 @@ _null_ je jedina primitivna vrednost koja se ponasa kao _false_ a koja vraca rez
 _typeof_ moze da vrati jednu od sedam znakovnih vrednosti: object, string, number, symbol, undefined, boolean, function
 
 ```js
-typeof function a() {
-  /*...*/
-} === "function"; // true
+typeof function a() {} === "function"; // true
 ```
 
 Smatra se da je funkcija - objekat koji se poziva. On ima interno svojstvo [[Call]] koje mu omogucava da se poziva.
