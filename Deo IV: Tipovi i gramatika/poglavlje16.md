@@ -403,3 +403,48 @@ JSON.parse("-0"); // -0
 Zato moram da vodim racuna o razlici izmedju pozitivne i negativne 0?
 
 Aplikacije koje npr. prikazuju animacije. Broj se koristi za oznacavanje dokle je objekat koji se animira stigao a predznak u kom se pravcu kretao. -0 znaci da je isao iz negativnog smera i stigao do pocetka...
+
+Jedan od nacina da proverimo istinski da li je vrednost -0 je koristeci funkciju:
+
+```js
+function isNegZero(n){
+  n = Number(n);
+  return (n === 0) && (1 / n === -Infinity);
+}
+
+isNegZero(-0); // true
+isNegZero(0 * (-3)); // true
+isNegZero(0); // false
+```
+
+### Specijalna jednakost
+
+NaN i -0 su jedine vrednosti koje se ponasaju cidnije od ostalih vrednosti. Zato sa njima moramo povesti vise racuna. JS programeri su dodali funkciju koja nam moze pomoci da ispitamo da li je neka vrednost odredjene vrednosti:
+
+```js
+var a = 2 / "foo";
+var b = 0 * (-3);
+
+Object.is(a, NaN); // true
+Object.is(b, -0); // true
+Object.is(b, 0); // false
+```
+
+Polifil:
+
+```js
+if(!Object.is){
+  Object.is = function(v1, v2){
+    // test za -0
+    if(v1 === 0 && v2 === 0) return 1/v1 === 1/v2;
+
+    // test za NaN
+    if(v1 !== v1) return v2 !== v2;
+
+    // za ostalo
+    return v1 === v2;
+  }
+}
+```
+
+Metoda _Object.is(..)_ je preporucena za koriscenje ukoliko radimo sa specijalnim vrednostima (NaN i -0), a za ostalo se preporucuje koriscenje operatora == i ===.
