@@ -448,3 +448,130 @@ if(!Object.is){
 ```
 
 Metoda _Object.is(..)_ je preporucena za koriscenje ukoliko radimo sa specijalnim vrednostima (NaN i -0), a za ostalo se preporucuje koriscenje operatora == i ===.
+
+## Prosledjivanje po vrednosti i po referenci
+
+U C++ jeziku mozemo primetiti razliku kada se promenljivoj deklarise vrednost po referenci ili joj se uvozi vrednost kao kopija. Misli se na pokazivace, koji imaju drugaciju sintaksu. Kada se promenljivoj dodeli vrednost pokazivaca, to oznacava da joj je dodeljena vrednost po referenci.
+
+U JS-u nema nikakve sintakse koja bi nam pokazala kako se dodeljuje vrednost promenljivoj, da li kao kopija ili kao referenca na drugu promenljivu. Masina to odredjuje u zavisnosti od toga sta je dodeljeno promenljivoj.
+
+```js
+var a = 2;
+var b = a; // 'b' sadrzi kopiju vrednosti 'a'
+
+b++;
+a; // 2
+b; // 3
+
+var c = [1, 2, 3];
+var d = c; // 'd' sadrzi referencu na deljenu vrednost 'c'
+
+d.push(4);
+c; // [1, 2, 3, 4]
+d; // [1, 2, 3, 4]
+```
+
+Primitivne / proste vrednosti se uvek prosledjuju drugoj promenljivoj kao kopije izvorne vrednosti.
+
+>Da se podsetim:
+>
+>Prosti tipovi: number, string, undefined, boolean, null i symbol
+>
+>Slozeni tipovi: object (podtipovi: array, function)
+
+Vrednost 2 je primitivna vrednost, sto znaci da ce se samo kopirati u promenljivu _b_. Kada nesto ucinimo nad promenljivom b, radimo samo nad kopijom koja je preuzeta iz promenljive _a_.
+
+U slucaju s promenljivima _c_ i _d_ je malo drugacije. Obe promenljive upucuju na jednu, zajednicku vrednost. Kada nesto ucinim nad promenljivom _d_, menjam zajednicku, deljenu vrednost. Ali pazi, ako promenljivoj _d_ dodelim neku drugu vrednost, to nema nikakve veze s promenljivom _c_ i tada ne uticem na tu deljenu vrednost:
+
+```js
+var c = [1, 2, 3];
+var d = c;
+
+c; // [1, 2, 3];
+d; // [1, 2, 3];
+
+d.push(4);
+
+c; // [1, 2, 3, 4]
+d; // [1, 2, 3, 4]
+
+d = [5, 6, 7];
+
+c; // [1, 2, 3, 4]
+d; // [5, 6, 7]
+```
+
+Do ove zbrke dolazi kod menjanja vrednost slozenih parametara:
+
+```js
+function foo(x){
+  x.push(4);
+  x; // [1, 2, 3, 4]
+
+  /*
+  // menjam vrednost promenljive x
+  // koja ne utice na promenljivu a
+  */
+  x = [4, 5, 6];
+  x.push(7);
+  x; // [4, 5, 6, 7];
+}
+
+var a = [1, 2, 3];
+
+/*
+// promenljivoj x dodeljujem vrednost po referenci
+// i pokazuje na deljenu vrednost [1, 2, 3]
+// linija x = [4, 5, 6] radi nad x promenljivoj
+// ali ne utice na to na koju vrednost promenljiva
+// a ima
+*/
+foo(a);
+a; // [1, 2, 3, 4]
+```
+
+Ovaj kod bi mogao da se resi na:
+
+```js
+function foo(x){
+  x.push(4);
+  x; // [1, 2, 3, 4]
+
+  x.length = 0;
+  x.push(4, 5, 6, 7);
+  x; // [4, 5, 6, 7]
+}
+
+var a = [1, 2, 3];
+
+foo(a);
+a; // [4, 5, 6, 7]
+```
+
+A ako bi zeleo da koristim primitivnu vrednost kao referencu (da ako dodje do menjanja, svakoj promenljivoj koja je "povezana" na izvornu promenljivu, promenim vrednost), to mogu uraditi tako sto tu vrednost okruzim u neku slozenu vrednost:
+
+```js
+function foo(wrapper){
+  wrapper.a = 42;
+}
+
+var obj = {
+  a: 2
+}
+
+foo(obj);
+
+obj.a; // 42
+```
+
+Objakt _obj_ ovde igra ulogu omotaca za primitivnu vrednost promenljive _a_. Funkciji se prosledjuje referenca na objekat _obj_ kroz parametar _wrapper_. Sada je moguce menjati deljeno svojstvo _obj.a_.
+
+## Sazetak poglavlja
+
+U JS-u, nizovi samo su numericki indeksirane kolekcije vrednosti proizvoljnog tipa. Znakovni nizovi (string) donekle su "nalik nizovima", ali imaju drugacije ponasanje i mora se obratiti dodatna paznja ako ih zelim koristiti bas kao nizove (ali ne vidim ni korist ni logiku zasto bi to radio).
+
+Tip null ima samo jednu vrednost - null. Vrednost undefined je u sustini podrazumevana vrednost svake promenljjive ili svojstva ako im nije dodeljena ni jedna vrednost. Operator void omogucava da od bilo kog tipa dobijem undefined.
+
+Tip number ima vise specijalnih vrednosti kao sto su NaN, Infinity, -Infinity pa cak u -0.
+
+Jednostavne skalarne primitive (string, number..) dodeljuju/prosledjuju se u obliku kopije vrednosti, ali se kombinovane vrednosti (tipa object) dodeljuju/prosledjuju u obliku kopije reference.
