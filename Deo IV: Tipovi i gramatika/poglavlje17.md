@@ -155,3 +155,72 @@ Ono sto se ustvari desava je: _Array.apply(..)_ poziva funckiju _Array(..)_ kojo
 I to ustvari izgleda ovako: _Array.apply(undefined, undefined, undefined)_
 
 Savet: nemoj se igrati s **praznim nizovima**
+
+### Konstruktori Object(..), Function(..) i RegExp(..)
+
+Da skratim pricu, nema potrebe koristiti ih u konstruktorskom obliku.
+
+>Ne znam sta je RegExp
+>
+>Update: ako sam dobro shvatio, RegExp je koriscen za pretrazivanje odredjenog izraza u zadatom izrazu. Pretpostavljam da se to desava iza Find and Replace komande u aplikacijama/browserima...
+>
+>TODO: [Nauciti RegExp](https://www.sitepoint.com/learn-regex/)
+
+### Konstruktori Date(..) i Error(..)
+
+Ovo su jedini korisni konstruktori od ovih sto sam do sada nabrojao, jer su ovo jedini objekti koji nemaju literalni oblik definisanja.
+
+Konstruktor _Error(..)_ se obicno definise pomocu operatora _throw_:
+
+```js
+function foo(x){
+  if(!x) throw new Error("x nije zadat");
+}
+
+foo(); // Uncaught Error: x nije zadat
+```
+
+### Konstruktor Symbol(..)
+
+Promenljiva tipa "symbol" se pravi bez koriscenja rez. reci _new_.
+
+```js
+var mysym = Symbol("moj prvi simbol");
+
+var a = {};
+a[mysym] = "foobar";
+
+console.log(a); // {Symbol(moj prvi simbol): 'footbar'}
+```
+
+Koristi se za imenovanje privatnih svojstava.
+
+#### Izvorni prototipovi
+
+Svaki tip ima ugradjeni _prototype_ objakat koji sadrzi svojstva i metode specificne za taj tip.
+
+On je taj koji nam omogucava koriscenje metoda _.toUpperCase(), indexOf(..), toString()_ nad vrednostima tipa string...
+
+##### Prototipovi kao podrazumevane vrednosti
+
+```js
+function foo(vals, fn, rx){
+  vals = vals || Array.prototype;
+  fn = fn || Function.prototype;
+  rx = rx || RegExp.prototype;
+}
+```
+
+_Array.prototype_ je prazna array lista.
+
+_Function.prototype_ je prazna funkcija.
+
+_RegExp.prototype_ je prazan regularni izraz.
+
+Treba samo voditi racuna da se te zadate vrednosti mogu samo citati, treba ih izbegavati menjati.
+
+## Sazetak poglavlja
+
+JavaScript stavlja na raspolaganje objektne omotace za primitivne vrednosti, koji su poznati kao izvorni objekti (String, Number, Boolean itd.). Ti objektni omotaci omogucavaju da vrednosti pistupaju metodama i svojstvima odgovarajucih objektnih podtipova (String#trim() i Array#concat(..)).
+
+Ako imate jednostavnu skalarnu primitivnu vrenodst, kao sto "abc" i zelite da pristupite njenom svojstvu length ili nekoj metodi objekta String.prototype, JS automatski "pakuje" tu vrednost (umece je u odgovarajuci objektni omotac) da bi se moglo pristupati svojstvu/metodi.
