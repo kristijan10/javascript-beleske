@@ -244,3 +244,65 @@ else console.log("nisam prosao");
 #### Vrednosti koje se ponasaju kao true
 
 Da skratim, sve sto se NE nalazi na listi vrednosti koje se konverzijom u _boolean_ smatraju kao _false_, ponasa se kao _true_. Ta lista je prilicno dugacka, zato se ne treba ni truditi pisati je, vec je mnogo mudrije proveriti da li se vrednost koju ispitujemo nalazi na listi za _false_, i ako se nalazi - vrednost ce implicitno/eksplicitno biti konvertovan u _false_, a u suprotnom _true_.
+
+## Eksplicitna konverzija
+
+### Eksplicitno: znakovni niz <--> brojevi
+
+Najcesca konverzija (iz stringa u broj).
+
+```js
+var a = 42;
+var b = String(a); // "42"
+
+var c = "3.14";
+var d = Number(c); // 3.14
+```
+
+Ovo je najocigledniji tip eksplicitnog konvertovanja. Slicna ideja je i u jezicima gde je staticko odredjivanje tipova.
+
+>U C/C++ bi se pretvaranje vrsilo na nacin: int(x) (mada postoji i drugi zapis - (int)x (kasting tipa, engl. type casting))
+>
+>Sto je mnogo slicno JS nacinu: Number(x)
+
+A postoje i mnogo drugih nacina:
+
+```js
+var a = 42;
+var b = a.toString(); // "42"
+
+var c = "3.14";
+var d = +c; // 3.14
+```
+
+Metoda _toString()_ radi malo drugacije nego sto sam zamisljao. Nisam uopste razmisljao o tome kako radi, tako da nije ni to lose receno xD
+
+Da bi iskoristio metodu nad primitivnom vrednoscu moram da je "upakujem" u okruzujuci objekat. Makar to nije nesto o cemu moram da razmisljam jer JS masina to radi umesto mene. Ovo je primer "eksplicitno implicitnog" konvertovanja.
+
++c je vec opste prihvacen oblik eksplicitnog nacina konvertovanja prihvacen u zajednici za otvoren JS kod.
+Ali ovaj oblik takodje moze lako i da zbuni.
+
+```js
+var a = "3.14";
+var b = 5 + +a; // 8.14
+
+/*
+// palo mi je napamet zasto nije samo stavio 5 + a
+// var c = 5 + a; // 53.14
+// var d = a + 5; // 3.145
+*/
+```
+
+Kako moze sa +, tako moze i sa -. Samo sto prilikom koriscenja s operacijom -, menja se znak broja.
+
+```js
+var a = "3.14"
+var b = -a; // -3.14
+
+/*
+// da bi ponovo prebacio
+// u pozitivnu stranu
+// mogu iskoristit jos jedan minus:
+// var b = - -a; // 3.14
+*/
+```
