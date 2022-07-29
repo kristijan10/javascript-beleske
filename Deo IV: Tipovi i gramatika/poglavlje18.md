@@ -169,3 +169,78 @@ JSON.stringify(a, null, "-----");
 Vrednosti tipa _number, boolean, string i null_ pretvaraju se u JSON format kao kada bi iskoristio _toString()_ metodu.
 
 Dok, ako _JSON.stringify(..)_ metodi prosledim vrendnost tipa _object_, a taj objekat ima definisanu metodu _toJSON()_, ta metoda se poziva automatski zbog "konverzije" tipa te vrednosti u JSON bezbedan oblik pre pretvaranja u JSON znakovni oblik.
+
+### Operacija toNumber
+
+Ako konverzija tipa _string_ u tip _number_ nije izvodljiva, operacija ce vratitit _NaN_ vrednost.
+
+Ako koristim neku vrednost koja nije broj uz matematicku operaciju, masina ce tu vrednost pretvoriti u numbericku alternativu.
+
+>true postaje 1; false postaje 0; undefined postaje NaN; null (neobjasnjivo) postaje 0
+
+Ako pokusavam da konvertujem slozen tip vrednosti (objekat/array) _toNumber_ metoda ce potraziti da li u internom opsegu tog objekta ima definisana metoda _toString()_ ili _valueOf()_.
+
+```js
+var a = {
+  valueOf: function(){
+    return "42";
+  }
+}
+
+var b = {
+  toString: function(){
+    return "42";
+  }
+}
+
+var c = [4, 2];
+c.toString = function(){
+  return this.join(""); // "42"
+}
+
+Number(a); // 42
+Number(b); // 42
+Number(c); // 42
+Number(""); // 0
+Number("42"); // 42
+Number("3e"); // NaN
+Number([]); // 0
+Number(["abc"]); // NaN
+Number(undefined); // NaN
+```
+
+### Operacija toBoolean
+
+Cesto pogresno misljenje vlada medju programerima da su numericke vrednosti _1_ i _0_ jednake vrednostima _true_ i _false_. Numericke vrednosti su numericke vrednosti, a logicke su logickke vrednosti. Ako bi se izvrsila konverzija tada bi _1_ mogao da postane _true_ (i obrnuto; a tako i za _0_ i _false_).
+
+#### Vrednosti koje se ponasaju kao false
+
+Prilikom konverzije tipova u boolean tip moze se suziti na:
+
+1) tipovi koji se pretvaraju u _false_
+2) svi ostali, odnosno, oni koji se pretvaraju u _true_
+
+Vrednosti koje se pretvaraju u _false_:
+
+- undefined
+- null
+- false
+- +0, -0, NaN
+- ""
+
+Sve ostale vrednosti koje postoje u JS-u se smatraju kao _true_.
+
+#### Objekti koji se ponasaju kao false
+
+Jedan primer koji je autor naveo je objekat _document.all_. Taj objekat je isti kao i svi drugi objketi u JS-u. Smatra se zastarelim ali autor nije naveo zbog cega je odluceno da se taj obican objekat prikazuje kao _false_.
+
+```js
+if(document.all) console.log("prosao sam");
+else console.log("nisam prosao");
+
+// "nisam prosao"
+```
+
+#### Vrednosti koje se ponasaju kao true
+
+Da skratim, sve sto se NE nalazi na listi vrednosti koje se konverzijom u _boolean_ smatraju kao _false_, ponasa se kao _true_. Ta lista je prilicno dugacka, zato se ne treba ni truditi pisati je, vec je mnogo mudrije proveriti da li se vrednost koju ispitujemo nalazi na listi za _false_, i ako se nalazi - vrednost ce implicitno/eksplicitno biti konvertovan u _false_, a u suprotnom _true_.
