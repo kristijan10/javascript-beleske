@@ -306,3 +306,94 @@ var b = -a; // -3.14
 // var b = - -a; // 3.14
 */
 ```
+
+#### Konverzija datuma u broj
+
+Jos jedan cest oblik upotrebe unarnog operatora + je prilikom konverzije datumskog objekta u tip _number_.
+
+```js
+var d = new Date();
+
++d; // broj u milisekundama koji je protekao od 1. januara 1970. godine
+```
+
+Najbolji nacin da dobijem informaciju o vremenu je koriscenjem nove metode _now_ u _Date_ objektu:
+
+```js
+var a = Date.now();
+
+// polifil
+if(!Date.now){
+  Date.now = function(){
+    return +new Date();
+  }
+}
+```
+
+**Preporuka**: nemoj koristiti oblik konverzije datuma, vec koristi metodu _Date.now()_ ako ti je potrebno trenutno vreme, a u suprotnom _new Date(..).getTime()_
+
+#### Neobican slucaj operatora ~
+
+Spada u opseg eksplicitnog konvertovanja.
+
+Ono sto se desava je da on prvo konvertuje u 32-bitni broj, a zatim negira sve bitove tog broja (obrce paritet svakog bita)
+
+-1 se obicno naziva kontrolna vrednost (engl. _sentinel_). Kada funcija vrati bilo koji vrednost >=0, to se tumaci kao uspeh, dok ako vrati -1 neuspeh. Jedan primer njene primene je metoda _indexOf(..)_. Ako ne nadje postring u stringu f-ja vraca -1, a ako nadje, vraca indeks >=0.
+
+```js
+var a = "Zdravo svete"
+
+if(a.indexOf("sv") >= 0){
+  // nasao sam ga
+}
+
+if(a.indexOf("sv") != -1){
+  // nasao sam ga
+}
+
+if(a.indexOf("vs") < 0){
+  // nisam ga nasao
+}
+
+if(a.indexOf("vs") == -1){
+  // nisam ga nasao
+}
+```
+
+Problem sa ovakvim kodom je taj sto se moze videti da zavisim od kontrolne vrednosti (-1), a vise bih voleo da se to ne primeti. Zato tu stupa operator ~ (**tilda**).
+
+```js
+var a = "Zdravo svete"
+
+~a.indexOf("sv"); // -7 <- ponasa se kao true
+
+if(~a.indexOf("sv")){
+  // nasao sam
+}
+
+~a.indexOf("vs"); // 0 <- ponasa se kao false
+!~a.indexOf("vs"); // true
+
+if(!~a.indexOf("vs")){
+  // nisam ga nasao
+}
+```
+
+#### Odsecanje bitova
+
+Tilda se takodje moze korisititi i za odsecanje decimalnih delova broja.
+
+```js
+~~-49.6; // -49
+Math.floor(-49.6); // -50;
+```
+
+Prva tilda pretvara u 32-bitnu alternativu i obrce vrednosti bitova, a druga zatim opet obrce vrednosti bitova sto ih vraca u prvobitno stanje.
+
+Ali to sto se moze postici sa duplom tildom, moze i s operatorom | (OR).
+
+```js
+~~1E20 / 10; // 166199296
+1E20 | 0 / 10; // 1661992960 <-razlicito od gornjeg
+(1E20 | 0) / 10 // 166199296
+```
