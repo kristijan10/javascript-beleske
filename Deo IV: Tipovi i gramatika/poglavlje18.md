@@ -397,3 +397,57 @@ Ali to sto se moze postici sa duplom tildom, moze i s operatorom | (OR).
 1E20 | 0 / 10; // 1661992960 <-razlicito od gornjeg
 (1E20 | 0) / 10 // 166199296
 ```
+
+### Eksplicitno: numericki znakovni niz u brojeve
+
+>Rasclanite znakovni niz u broj kada vam nije vazno koji se drugi numericki znaci mogu naci na desnoj strani.
+>
+>Konvertujte stip string (u number) samo kada su prihvatljive jedino numericke vrednosti i kada bi sve nalik na "42px" trebalo odbaciti kao da nije broj
+
+```js
+var a = "42"
+var b = "42px"
+
+Number(a); // 42
+parseInt(a); // 42
+
+Number(b); // NaN
+parseInt(b); // 42
+```
+
+Pri generisanju numericke od znakovne vrednosti, tolerise se prisustvo nenumerickih znakova (postupak analiziranja pojedinacnih znakova sleva nadesno zavrsava se na prvo nenumerickom znaku), dok konverzija tipa to ne tolerise i propada (a rezultat je NaN).
+
+_parseInt_ je pre ES5 verzije zahtevao kao drugi argument da se napise u kom sistemu brojeva ce da konvertuje. Zatim je stavljeno kao obavezno da se stavlja 10, a nakon toga za kasnije verzije se podrazumevalo da je 10 sve dok nisi nista prosledio kao drugi argument.
+
+#### Rasclanjivanje vrednosti koje nisu znakovnog tipa
+
+Pre nekoliko godina se pojavila sarkasticna poruka koja je ismevala ponasanje JS-a:
+
+```js
+parseInt(1/0, 19); // 18
+```
+
+Kao prvo, vidi se da metodi nije prosledjen tip string, vec broj. To se jednostavno ne radi. A ako to i uradis, masina implicitno konvertuje broj u string, a zatim rasclanjuje.
+
+```js
+parseInt(1/0, 19);
+
+// pretvara se u
+parseInt("Infinity", 19);
+
+/*
+// brojevni sistem 19 sadrzi od 1-9 i od a-i (mala i velika)
+// kada krene da rasclanjuje "I" je vrednost 18, "n"
+// ne postoji u tom brojevnom sistemu pa se proces prekida
+*/
+```
+
+```js
+parseInt(0.000008); // 0 ("0" od "0.000008")
+parseInt(0.0000008); // 8 ("8" od "8e-7")
+parseInt(false, 16); // 250 ("fa" od "false");
+parseInt(parseInt, 16); // 15 ("f" od "function..");
+
+parseInt("0x10"); // 16
+parseInt("103", 2); // 2
+```
