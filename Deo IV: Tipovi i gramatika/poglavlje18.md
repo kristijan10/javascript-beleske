@@ -451,3 +451,35 @@ parseInt(parseInt, 16); // 15 ("f" od "function..");
 parseInt("0x10"); // 16
 parseInt("103", 2); // 2
 ```
+
+### Eksplicitno: * -> tip boolean
+
+Kao sto postoji nacin da eksplicitno konvertujem string u number pomocu operatora +, tako postoji i ovde - **!**
+
+```js
+var a = "0";
+var b = [];
+var c = {};
+
+var d = null
+var e = 0;
+var f = "";
+var g;
+
+Boolean(a); // true
+!!b; // true
+Boolean(c); // true
+
+Boolean(d); // false
+!!e; // false
+!!f; // false
+!!g; // false
+
+/*
+// razlog zasto dva !! je sto jedan menja
+// paritet (od false -> true i obrnuto)
+// prvi ! je za eksplicitno konvertovanje
+// koji takodje menja i paritet, a onda je drugi
+// da vrati na podrazumevanu parnost 
+*/
+```
