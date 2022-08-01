@@ -483,3 +483,139 @@ Boolean(d); // false
 // da vrati na podrazumevanu parnost 
 */
 ```
+
+## Implicitna konverzija
+
+Podrazumeva se konverzija koja nama programerima na prvi pogled nije uocljiva. Nije eksplicitno naznaceno da dolazi do bilo kakve konverzije, ali dubljim razumevanjem napisanog koda mozemo shvatiti da li dolazi do implicitne ili ne dolazi.
+
+Ovaj tip konverzije je onaj koji tera vecinu ljudi od konverzija uopsteno. Toliko je mrze da misle da je to uvedena greska u JS-u.
+
+Cilj implicitne konverzije definisacemo kao smanjivanje opsirnosti iskaza, smanjivanje kolicina ponovljenog sablonskog koda i/ili nepotrebnih detalja implementacije koji pretrpavaju nas kod sumom koji nam odvlaci paznji s vaznijih namera.
+
+### Implicitno pojednostavljivanje
+
+Ono sto treba je shvatiti kako koji tip funkcionise, kako ga koristimo u kodu i to nam omogucava koriscenje implicitne konverzije, koja cini kod pojednostavljenim, bez viska naglasavanja masini da mora da prebaci iz ovog tipa u ovaj tip. To ona primeti kada vidi na koji nacin koristimo tipove.
+
+### Implicitno: znakovni nizovi -> brojevi
+
+Operator + je preklopljen tako da sluzi i za sabiranje brojeva ali i za spajanje stringova. Kako da znam kada se koja funkcionalnost koristi?
+
+```js
+var a = "42";
+var b = "0";
+var c = 42;
+var d = 0;
+
+a+b; // "420"
+c+d; // 42
+```
+
+```js
+var a = [1, 2];
+var b = [3, 4];
+
+a+b; // "1, 23, 4"
+```
+
+Zasto je vratio string kada su svi brojevi u nizu?
+
+Kada operator + dobije vrednost tipa _object_ kao jedan od operanada, prvo za tu vrednost poziva operaciju _toPrimitive()_. Posto pozivanje metode _valueOf()_ za vrednost tipa array nije jednostavna primitivna vrednost, prelazi se na znakovni oblik predstavljanja vrednosti koji se dobija pomocu metode _toString()_. Zbog toga nizovi postaju vrednosti "1,2" i "3,4". Operator zatim samo spaja ta dva stringa i zato dobijamo ocekivani rezultat - "1,23,4".
+
+Vrednost tipa _number_ se moze jednostavno konvertovati u tip _string_ "sabiranjem" broja i praznog znakovnog niza:
+
+```js
+var a = 42;
+var b = a + "";
+b; // "42"
+```
+
+```js
+var a = {
+  valueOf: function(){return 42;},
+  toString: function(){return 4;}
+};
+
+a + ""; // "42"
+String(a); // "4"
+```
+
+Zbog nacina na koji deluje apstraktna operacija toPrimitive, izraz _a + ""_ poziva metodu _valueOf()_ za vrednost _a_, a povratna vrednost te metode se zatim konvertuje u string kroz internu metodu _toString()_. Ali funkcija _String(a)_ samo poziva metodu _toString()_ direktno.
+
+```js
+// implicitno konvertovanje iz tipa string u tip number
+var a = "3.14"
+var b = a - 0;
+
+/*
+// moze i:
+// b = a/1;
+// b = a*1;
+*/
+b; // 3.14
+```
+
+Sta se desava s koriscenjem operatora - uz objekte?
+
+```js
+var a = [3];
+var b = [1];
+
+a - b; // 2
+```
+
+Prvo iz niza se pretvara u string, a zatim i u number kako bi se mogla izvrsiti operacija oduzimanja.
+
+### Implicitno: logicke vrednosti -> brojevi
+
+```js
+/*
+// f-ja proverava da li je prosledjeno
+// vise od jedne true vrednosti
+*/
+function onlyOne(a, b, c){
+  return !!((a && !b && !c) || (!a && b && !c) || (!a && !b && c));
+}
+
+var a = true;
+var b = false;
+
+onlyOne(a, b, b); // true
+onlyOne(b, a, b); // true
+
+onlyOne(a, b, a); // false
+```
+
+Sta bi bilo ako mi treba vise argumenata da proverim u funkciji? Tada bi presao na pristup brojevima:
+
+```js
+/*
+// ako je argumentom prosledjeno samo
+// jedna vrednost true f-ja ce vratiti true,
+// u suprotnom vraca false
+*/
+function onlyOne(){
+  var sum = 0;
+  for(let i = 0; i < arguments.length; i++){
+    // ako je vrednost razlicita od false
+    // proci ce uslov i izvrsiti kod
+
+    // ovde se takodje dogadja i implicitna
+    // konverzija; posto prosledjujem vrednosti
+    // true ili false one ce se pretvoriti u
+    // svoj numericki par i izvrsiti matematicku
+    // operaciju sabiranja
+    if(arguments[i]) sum += arguments[i];
+  }
+  
+  return sum == 1;
+}
+
+var a = true;
+var b = false;
+
+onlyOne(a, b); // true
+onlyOne(b, a, b, b, b); // true
+
+onlyOne(b, b); // false
+onlyOne(b, a, a, b, b, a); // false
+```
