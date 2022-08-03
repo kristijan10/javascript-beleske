@@ -671,6 +671,12 @@ Za operator ||: AKO JE LEVI OPERAND _true_, rezultat celog ispitivanja je vredno
 
 Za operator &&: AKO JE LEVI OPERAND _true_ rezultat celog ispitivanja je vrednost operanda s DESNE strane. U suprotnom (AKO JE LEVI OPERAND _false_) rezultat je vrednost operanda s LEVE strane.
 
+>Vec sam do sada to ucio:
+>
+>a || b; ako je jedan od operanada true a drugi false, razultat tog poredjenja je true (sto je vrednost onog operanda koji je true: "foo" || null - "foo", odnosno true (vrednost operanda s leve strane))
+>
+>a && b; ako je jedan od operanada true a drugi false, rezultat poredjenja je false: "foo" && null - null, odnosno false
+
 Jos jeadn nacin na koji se moze zamisliti operacija poredjenja:
 
 ```js
