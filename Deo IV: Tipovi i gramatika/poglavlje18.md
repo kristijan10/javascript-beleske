@@ -729,3 +729,15 @@ if(a && (b || c)) console.log("da"); // "da"
 ```
 
 Prvo se ulazi u unutrasnju zagradu i konvertuje vrednost promenljive b u tip boolean, sto ce biti _false_ (a ako je vrednost operanda s leve strane u operaciji || onda se uzima vrednost s desne strane - "foo"). Zatim se konvertuje vrednost promenljive a u tip boolena, sto je true (a kod operatora && ako je vrednost s leve strane _true_, rezultat poredjenja je vrednost operanda s desne strane - "foo"). Onda se izvrsava implicitna konverzija vrednosti "foo" u tip boolean, sto je _true_, pa uslov prolazi i izvrsava se zadata naredba u bloku koda.
+
+### Konverzija simbola
+
+Eksplicitna konverzija iz tipa _symbol_ u tip _string_ je dozvoljena, ali implicitna nije.
+
+```js
+var a = Symbol("cool");
+var b = String(a); // "Symbol(cool)"
+
+var c = Symbol("not cool");
+var d = c + ""; // TypeError: can't convert symbol to string
+```
