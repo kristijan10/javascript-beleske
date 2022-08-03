@@ -247,7 +247,7 @@ Da skratim, sve sto se NE nalazi na listi vrednosti koje se konverzijom u _boole
 
 ## Eksplicitna konverzija
 
-### Eksplicitno: znakovni niz <--> brojevi
+### Eksplicitno: znakovni niz -> brojevi
 
 Najcesca konverzija (iz stringa u broj).
 
@@ -619,3 +619,107 @@ onlyOne(b, a, b, b, b); // true
 onlyOne(b, b); // false
 onlyOne(b, a, a, b, b, a); // false
 ```
+
+### Implicitno: * -> boolean
+
+Operacije u izrazima koji dovode do implicitne konverzije u tip _boolean_:
+
+1) uslov u iskazu petlje _if(..)_
+2) uslov (drugi argument) u petlji _for(.., .., ..)_
+3) uslov u petljama _while(..)_ i _do..while_
+4) uslov (prva odredba) u ternarnim izrazima _.. ? .. : .. ;_
+5) levi operand (koji sluzi kao uslov) logickih operatora _||_ ("logicka disjunkcija" - ili) i && ("logicka konjunkcija" - i)
+
+```js
+var a = 42;
+var b = "abc"
+var c;
+vad d = null;
+
+if(a) console.log("da"); // "da"
+while(c) console.log("ne, ne izvrsava se");
+c = d ? a : b;
+c; // "abc"
+if((a && d) || c) console.log("da"); // "da"
+```
+
+### Operatori || i &&
+
+Ovi operatori drugacije se ponasaju nego u nekim drugim jezicima. Autor kaze da je progresno dato ime ovih operatora "logicki operator za ___", vec on misli da je prikladnije ime **"operator za biranje operanda"**
+
+Razlog je taj sto u JavaScript-u oni zapravo ne vracaju vrednost logickog _boolean_ tipa, vecvracaju rezultat jednog od zadatih operanda.
+
+```js
+var a = 42;
+var b = "abc"
+vac c = null;
+
+a || b; // 42
+a && b; // "abc"
+
+c || b; // "abc"
+c && b; // null
+```
+
+U jezicima kao sto su C/C++ ovi operatori bi vratili rezultat _true ili false_, dok JavaScript (pa i Ruby i Python) vracaju vrednost jednog od operanda.
+
+Nacin na koji funkcionise biranje operanda:
+
+Oba operatora ispituju da li je vrednost s leve strane tipa _boolean_. Ako nije izvrsava se normalna ToBoolean konverzija.
+
+Za operator ||: AKO JE LEVI OPERAND _true_, rezultat celog ispitivanja je vrednost operanda s LEVE strane. U suprotnom (AKO JE LEVI OPERAND _false_) rezultat je vrednost operanda s DESNE strane.
+
+Za operator &&: AKO JE LEVI OPERAND _true_ rezultat celog ispitivanja je vrednost operanda s DESNE strane. U suprotnom (AKO JE LEVI OPERAND _false_) rezultat je vrednost operanda s LEVE strane.
+
+Jos jeadn nacin na koji se moze zamisliti operacija poredjenja:
+
+```js
+a || b;
+a ? a : b;
+
+a && b;
+a ? b : a;
+```
+
+Primena koju nisam razumeo a koristi se cesto:
+
+```js
+function foo(a, b){
+  a = a || "zdravo";
+  b = b || "svete";
+
+  console.log(`${a} ${b}`);
+}
+
+foo(); // "zdravo svete"
+foo("da", "da!"); // "da da!"
+```
+
+Jos jedan oblik upotrebe koji se koristi s operatorom && je takozvani "cuvarski" oblik (engl. _guard_); odnosno, test prvog "cuva" drugi izraz:
+
+```js
+function foo(){
+  console.log(a);
+}
+
+var a = 42;
+
+a && foo(); // 42
+
+// ^ ekvivalentno je:
+if(a) foo();
+```
+
+Funkcija se poziva samo ako je vrednost promenljive _a_ razlicita od vrednosti false. A ako je ipak false, dolazi do "kratkog spoja" - odnosno, f-ja se ne poziva.
+
+>Kada sa poceo da citam na koji nacin funkcionisu operatori poredjenja (|| i &&) pomislio sam da sam do sada negde pogresio pisajuci takav kod. Ali to nije istina. Ono vraca vrednost nekog od operanda (ne logicku vrednost) ali se opracija uglavnom korstila u nekom uslovu, sto se vec videlo da se izvrsava implicitna konverzija u boolean tip
+
+```js
+var a = 42;
+var b = null;
+var c = "foo"
+
+if(a && (b || c)) console.log("da"); // "da"
+```
+
+Prvo se ulazi u unutrasnju zagradu i konvertuje vrednost promenljive b u tip boolean, sto ce biti _false_ (a ako je vrednost operanda s leve strane u operaciji || onda se uzima vrednost s desne strane - "foo"). Zatim se konvertuje vrednost promenljive a u tip boolena, sto je true (a kod operatora && ako je vrednost s leve strane _true_, rezultat poredjenja je vrednost operanda s desne strane - "foo"). Onda se izvrsava implicitna konverzija vrednosti "foo" u tip boolean, sto je _true_, pa uslov prolazi i izvrsava se zadata naredba u bloku koda.
