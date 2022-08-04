@@ -741,3 +741,126 @@ var b = String(a); // "Symbol(cool)"
 var c = Symbol("not cool");
 var d = c + ""; // TypeError: can't convert symbol to string
 ```
+
+## Labava jednakost i striktna jednakost
+
+Poredjenje jednakosti moze biti labavo (==) i striktno (===).
+
+Razlika je sto labavo poredjenje dozvoljava konverziju tipova pri ispitivanju jednakosti, dok striktno poredjenje to ne dozvoljava.
+
+### Performanse pri ispitivanju vrednosti
+
+Ne mora da te brine da li koriscenje striktnog operatora poredjenja usporava/ubrzava program/utice na performanse. Rec je o mikrosekundama (milioniti deo sekunde)...
+
+Sustina je da li ti je za tok programa bitno da li je prilikom poredjenja doslo do konverzije tipa (koristeci ==) ili nije (koristeci ===).
+
+### Apstraktna jednakost
+
+Opis algoritma kojim se utvrdjuje jednakost izmedju vrednosti.
+
+Ono na sta se svodi je da se prvo proverava da li su istog tipa vrednosti. Ako jesu, poredi se da li su iste vrednosti. U suprotnom (ako su tipovi razliciti), dolazi do konvertuje jednog ili oba u isti tip, pa se ponovo gleda da li su iste vrednosti.
+
+#### Poredjenje: znakovni nizovi s brojevima
+
+Ako je jedan od vrednosti tipa _string_ a drugi _number_, uvek ce se _string_ pretvoriti u tip _number_.
+
+```js
+var a = 42;
+var b = "42";
+
+a === b; // false
+a == b; // true
+```
+
+Operacija labave nejednakosti prvo izvrsava labavu jednakost pa se njen rezultat negira.
+
+#### Poredjenje: bilo sta s logickom vrednoscu
+
+```js
+var a = "42";
+var b = true;
+
+a == b; // false
+
+/*
+// "42" == true
+// specifikacija kaze da ako je jedna vrednost
+// tipa boolean ona se pretvara u number
+// "42" == 1
+// specifikacija kaze da ako se porede number
+// i string, string se pretvara u number
+// 42 == 1 -> false
+*/
+```
+
+Cesto se desava da nas mozak to shvata pogresno. Kada pogledamo "42" == true mozak misli da je to jednako. Ali moramo da gledamo kako to operator labavog poredjenja vidi.
+
+```js
+// koristim se vrednostima iz
+// prethodnog primera koda
+if(a == true){/*nece biti izvrseno*/}
+if(a === true){/*nece biti izvrseno*/}
+if(a){/*ovde dolazi do implicitne konverzije i izvrsava se blok koda*/}
+if(!!a){/*eksplicitan nacin konvertovanja i opet prolazi uslov*/}
+if(Boolean(a)){/*ekspl. konvertovanje i prolazi uslov*/}
+```
+
+#### Poredjenje: vrednosti null i undefined
+
+Po specifikaciji (poredjenje labave jednakosti) ako je jedna od vrednosti _null_ a druga _undefined_ rezultat je true.
+
+```js
+var a = null;
+var b;
+
+a == b; // true
+a == null; // true
+b == null; // true
+
+a == ""; // false
+a == false; // false
+b == false; // false
+a == 0; // false
+b == 0; // false
+```
+
+Konverzija izmedju vrednosti _null_ i _undefined_ je predvidljiva i bezbedna za koristiti.
+
+```js
+var a = doSomething();
+
+if(a == null){/*izvrsi samo ako f-ja vrati null ili undefined*/}
+```
+
+#### Poredjenje: objekti sa skalarnim vrednostima
+
+Poredjenje primitivne vrednosti s objektom (bilo koje vrste) dovodi do toga da se objekat pretvara u primitivnu vrednost pomocu operacije ToPrimitive.
+
+```js
+var a = 42;
+var b = [42];
+
+a == b; // true
+
+/*
+// masina vidi objekat -> iskoristi ToPrimitive
+// 42 == "42"
+// 42 == 42 -> true
+*/
+```
+
+```js
+var a = null;
+var b = Object(a); // isto sto i `Object()`
+a == b; // false
+
+var c = undefined;
+var d = Object(c); // isto sto i `Object()`
+c == d; // false
+
+var e = NaN;
+var f = Object(e); // isto sto i `Number(e)`
+e == f; // false
+```
+
+"Pakovanje" se za vrednosti _null_ i _undefined_ ne moze izvrsiti jer nemaju ekvivalentan objektni omotac. Vrednost NaN se moze upakovati u svoj ekv. objektni omotac Number, ali kada zbog == dodje do raspakivanja dovodi do NaN == NaN sto je uvek false.
