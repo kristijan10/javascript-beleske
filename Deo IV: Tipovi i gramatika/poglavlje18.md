@@ -864,3 +864,94 @@ e == f; // false
 ```
 
 "Pakovanje" se za vrednosti _null_ i _undefined_ ne moze izvrsiti jer nemaju ekvivalentan objektni omotac. Vrednost NaN se moze upakovati u svoj ekv. objektni omotac Number, ali kada zbog == dodje do raspakivanja dovodi do NaN == NaN sto je uvek false.
+
+### Granicni slucajevi
+
+Lista granicnih slucajeva do kojih moze doci implicitnom konverzijom (koristeci labavu jednakost ==).
+
+#### Ruzni trikovi
+
+```js
+Number.prototype.valueOf = function(){
+  return 3;
+}
+
+new Number(2) == 3; // true
+```
+
+Ovo se dogadja zato sto levi operand nije broj, vec objekat koji pakuje vrednost 2. Implicitna konverzija poziva internu metodu _valueOf()_ gde nalazi vrednost 3.
+
+```js
+if(a == 2 && a == 3){
+  // ...
+}
+```
+
+>Pomisao "Nemoguce", ali je moguce...!
+
+```js
+var i = 2;
+
+Number.prototype.valueOf = function(){
+  return i++;
+}
+
+var a = new Number(42); // broj je nebitan
+
+if(a == 2 && a == 3) console.log("Zasto komplikujem?");
+// "Zasto komplikujem"
+```
+
+#### Poredjenje s vrednostima koje se ponasaju kao false
+
+```js
+"0" == false; // true - NIJE DOBRO
+false == 0; // true - NIJE DOBRO
+false == ""; // true - NIJE DOBRO
+false == []; // true - NIJE DOBRO
+"" == 0; // true - NIJE DOBRO
+"" == []; // true - NIJE DOBRO
+0 == []; // true - NIJE DOBRO
+```
+
+#### Suludi slucajevi
+
+```js
+[] == ![]; // true WTF??
+```
+
+>Ovaj se primer dao videti u proslom bloku koda, samo sto ga nisam tako primetio
+
+Pre poredjenja jednakosti radi se pretvaranje u boolean (i obrcanje pariteta) opernda s desne strane. Zatim to izgleda vise kao slucaj koji smo videli.
+
+```js
+[] == false; // true
+```
+
+```js
+2 == [2]; // true
+"" == []; // true
+```
+
+```js
+0 == "\n"; // true
+0 == " "; // true
+
+Number(" "); // 0
+```
+
+#### Provara logike
+
+Pokusavam da shvatim zasto se ljudi boje implicitne konverzije i zasto je nazivaju greskom jezika. Kada bolje pogledam, tu ima samo sedam slucajeva koji dovode do zablue. A posto je pomenuto da nikada ne bi trebalo koristiti operaciju poredjenja gde je jedan od operanada _false_, znaci da ostaju jos tri slucaja do kojih moze doci "slucajno".
+
+Pretpostavljam da je ljudi izbegavaju zato sto ne izuce sta se desava iza koda, odnosno, sta masina radi kada procita napisan kod.
+
+A ona tri slucaja sto sam rekao da ostaju "cudna" i nerazjasnjena:
+
+```js
+"" == 0; // true - NIJE DOBRO
+"" == []; // true - NIJE DOBRO
+0 == []; // true - NIJE DOBRO
+```
+
+To je ono sto moras da zapamtis da ne mozes da koristis.
