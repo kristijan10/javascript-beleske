@@ -955,3 +955,35 @@ A ona tri slucaja sto sam rekao da ostaju "cudna" i nerazjasnjena:
 ```
 
 To je ono sto moras da zapamtis da ne mozes da koristis.
+
+#### Bezbedna primena implicitne konverzije
+
+Savet: ispitaj program i vidi sta se sve moze od vrednosti pojaviti na obe strane operatora labavog poredjenja (==).
+
+Ako se na jednoj strani mogu pojaviti vrednostima tipa _boolean_, NEMOJ korisititi operator labavog poredjenja (==).
+
+Takodje i za vrednosti [], "" i 0; nemoj koristiti ==.
+
+Bolja alternativa u ova dva slucaja bi bila upotreba striktnog operatora poredjenja (===), sto bi resio sve moguce probleme koji bi se mogli naci zbog implicitne konverzije.
+
+## Apstraktno relaciono poredjenje
+
+JS ima jako cudnu mehaniku poredjenja vrednosti pomocu operatora <, >, <=, >=.
+
+Ono sto radi je da ako je upotrebljen operator < ili <= nastavlja tako sto pretvara sve vrednosti pomocu ToPrimitive operacije, a zatim ako je slucaj da oba nisu tipa _string_ onda se prebacuju u _number_.
+
+Ali ako je upotrebljen operator > ili >= onda se obrce ceo izraz.
+
+>a > b postaje b < a
+
+Svodi se na to da ce masina uvek proveravati da li je nesto < ili <=.
+
+JS masina operatore <= i >= tretira kao **ne vece od**.
+
+>a => b postaje b <= a postaje !(b < a)
+
+## Sazetak poglavlja
+
+Eksplicitna se obavlja tamo gde je ocigledna namera dase vrednost konvertuje iz jednog u drugi tip. Korist od toga je bolje razumevanje i lakse odrzavanje koda.
+
+Implicitna je konverzija koja je "skrivena" i obicno se javlja kao posledica upotrebe neke druge operacije.
