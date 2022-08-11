@@ -8,7 +8,7 @@ Izraz moze biti iskaz, ali obrnuto ne moze.
 
 Prost primer da bi razlikovao:
 
-3*5 - izraz
+3\*5 - izraz
 
 var a = 3\*5; - iskaz (deklaracioni; 3\*5 je izraz)
 
@@ -25,14 +25,14 @@ var a = 42;
 
 Taj undefined koji se vraca je povratna vrednost koja se vraca iz algoritma koji se koristi za "postavljanje" te promenljive.
 
->Taj algoritam ustvari vraca znakovni niz s imenom deklarisane vrednosti
+> Taj algoritam ustvari vraca znakovni niz s imenom deklarisane vrednosti
 
 Zavrsna vrednost svakog standardnom bloka { .. } je vrednost poslednjeg iskaza/izraza koji taj blok sadrzi.
 
 ```js
 var b;
 
-if(true) b = 42;
+if (true) b = 42;
 // 42
 ```
 
@@ -60,8 +60,8 @@ var b = a + 3;
 Ali se ti sporedni efekti pocnu pojavljivati ako ih ne koristimo kako treba prilikom pozivanja funkcija.
 
 ```js
-function foo(){
-   a = a + 1;
+function foo() {
+ a = a + 1;
 }
 
 var a = 2;
@@ -96,3 +96,138 @@ var b = (a++, a);
 a; // 43
 b; // 43
 ```
+
+### Kontekstno zavisna pravila
+
+#### Viticaste zagrade
+
+Objektni literal:
+
+```js
+var a = {
+ foo: bar(),
+};
+```
+
+Ovo je objektni literal zato sto je par {..} vrednost koja se dodeljuje promenljivoj a.
+
+#### Oznaceni iskazi
+
+Ako uklonim levi deo iskaza _var a =_ dobijam obican blok koda:
+
+```js
+{
+ foo: bar();
+}
+```
+
+Posto JS nema goto komandu, umesto nje se moze koristiti _continue/break_.
+
+```js
+foo: for (var i = 0; i < 4; i++)
+ for (var j = 0; j < 4; j++) {
+  // prelazimo u sledecu iteraciju
+  if (j == i) continue foo;
+
+  // preskace neparne proizvode
+  if ((j * i) % 2 == 1) continue;
+
+  console.log(i, j);
+ }
+
+// 1 0
+// 2 0
+// 2 1
+// 3 0
+// 3 2
+```
+
+_break_ za razliku od _continue_ izlazi iz cele petlje i nastavlja da izvrsava dalji kod.
+
+```js
+foo: for (var i = 0; i < 4; i++)
+ for (var j = 0; j < 4; j++) {
+  if (i * j <= 3) {
+   console.log("Prekidam", i, j);
+   break foo;
+  }
+  console.log(i, j);
+ }
+
+// 0 0
+// 0 1
+// 0 2
+// 0 3
+// 1 0
+// 1 1
+// 1 2
+// Prekidam 1 3
+```
+
+Ako koristis neke skokove (za sta bi oni bili korisni je da pronadjes vrednost neke promenljive na drugom mestu) dokumentuj veoma dobro jer ces i ti zaboraviti a i drugi koji budu radili na tvom kodu ce biti zbunjeni.
+
+#### Blokovi
+
+```js
+[] + {}; // [object Object]
+{} + []; // 0
+```
+
+Implicitna konverzija u prvom izrazu na operand s leve strane pretvara u "" (prazan string) pa se zato i {} objekat pretvara u string sto daje [object Object].
+
+U drugom izrazu JS masina vidi da ima objekat s leve strane (prazan blok koda) pa [] pretvara u broj - 0.
+
+#### Destrukturiranje objekata
+
+```js
+function getData(){
+   // ...
+   // ...
+   return {
+      a: 42,
+      b: "foo"
+   }
+}
+
+var {a, b} = getData();
+
+console.log(a, b); // 42 "foo"
+```
+
+Destruktuiranje objekata pomocu para {..} se moze iskoristiti i za zadavanje vrednosti imenovanim argumentima funkcije.
+
+```js
+function foo({a, b, c}){
+   // nema potrebe za ovim oblikom
+   // var a = obj.a, b = obj.b, c = obj.c;
+
+   console.log(a, b, c);
+}
+
+foo({
+   b: "foo"
+   c: [1, 2, 3],
+   a: 42,
+});
+
+// 42 "foo" [1, 2, 3]
+```
+
+#### Blokovi else if i opcioni blokovi
+
+Ne postoji else if iskaz kao takav. Ono se ustvari tretira kao:
+
+```js
+if(a) doSomething();
+else{
+   if(b) doSomethingDifferent();
+   else doThird();
+}
+
+// skraceno:
+if(a) doSomething();
+else if(b) doSomethingDifferent();
+else doThird();
+```
+
+Skrivena karakteristika JS-a kaze da ako u bloku iza if ili else ima samo jedan iskaz, moze se izostaviti par viticastih zagrada. Po ovom principu je dodata else if grana...
