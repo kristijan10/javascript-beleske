@@ -170,7 +170,9 @@ Ako koristis neke skokove (za sta bi oni bili korisni je da pronadjes vrednost n
 
 ```js
 [] + {}; // [object Object]
-{} + []; // 0
+{
+}
++[]; // 0
 ```
 
 Implicitna konverzija u prvom izrazu na operand s leve strane pretvara u "" (prazan string) pa se zato i {} objekat pretvara u string sto daje [object Object].
@@ -180,16 +182,16 @@ U drugom izrazu JS masina vidi da ima objekat s leve strane (prazan blok koda) p
 #### Destrukturiranje objekata
 
 ```js
-function getData(){
-   // ...
-   // ...
-   return {
-      a: 42,
-      b: "foo"
-   }
+function getData() {
+ // ...
+ // ...
+ return {
+  a: 42,
+  b: "foo",
+ };
 }
 
-var {a, b} = getData();
+var { a, b } = getData();
 
 console.log(a, b); // 42 "foo"
 ```
@@ -218,16 +220,75 @@ foo({
 Ne postoji else if iskaz kao takav. Ono se ustvari tretira kao:
 
 ```js
-if(a) doSomething();
-else{
-   if(b) doSomethingDifferent();
-   else doThird();
+if (a) doSomething();
+else {
+ if (b) doSomethingDifferent();
+ else doThird();
 }
 
 // skraceno:
-if(a) doSomething();
-else if(b) doSomethingDifferent();
+if (a) doSomething();
+else if (b) doSomethingDifferent();
 else doThird();
 ```
 
 Skrivena karakteristika JS-a kaze da ako u bloku iza if ili else ima samo jedan iskaz, moze se izostaviti par viticastih zagrada. Po ovom principu je dodata else if grana...
+
+## Prioritet operatora
+
+Ukratko, svaki jezik ima neki prioritet kojim se odredjuje koji operator ima prednost kada je u pitanju chain-ovanje operatora.
+
+MDN ima listu na kojoj je tabela svih operatora i JS-ov prioritet nad njima.
+
+### Kratko spajanje operatora
+
+Odredjeni operatori poseduju "kratkospojnu" mogucnost.
+
+Primer mogu biti operatori && i ||. Ako je operand s leve strane dovoljan da se odredi ishod cele operacije, onda se izracunavanje desnog operanda preskace i tu se zavrsava operacija.
+
+To se dosta koristi u ispitivanju uslova:
+
+```js
+if (opts && opts.cool) {
+ /*..*/
+}
+// ako postoji objekat opts proverava da li postoji i njegovo svojstvo cool, u suprotnom (ako ne postoji objekat) prekida se ispitivanje i izlazi iz uslova
+
+if (opts.cache || primeCache()) {
+ /*..*/
+}
+// ako postoji metoda cache u objektu opts, on se primenjuje, u suprotnom poziva se f-ja primeCache
+```
+
+### Jace vezivanje operatora
+
+&& i || "jace vezuju" za razliku od ? : (ternarnog operatora).
+
+```js
+a && b || c ? c || b ? a : c && b : a
+// to je slicno
+((a && b) || c) ? ((c || b) ? a : (c && b)) : a
+```
+
+### Asocijativnost
+
+Asocijativnost je nacin na koji JS masina gleda ko od operatora ima prednost u izracunavanju kada se nadoveze vise operatora.
+
+```js
+a ? b : c ? d : e;
+// masina bi to podelila na sledeci nacin:
+a ? b : (c ? d : e);
+
+a && b && c;
+// masina bi to podelila na sledeci nacin:
+(a && b) && c;
+
+// operacija dodeljivanja vrednosti ima desnu asocijativnost bas kao i ternarni operator
+var a, b, c;
+a = b = c = 42;
+a = (b = (c = 42));
+```
+
+### Otklanjanje nedoumica
+
+Da skratim pricu, rucnu (eksplicitnu) asocijativnost koristi tamo gde ce ona doprineti do lakseg razumevanja koda, a implicitnu asocijativnost postavljaj kako bi smanjio i "ocistio" kod.
