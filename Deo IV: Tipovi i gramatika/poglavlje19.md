@@ -320,3 +320,9 @@ function foo(a){
    if(!a) return a *= 2;
 }
 ```
+
+### Ispravljanje gresaka
+
+Neki JS programeri misle da je pisanje ; obavezno i da se ne treba oslanjati na ASI, dok oni drugi misle da treba da pistu kod bez ; pa da ga ASI stavi tamo gde prevodilac pokaze kao sintaksnu gresku.
+
+Autorovo misljenje je da znak **;** treba stavljati svuda, jer on nicemu ne skodi, a tebi (i drugim koji budu radili s tvojim kodo) opet pomaze da shvatis gde se zavrsava dati izraz.
