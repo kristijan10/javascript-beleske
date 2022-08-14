@@ -292,3 +292,31 @@ a = (b = (c = 42));
 ### Otklanjanje nedoumica
 
 Da skratim pricu, rucnu (eksplicitnu) asocijativnost koristi tamo gde ce ona doprineti do lakseg razumevanja koda, a implicitnu asocijativnost postavljaj kako bi smanjio i "ocistio" kod.
+
+## Automatsko umetanje znaka ';'
+
+ASI (Automatic Semicolon Insertation) odvija se kada JS podrazumeva znak **;** na nekim mestima u kodu uprkost tome sto ga nisam tamo izricito stavio.
+
+Znak **;** i **,** umece samo tamo gde vidi da je kraj reda i da ima belina (prelazak u sledeci red), nikada to ne radi u sred reda.
+
+Znak **;** se ocekuje nakon do..while bloka, sto vecina ne stavlja, pa zato ASI preuzima ulogu i dodaje je na kraj bloka. If i while blokovi ga ne zahtevaju, pa tu ne dodaje.
+
+A sto se tice rez. reci _break, return, continue i yield(ES6)_ ako nisi naglasio da li se nesto vraca (tako sto stavis ili u zagradu, ako se radi o vise stvari, ili samu vrednost nakon rez. reci ASI algoritam ce shvatiti to kao samo nacin da izadjes iz petlje pa ce staviti **;** na kraj (to samo ako nakon rez. reci ima belina - prelazak u sledeci red)).
+
+```js
+function foo(a){
+   if(!a) return
+   a *= 2;
+}
+
+// ovo bi ASI algoritam video:
+function foo(a){
+   if(!a) return;
+   a *= 2;
+}
+
+// a ako bas taj izraz zelis da vratis, moras naglasiti
+function foo(a){
+   if(!a) return a *= 2;
+}
+```
