@@ -326,3 +326,34 @@ function foo(a){
 Neki JS programeri misle da je pisanje ; obavezno i da se ne treba oslanjati na ASI, dok oni drugi misle da treba da pistu kod bez ; pa da ga ASI stavi tamo gde prevodilac pokaze kao sintaksnu gresku.
 
 Autorovo misljenje je da znak **;** treba stavljati svuda, jer on nicemu ne skodi, a tebi (i drugim koji budu radili s tvojim kodo) opet pomaze da shvatis gde se zavrsava dati izraz.
+
+## Greske
+
+Osim do sada pomenutih gresaka (TypeError, ReferenceError, SyntaxError...) postoje i greske koje se otkrivaju u toku kompajliranja koda.
+
+```js
+var a = /+foo/; // SyntaxError
+
+var b;
+42 = b; // SyntaxError
+
+function foo(a, b, a){/*..*/} // ispravno
+function foo(a, b, a){"use strict"} // SytaxError
+```
+
+### Prerana upotreba promenljivih
+
+Zona nazvana TDZ (Temporal Dead Zone) je zona u kojoj promenljiva jos uvek nije deklarisana a i ne moze se pristupiti.
+
+```js
+a = 2;
+let a; // greska
+```
+
+Pomocu operatora _typeof_ mogu da proverim da li promenljiva postoji ili je samo koristim u TDZ-u.
+
+```js
+typeof a; // undefined (nema je deklarisane)
+typeof b; // ReferenceError (TDZ)
+let b;
+```
