@@ -357,3 +357,99 @@ typeof a; // undefined (nema je deklarisane)
 typeof b; // ReferenceError (TDZ)
 let b;
 ```
+
+## Argumenti funkcije
+
+Autor naglasava da je koriscenje niza _arguments_ zastareo nacin koriscenja prosledjenih argumenata, a da je u ES6 verziji uneta novija verzija.
+
+```js
+function foo(a=42, b=a+1){
+   console.log({a, b, arguments});
+}
+
+foo(); // {a: 42, b: 43, Arguments(prazan objekat)}
+foo(10); // {a: 10, b: 11, Arguments{0: 10}}
+foo(10, undefined); // {a: 10, b: 11, Arguments{0: 10, 1: undefined}}
+foo(10, null); // {a: 10, b: null, Arguments{0: 10, 1:null}}
+```
+
+```js
+function bar(a){
+   console.log(a + arguments[1]); // bezbedno
+}
+
+bar(10, 32); // 42
+```
+
+## Blok try..finally
+
+Do sada je bilo reci samo o bloku try..catch, ali takodje postoji i jos jedan blok koji se moze dodati na try..catch blok - finally.
+
+Sta god da se desi (da li se izvrsio try blok ili se preskocio pa presao u catch) finally ce se uvek izvrsiti.
+
+```js
+function foo(){
+   try{
+      return 42;
+   }
+   finally{
+      console.log("Zdravo");
+   }
+   console.log("Ovo nikada nece biti izvrseno");
+}
+
+console.log(foo());
+// "Zdravo"
+// 42
+```
+
+>F-ja foo vrati vrednost 42 metodi log, zatim predje u finally blok, gde izvrsava logovanje, pa kada to zavrsi vraca se u console.log() metodu gde postavlja vrednost 42
+
+## Iskaz switch
+
+```js
+switch(a){
+   case 2:
+      // radi nesto
+      break;
+   case 3:
+      // radi nesto
+      break;
+   default:
+      // radi nesto u svim
+      // ostalim slucajevima
+}
+```
+
+Prilikom provere slucajeva izvrsava se striktna jednakost (===). Ako bi hteo da iskoristim labavu jednakost:
+
+```js
+var a = 42;
+
+switch(true){
+   case a == 2:
+      // radi nesto
+      break;
+   case a == 3:
+      // radi nesto
+      break;
+}
+```
+
+## Sazetak poglavlja
+
+Iskazi i izrazi imaju odogvarajucu analogiju u govornom jeziku - iskazi su slicni recinicama a ozrazo sintagmama i recenicama. Izrazi mogu bitit potpuno samostalni, a mogu umati i sporedne efekte.
+
+Gramatima JS-a postavlja semanticka pravila upotrebe povrsh ciste sintakse. Na primer, parovi {} na razlicitim mestima u programu mogu znaciti da su to blokovi iskaza, objektni literali, destrukturirajuci iskazi za dodelu vrednosti ili imenovani argumenti funkcije.
+
+Za sve JS operatore postoje strogo odredjena pravila njihovog prioriteta (koji operator se obradjuje pre ostalih) i asocijativnosti (kako se implicitno grupisu delovi izraza za koji sadrzi vise operatora).
+
+ASI (Automatic Semicolon Insertion) mehanizam za ispravljanje gresaka koje otkriva analizator koda ugradjen u JS masinu i koji omogucava da se u odredjenim slucajevima umetne podrazumevani znak ; na mestima gde je obavezan ali je izostavljen i gde njegovo umetanje ispravlja gresku koji vidi analizator koda.
+
+JS ima vise tipova gresaka, ali je manje poznato da ima dve klasifikacije za greske: "rane" (koje generise kompajler jida i koje se ne mogu presretnuti u kodu) i one "u vreme izvrsavanja" (koje se mogu presretati i obradjivati pomocu try..catch). Sve sintaksne greske su ocigledno rane greske koje zaustavljaju program pre nego sto pocne da se izvrsava, ali ima i drugih.
+
+Postoji zanimljiva veza izmedju argumenata funkcije i njihovih formalno deklarisanih imenovanih parametara. Konkretno, niz _arguments_ uvodi vuse zamki zbog ponasanja "busne" apstrakcije ako ne vodite dovoljno racuna. Pokusajte izbegavati ako je moguce, a ako to nije moguce, onda pokusaj ne mesati elemente niza _arguments_ i imenovani parametar ako oba predstavljaju isti argument.
+
+Odredba _finally_ pridruzena _try..catch_ uvodi nekoliko vrlo zanimljivih posebnosti u vezi s redosledom izvrsavanja tih blokova.
+
+Iskaz _switch_ nudii zgodan skracen oblik za lanac iskaza _if..else if.. else_.
