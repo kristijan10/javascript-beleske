@@ -1,0 +1,213 @@
+# Asihronizam: pojmovi sada i kasnije
+
+Jedno od najvaznijih delova JavaScripta jeste kako izraziti ponasanje programa koje je promenljivo tokom vremena. Odnosno to je pitanje sta se dogadja kada se deo koda izvrsi _sada_, a neki njegov deo _kasnije_.
+
+## Program u delovima
+
+Programeri imaju problem s shvatanjem da se _kasnije_ ne izvrsavao neposredno i odmah posle _sada_.
+
+```js
+// ajax je kao fetch
+var data = ajax("https://some.url/api");
+
+// posto se ajax ne izvrsava sihrono,
+// data ce uglavnom biti ispisana kao
+// undefined
+console.log(data);
+```
+
+Ajax radi tako sto _sada_ salje zahtev, a _kasnije_ dobija odgovor.
+
+Najjednostavniji nacin za "cekanje" jesu povratne funkcije (engl. callback function).
+
+```js
+ajax("https://some.url/api", function myCallback(data){
+   console.log(data);
+})
+```
+
+```js
+function now(){
+   return 42;
+}
+
+function later(){
+   answer *= 2;
+   console.log("Smisao zivota: ", answer); 
+}
+
+var answer = now(); // 42
+
+setTimeout(later, 1000);
+// ceka 1 sekund
+// Smisao zivota: 84
+
+/*
+// program se sastoji od delova Sada
+// i Kasnije
+//
+// Sada se izvrsava:
+//    function now(){} - samo se inicijalizuje
+//    function later(){} - samo se inicijalizuje
+//    var answer = now(); - dodeljuje vrednost
+//    setTimeout(later, 1000); - zapocinje odbrojavanje
+//
+// Kasnije se izvrsava:
+//    poziva se izvrsavanje funkcije later:
+//       answer *= 2;
+//       console.log("Smisao zivota: ", answer);
+*/
+```
+
+Kada god se deo koda upakuje u funkciju kojoj zadas da se izvrsi kao odziv na odredjeni dogadjaj (isticanje vremenskog intervala, pritiskanje tastera misa, prijem ajax odziva...) tako formiram element koji se izvrsava _kasnije_ i time u program uvodim asihronizam.
+
+### Asihronizam konzole
+
+Posto objekat _console_ nije sastavni deo ECMAScripta, vec ga citaci veba dodaju, pa zato moze doci do razlicitih ponasanja u konzolama razlicitih veb pretrazivaca.
+
+```js
+// jedan od retkih slucajeva
+var a = {
+   index: 1
+}
+
+console.log(a);
+
+a.index++;
+```
+
+>Neki citaci veba console.log() izvrsavaju asihrono zbog sporog U/I protoka. Zato bi se tada dogodilo da u nekim konzolama prikaze prvo objekat ({index: 1}) pa zatim inkrementira, a u nekim bi se prikaz izvrsio asihrono (proslo bi dovoljno vremena da se izvrsi sledeci iskaz), sto znaci da bi doslo prvo do inkrementiranja, a zatim i prikaza promenjene vrednosti.
+
+## Petlja za obradu dogadjaja
+
+JS-ova masina ima posao samo da iscitava redom linije i izvrsava. Kada naidje na kod koji se postavlja kao odgovor na neki dogadjaj, JS masina se zaustavi kod njega, iscita na koji dogadjaj treba da ceka, dok dalje nastavlja da cita i izvrsava kod.
+
+Kada JS masina primi neki odgovor (klik misa, odgovor sa servera...) izvrsava blok koda koji je zadat za taj dogadjaj.
+
+>Sada mi je sinulo, da li se cuvaju negde informacije o tome na koji dogadjaj se postavlja cekanje i koja se f-ja izvrsava kada masina primi odgovor?
+
+```js
+// konceptualni izgled petlje
+// za obradu dogadjaja
+
+// eventLoop je niz koji igra
+// ulogu cekanja (obrada po modelu FIFO)
+var eventLoop = [];
+var event;
+
+while(true){
+   if(eventLoop.length > 0){
+      event = eventLoop.shift();
+
+      try{
+         event()
+      } catch(err){
+         reportError(err);
+      }
+   }
+}
+```
+
+## Paralelni visenitni rad
+
+Asihrono je interval izmedju _sada_ i _kasnije_, a paralelno opisuje stvari koje se mogu izvrsavati istovremeno.
+
+JS po prirodi je single-thread (jednonitni), sto znaci da se izvrsavanje jednog dela koda ne moze preplitati s izvrsavanjem nekog drugog dela.
+
+```js
+var a = 20;
+
+function foo(){
+   a = a + 1;
+}
+
+function bar(){
+   a = a * 2;
+}
+
+ajax("http://some.url/1", foo);
+ajax("http://some.url/2", bar);
+
+/*
+// od blizine servera i protoka podataka zavisi koliko
+// ce treba odgovoru da stigne, sto znaci da postoje
+// dva odgovora naseg programa na to kojom brzinom
+// dobijemo odgovor od servera
+//
+// U slucaju da prvo pristigne odgovor s servera 1
+// onda bi a u tom slucaju bilo 42
+//
+// A da je slucaj da server 2 vrati brze odgovor, a bi tada imalo vrednost 41
+*/
+```
+
+### Potpuno izvrsavanje
+
+Posto je JS single-threaded jezik, kada masina krene da izvrsava blok koda funkije ona je izvrsava do kraja bloka, a nakon toga cita redom i ide dalje. To ponasanje se zove **potpuno izvrsavanje** (engl. **run-to-completion**).
+
+>Ja sam ono sto je on u ovom delu objasnio napisao u objasnjenju koda pod naslovom iznad
+
+```js
+var a = 1;
+var b = 2;
+
+function foo(){
+   a++;
+   b *= a;
+   a = b + 3;
+}
+
+function bar(){
+   b--;
+   a = 8 + b;
+   b = a * 2;
+}
+
+ajax("https://some.url/1", foo);
+ajax("https://some.url/2", bar);
+```
+
+| Rezultat 1 | Rezultat 2 |
+| ---------- | ---------- |
+| var a = 1; | var a = 1; |
+| var b = 2; | var b = 2; |
+|            |            |
+| //foo()    | //bar()    |
+| a++;       | b--;       |
+| b = b * a; | a = 8 + b; |
+| a = b + 3; | b = a * 2; |
+|            |            |
+| //bar()    | //foo()    |
+| b--;       | a++;       |
+| a = 8 + b; | b = b * a; |
+| b = a * 2; | a = b + 3; |
+|            |            |
+| a - 11     | a - 183    |
+| b - 22     | b - 180    |
+
+## Istovremenost
+
+Mogucnost izvrsavanja dva ili vise "procesa" istovremeno, bez obzira na to da li se operacije koje ih cine izvrsavaju paralelno (u istom trenutku na zasebnim procesorima ili jezgrima) se zove **istovremenost** (engl. **concurrency**).
+
+Primer primene istovremenosti su web aplikacije koje prikazuju listu azuriranih statusa (web aplikacije za prikaz cena deonica, drustvene mreze...).
+
+```md
+onscroll, request 1 <- pocinje Proces 1
+onscroll, request 2
+response 1 <- pocinje Proces 2
+onscroll, request 3
+response 2
+response 3
+onscroll, request 4
+onscroll, request 5
+onscroll, request 6
+response 4
+onscroll, request 7 <- zavrsava Proces 1
+response 6
+response 5
+response 7 <- zavrsava Proces 2
+```
+
+Proces 1 i Proces 2 se odvijaju istovremeno (paralelizam na nivou posla), ali se njihovi dogadjaji obradjuju sekvencijalno (serijski) u redu petlje za obradu dogadjaja.
+
+Nisam primetio na prvi pogled, ali _response 6_ je vracen pre _response 5_. Autor kaze da postoje i drugi nacini obrade podataka, sto ce opisati u narednim poglavljima.
