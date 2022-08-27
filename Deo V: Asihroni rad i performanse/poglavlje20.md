@@ -211,3 +211,137 @@ response 7 <- zavrsava Proces 2
 Proces 1 i Proces 2 se odvijaju istovremeno (paralelizam na nivou posla), ali se njihovi dogadjaji obradjuju sekvencijalno (serijski) u redu petlje za obradu dogadjaja.
 
 Nisam primetio na prvi pogled, ali _response 6_ je vracen pre _response 5_. Autor kaze da postoje i drugi nacini obrade podataka, sto ce opisati u narednim poglavljima.
+
+### "Procesi" bez medjusobne interakcije
+
+```js
+var res = {};
+
+function foo(result){
+   res.foo = result;
+}
+
+function bar(result){
+   res.bar = result;
+}
+
+ajax('http://some.url/1', foo);
+ajax('http://some.url/2', bar);
+```
+
+Ovde nema nikakve komunikacije izmedju povratnih funkcija, ne "trkaju se" cija ce se vrednost koristiti jer se povratna vrednost cuva u promenljivoj koja je odgovorna za istoimenu f-ju.
+
+### "Procesi" izmedju kojih postoji interakcije
+
+```js
+var a = [];
+
+function response(data){
+   a.push(data);
+}
+
+ajax('some.url/1', response);
+ajax('some.url/2', response);
+```
+
+>Programer ovde ne sme da pretpostavlja da ce se uvek na prvo mesto u promenljivoj a nalaziti odgovor pristigao od strane prvog linka
+>
+>Nekada na a[0] moze da se nalazi odgovor prvog poziva, a nekada odgovor drugog poziva
+
+Da bi se izbeglo utrkivanje, treba koordinisati interakciju zbog redosleda izvrsavanja:
+
+```js
+var a = [];
+
+function response(data){
+   if(data.url == "some.url/1"){
+      a[0] = data;
+   } else if(data.url == "some.url/2"){
+      a[1] = data;
+   }
+}
+
+// ajax poziv
+```
+
+>Ovim nacinom nije mi bitno koji odgovor stigne prvi pa se resavam i "utrkivanja" a i znam da ce zasigurno na prvom mestu biti odgovor prvog zahteva
+
+```js
+var a, b;
+
+function foo(x){
+   a = x * 2;
+   baz();
+}
+
+function bar(y){
+   b = y / 2;
+   baz();
+}
+
+function baz(){
+   console.log(a+b);
+}
+
+ajax('some.url/1', foo);
+ajax('some.url/2', bar);
+```
+
+>Bilo koji odgovor da mi stigne prvi, uvek ce biti greske kada pristigne prvi odgovor
+
+Kada pristigne prvi odgovor poziva se funkcija koja konzoluje jedan od definisanih + drugi (koji nije definisan). Nakon sto i drugi odgovor pristigne, onda mogu da dobijem dobar odgovor.
+
+Resenje tog problema je koriscenjem **kapije** (engl. **gate**)
+
+```js
+var a, b;
+
+function foo(x){
+   a = x * 2;
+   // ispisi mi rezultat samo ako su stigla oba odgovora
+   if(a && b) baz();
+}
+
+function bar(y){
+   b = y / 2;
+   if(a && b) baz();
+}
+
+function baz(){
+   console.log(a+b);
+}
+
+ajax('some.url/1', foo);
+ajax('some.url/2', bar);
+```
+
+A problem za utrkivanje se moze resiti koristeci **rampa** (engl. **latch**):
+
+```js
+var a;
+
+function foo(x){
+   if(a === undefined){
+      a = x * 2;
+      baz();
+   }
+}
+
+function bar(x){
+   if(a === undefined){
+      a = x / 2;
+      baz();
+   }
+}
+
+function baz(){
+   console.log(a);
+}
+
+ajax('some.url/1', foo);
+ajax('some.url/2', bar);
+```
+
+>Koji god odgovor da je pristiga prvi samo on je odgovoran za postavljanje vrednosti
+>
+>Ko prvi devojci, njemu devojka xD
