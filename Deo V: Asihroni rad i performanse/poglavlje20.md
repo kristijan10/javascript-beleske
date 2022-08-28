@@ -402,3 +402,33 @@ function response(data) {
 ajax('some.url/1', response);
 ajax('some.url/2', response);
 ```
+
+## Poslovi
+
+Niz za poslove (engl. **job queue**) je niz koji se izvrsava kasnije, ali preko reda.
+
+```js
+console.log("A");
+
+setTimeout(function(){
+   console.log("B");
+}, 0);
+
+// sledeci blok koda je izmisljen kako bi se prikazao
+// pravi nacin ponasanja
+schedule(function(){
+   console.log("C");
+
+   schedule(function(){
+      console.log("D");
+   })
+})
+/*
+// "A"
+// "C"
+// "D"
+// "B"
+*/
+```
+
+>Ne razumem, ali ce biti dalje objasnjeno kroz poglavlje 22
