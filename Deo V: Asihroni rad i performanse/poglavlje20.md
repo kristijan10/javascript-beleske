@@ -345,3 +345,60 @@ ajax('some.url/2', bar);
 >Koji god odgovor da je pristiga prvi samo on je odgovoran za postavljanje vrednosti
 >
 >Ko prvi devojci, njemu devojka xD
+
+### Saradnja
+
+Ako bi se desilo da sa neke udaljene lokacije na serveru zelim da preuzmem neki podatak/fajl i on u sebi sadrzi stotine hiljada linija koda, to bi zaustavilo ceo proces ucitavanja stranice na strani klijenta, sto bi rezultovali usporenom sadrzaju, sto znaci da ce korisnik trebati da ceka duze.
+
+To se resava na sledeci nacin:
+
+```js
+// prvi primer koda je onaj koji bi pravio problem
+var resp = [];
+
+function response(data){
+   res = res.concat(
+      data.map(function(val){
+         return val * 2;
+      })
+   );
+}
+
+ajax('some.url/1', response);
+ajax('some.url/2', response);
+
+/*
+// kada prvi upit vrati odgovor pozivanjem f-je
+// response u listu resp se ubacuju duplirane vrednosti
+// odgovora primljenog s udaljene lokacije, a dok se sve
+// to ne ogradi (prolazak kroz dospelu listu, 
+// dupliranje njenih vrednosti pa i ubacivanje u listu
+// resp). A tako isto i za drugi. U medjuvremenu,
+// kontent na klijentskoj strani ne moze da se ucita
+*/
+
+// resenje problema
+var res = [];
+
+function response(data) {
+   // obrada paketa velicine 1000
+    var chunk = data.splice(0, 1000);
+
+    res = res.concat(
+        chunk.map(function(val) {
+            return val * 2;
+        })
+    )
+
+   // ako ima jos paketa
+    if (data.length > 0) {
+      // obradicu ih asihrono
+      setTimeout(function() {
+         response(data)
+      }, 0)
+    }
+}
+
+ajax('some.url/1', response);
+ajax('some.url/2', response);
+```
