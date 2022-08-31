@@ -488,3 +488,17 @@ b++;
 
 console.log(a + b);
 ```
+
+## Sazetak poglavlja
+
+JS program se uvek (prakticno) deli na dva ili vise delova; prvi deo se izvrsava _sada_ a drugi _kasnije_, kao odziv na odredjeni dogadjaj.
+
+Sve dok ima dogadjaja koji cekaju na obradu, petlja za obradu dogadjaja izvrsava se dok se ne isprazni red cekanja za obradu.
+
+Svaka iteracija petlje za obradu dogadjaja zove se **podeljak** (engl. **tick**). Interkacije korisnika, ulazno/izlazne operacije i tajmeri postavljaju dogadjaje u red cekanja na obradu.
+
+U svakom datom trenutku moze se obradjivati samo jedan dogadjaj iz reda cekanja. Tokom obrade jednog dogadjaja, on moze neposredno ili posredno prouzrokovati dodavanje jednog ili vise dogadjaja koji ce se kasnije obraditi.
+
+Istovremenost imamo kada se dva ili vise lanca dogadjaja preplicu tokom vremena, tako da - gledano s viseg nivoa - oni se prividno izvrsavaju istovremeno.
+
+Izmedju tih istovremenih "procesa" cesto je potreban odredjeni oblik koordinacije - na primer, da bismo obezbedili dati redosled izvrsavanja ili sprecili stanje utrkivanja. Ti "procesi" mogu i medjusobno saradjivati tako sto se dele na manje delove i tako omogucavaju preplitanje s delovima drugih "procesa"
