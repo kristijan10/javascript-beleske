@@ -431,4 +431,60 @@ schedule(function(){
 */
 ```
 
->Ne razumem, ali ce biti dalje objasnjeno kroz poglavlje 22
+>Ne razumem, ali ce biti dalje objasnjeno kroz poglavlje 224
+
+## Redosled izvrsavanja iskaza u kodu
+
+JS masina kada kompajlira kod nekada moze i da izmeni redosled kojim se kod izvrsava.
+
+```js
+var a, b;
+
+a = 10;
+b = 30;
+
+a = a + 1;
+b = b + 1;
+
+console.log(a+b);
+
+// js bi to mogao da "optimizuje" na neki od sledecih nacina
+
+var a, b;
+
+a = 10;
+a ++;
+
+b = 30;
+b++;
+
+console.log(a + b);
+
+// ili
+
+var a, b;
+
+a = 11;
+b = 31;
+
+console.log(a+b);
+```
+
+>JS prilikom kompajliranja na neki predefinisan nacin odredjuje da li moze da skrati nekako kod i omoguci sebi da ga sto efikasnije i brze obradi
+>
+>Ta optimizacija se nece izvrisiti u slucajevima kada on odredi da to ne moze
+
+```js
+// primer kada kompajler ne bi optimizovao kod
+var a, b;
+
+a = 10;
+b = 30;
+
+console.log(a * b);
+
+a++;
+b++;
+
+console.log(a + b);
+```
