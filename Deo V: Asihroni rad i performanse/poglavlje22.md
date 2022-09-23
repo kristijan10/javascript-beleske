@@ -155,3 +155,53 @@ p1===p2; // true
 ### Uspostavljanje poverenja
 
 Ukratko, obecanja sigurna za pravljenje robusnoh softvera i od njih se moze ocekivati ocekivano. Dodaje neku logiku za razliku od povratnih f-ja.
+
+## Lancani tok obecanja
+
+```js
+var p = Promise.resolve(21);
+
+var p2 = p.then(function (v){
+   console.log(v);
+   // sada p2 ima vrednost 42
+   return v * 2;
+})
+p2.then(function(v){
+   console.log(v);
+})
+```
+
+Metoda _then_ nazad vraca obecanje, pa se to moze iskoristiti da bi se jos jedna _then_ metoda nakacila posle na to.
+
+Jako je mocno kada se mora uciniti nesto s vrednoscu koju dobijes, a zatim da nastavis da ides kroz obecanje i odradis neku drugu stvar nad tim.
+
+```js
+var p = Promise.resolve(21);
+
+var p2 = p.then(function(v){
+   return v * 2;
+}).then(function(v){
+   console.log(v); // 42
+});
+```
+
+Ili jos bolje, sve ulancane metode ce cekati na odgovor, koji moze da se izvrsi i asihrono.
+
+```js
+var p = Promise.resolve(21);
+
+p.then(function(v){
+   console.log(v);
+   return new Promise(function(resolve, reject){
+      // uvodi asihronizam
+      setTimeout(function(){
+         resolve(v*2); // 42
+      }, 100);
+   })
+}).then(function(v){
+   // izvrsava se nakon 100ms cekanja
+   console.log(v); // 42
+})
+```
+
+Mocna alatka kojom mogu da kontrolisem kada ce se razresiti/ispuniti obecanje..
